@@ -3,6 +3,7 @@
   <groupId>MavAdvise</groupId>
   <artifactId>MavAdvise</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <description>Server code for MavAdvise</description>
   <packaging>war</packaging>
   <build>
     <sourceDirectory>src</sourceDirectory>
