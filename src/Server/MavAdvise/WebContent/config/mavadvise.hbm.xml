@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="org.web.beans.User" table="user">
+		<id name="userId" type="int" column="userid">
+			<generator class="increment"></generator>
+		</id>
+		<property name="name" column="name"></property>
+		<property name="contact" column="contact"></property>
+		<property name="address" column="address"></property>
+		<property name="email" column="email"></property>
+		<property name="password" column="password"></property>
+		<property name="picture" column="picture" type="binary"></property>
+	</class>
+
+	<class name="org.web.beans.Advertisement" table="advertisement">
+		<id name="advertisementId" type="int" column="adv_id">
+			<generator class="increment"></generator>
+		</id>
+
+		<property name="itemName" column="item_name"></property>
+		<property name="currentBidPrice" column="current_bid" type="double"></property>
+		<property name="startingPrice" column="start_price" type="double"></property>
+
+		<property name="expiryDate" column="expiry_date" type="date"></property>
+		<property name="startDate" column="start_date" type="date" insert="false" update="false"></property>
+		<property name="description" column="description"></property>
+		<property name="status" column="status"></property>
+		<property name="sellerId" column="seller"></property>
+		<property name="buyer" column="buyer"></property>
+		<property name="auctionType" column="auction_type"></property>
+		<property name="categoryID" column="category_id"></property>
+	</class>
+
+	<class name="org.web.beans.Bid" table="bid">
+		<id name="id" type="int" column="id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="bidderId" column="bidder_id"></property>
+		<property name="bidAmount" column="bid_amount"></property>
+		<property name="adId" column="ad_id"></property>
+	</class>
+
+	<class name="org.web.beans.DirectBuy" table="direct_buy">
+		<id name="id" type="int" column="id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="buyerId" column="buyer_id"></property>
+		<property name="adId" column="ad_id"></property>
+	</class>
+
+	<class name="org.web.beans.Category" table="category">
+		<id name="categoryId" type="int" column="id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="categoryName" column="category_name"></property>
+	</class>
+
+	<class name="org.web.beans.Review" table="reviews">
+		<id name="id" type="int" column="id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="reviewer" column="reviewer"></property>
+		<property name="adId" column="ad_id"></property>
+		<property name="review" column="review"></property>
+		<property name="rating" column="rating"></property>
+	</class>
+
+	<class name="org.web.beans.Image" table="images">
+		<id name="id" type="int" column="id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="adId" column="ad_id"></property>
+		<property name="image" type="binary">
+			<column name="image" not-null="true" />
+		</property>
+	</class>
+
+	<sql-query name="findMyOrders">
+		<return alias="advertisement" class="org.web.beans.Advertisement"/>
+		<![CDATA[select * from advertisement adv, bid bd where adv.adv_id = bd.ad_id and adv.status = 'SOLD']]>
+    </sql-query>
+</hibernate-mapping>
