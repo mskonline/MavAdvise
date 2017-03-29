@@ -4,20 +4,21 @@
  "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-
-	<class name="org.web.beans.User" table="user">
-		<id name="userId" type="int" column="userid">
-			<generator class="increment"></generator>
+	<class name="org.web.beans.User" table="users">
+		<id name="netID" type="string" column="net_id">
 		</id>
-		<property name="name" column="name"></property>
-		<property name="contact" column="contact"></property>
-		<property name="address" column="address"></property>
+		<property name="utaID" column="uta_id"></property>
+		<property name="firstName" column="firstname"></property>
+		<property name="lastName" column="lastname"></property>
 		<property name="email" column="email"></property>
 		<property name="password" column="password"></property>
-		<property name="picture" column="picture" type="binary"></property>
+		<property name="roleType" column="roletype"></property>
+		<property name="branch" column="branch"></property>
+		<property name="securityQuestion" column="security_question"></property>
+		<property name="securityAnswer" column="security_answer"></property>
 	</class>
 
-	<class name="org.web.beans.Advertisement" table="advertisement">
+	<!--<class name="org.web.beans.Advertisement" table="advertisement">
 		<id name="advertisementId" type="int" column="adv_id">
 			<generator class="increment"></generator>
 		</id>
@@ -83,5 +84,5 @@
 	<sql-query name="findMyOrders">
 		<return alias="advertisement" class="org.web.beans.Advertisement"/>
 		<![CDATA[select * from advertisement adv, bid bd where adv.adv_id = bd.ad_id and adv.status = 'SOLD']]>
-    </sql-query>
+    </sql-query>-->
 </hibernate-mapping>
