@@ -1,0 +1,6 @@
+Login 
+http://localhost:8080/MavAdvise/login?netID=123&password=123
+
+
+Register
+http://localhost:8080/MavAdvise/register?firstName=abc1&lastName=efg1&email=def@gmail.com&password=234&roleType=STUDENT&netID=234&utaID=234&branch=CS&securityQuestion=q&securityAnswer=a
