@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MavAdvise</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="branch_array">
+        <item>Choose Department</item>
+        <item>CSE</item>
+        <item>MIS</item>
+        <item>EE</item>
+        <item>MECH</item>
+        <item>CIVIL</item>
+    </string-array>
+
+    <string-array name="role_array">
+        <item>What are you?</item>
+        <item>Student</item>
+        <item>Advisor</item>
+    </string-array>
+
+    <string-array name="securityQuestions_array">
+        <item>Choose a security question</item>
+        <item>Where is your birth place?</item>
+        <item>What is your Mother\'s Maiden name?</item>
+    </string-array>
+</resources>

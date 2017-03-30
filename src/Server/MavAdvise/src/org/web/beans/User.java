@@ -73,4 +73,16 @@ public class User {
 	public void setSecurityAnswer(String securityAnswer) {
 		this.securityAnswer = securityAnswer;
 	}
+
+	public boolean validate(){
+		//TODO
+		return true;
+	}
+
+	public boolean authenticate(String password){
+		if(password.equalsIgnoreCase(this.password))
+			return true;
+		else
+			return false;
+	}
 }

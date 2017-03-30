@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,8 +45,23 @@ public class SessionController{
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	@ResponseBody
-	public void register(HttpServletRequest request, @RequestParam Map<String,String> allRequestParams){
+	public String register(HttpServletRequest request, @ModelAttribute User user){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
 
+		boolean status = dbmanager.saveUser(user);
+
+		if(status)
+			r.setType("SUCCESS");
+		else
+			r.setType("FAILED");
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)

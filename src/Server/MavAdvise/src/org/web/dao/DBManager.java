@@ -27,14 +27,20 @@ public class DBManager {
 	}
 
 	public boolean saveUser(User user){
-		Transaction tx = null;
-		Session session = factory.openSession();
-		tx = session.beginTransaction();
+		try{
+			Transaction tx = null;
+			Session session = factory.openSession();
+			tx = session.beginTransaction();
 
-		session.save(user);
-		tx.commit();
+			session.save(user);
+			tx.commit();
 
-		session.close();
+			session.close();
+		} catch(Exception e){
+			logger.error("Error saving the user details. " + e.getMessage());
+			return false;
+		}
+
 		return true;
 	}
 

@@ -19,7 +19,7 @@ public class AppSessionInterceptor extends HandlerInterceptorAdapter {
 	public AppSessionInterceptor() {
 		excludeURLs = new ArrayList<String>();
 		excludeURLs.add("login");
-		excludeURLs.add("registerUser");
+		excludeURLs.add("register");
 		excludeURLs.add("ping");
 	}
 
