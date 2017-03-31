@@ -2,7 +2,6 @@ package org.mavadvise.app;
 
 import android.app.Application;
 
-
 public class MavAdvise extends Application {
 
     private AppConfig appConfig;

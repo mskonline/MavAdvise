@@ -1,5 +1,7 @@
 package org.mavadvise.commons;
 
+import android.util.Log;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 
@@ -14,7 +16,7 @@ public class Utils {
 
             hashedStr = String.format("%0" + (d.length*2) + "X", new BigInteger(1, d));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Utils", "Hashing error " + e.getMessage());
         }
 
         return hashedStr;

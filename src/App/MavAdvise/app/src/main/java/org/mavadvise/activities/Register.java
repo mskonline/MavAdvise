@@ -35,13 +35,18 @@ public class Register extends AppCompatActivity {
     private DialogFragment saveDialog;
     private AppConfig appConfig;
 
-    String firstName, lastName, email,
-            netID, utaID, password,
-            passwordRtype, securityAnswer;
+    private String firstName,
+                    lastName,
+                    email,
+                    netID,
+                    utaID,
+                    branch,
+                    role,
+                    password,
+                    passwordRtype,
+                    securityAnswer;
 
-    String branch, role;
-
-    int securityQuestionID;
+    private int securityQuestionID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,6 @@ public class Register extends AppCompatActivity {
 
         // Branch spinner
         Spinner spinner = (Spinner) findViewById(R.id.branchSP);
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.branch_array, android.R.layout.simple_spinner_item);
 
@@ -59,7 +63,6 @@ public class Register extends AppCompatActivity {
 
         // Role spinner
         spinner = (Spinner) findViewById(R.id.roleSP);
-
         adapter = ArrayAdapter.createFromResource(this,
                 R.array.role_array, android.R.layout.simple_spinner_item);
 
@@ -68,7 +71,6 @@ public class Register extends AppCompatActivity {
 
         // Security Questions spinner
         spinner = (Spinner) findViewById(R.id.securityQuestionSP);
-
         adapter = ArrayAdapter.createFromResource(this,
                 R.array.securityQuestions_array, android.R.layout.simple_spinner_item);
 
@@ -76,7 +78,6 @@ public class Register extends AppCompatActivity {
         spinner.setAdapter(adapter);
 
         Button registerBtn = (Button) findViewById(R.id.registerBTN);
-
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,7 +138,7 @@ public class Register extends AppCompatActivity {
 
         //Register
         saveDialog =  ProgressDialogFragment.newInstance();
-        saveDialog.show(getFragmentManager(), "Saving");
+        saveDialog.show(getFragmentManager(), "Saving...");
         new RegisterUser().execute();
     }
 
@@ -155,7 +156,9 @@ public class Register extends AppCompatActivity {
 
             try {
                 Thread.sleep(500);
-            } catch (Exception e){Log.e("Register", "Thread exception");}
+            } catch (Exception e) {
+                Log.e("Register", "Thread exception");
+            }
 
             try {
                 OkHttpClient client = new OkHttpClient();
@@ -164,8 +167,8 @@ public class Register extends AppCompatActivity {
                         .scheme("http")
                         .host(appConfig.getHostName())
                         .port(appConfig.getPort())
-                        .addPathSegment("MavBids")
-                        .addPathSegment("registerUser")
+                        .addPathSegment("MavAdvise")
+                        .addPathSegment("register")
                         .build();
 
                 password = Utils.hashString(password);
@@ -204,22 +207,26 @@ public class Register extends AppCompatActivity {
 
             try {
                 Thread.sleep(500);
-            } catch (Exception e){Log.e("Register", "Thread exception");}
-
+            } catch (Exception e){
+                Log.e("Register", "Thread exception");
+            }
 
             if(result != null) {
                 try {
                     JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("result");
+                    String resultStr = obj.getString("type");
 
-                    if(resultStr.equalsIgnoreCase("true")){
+                    if(resultStr.equalsIgnoreCase("success")){
                         DialogFragment mDialog = AlertDialogFragment.newInstance();
                         mDialog.show(getFragmentManager(), "Info");
+                    } else {
+                        String msg = obj.getString("message");
+                        Toast.makeText(getApplicationContext(), msg,
+                                Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     Log.e("JSON Parse", e.getMessage());
                 }
-
             }
 
         }
@@ -233,7 +240,7 @@ public class Register extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new AlertDialog.Builder(getActivity())
-                .setMessage("Successfully registered. You will need to Login now.")
+                .setMessage("Successfully registered.\nYou will need to Login now.")
                 .setCancelable(false)
                 .setPositiveButton("Ok",
                     new DialogInterface.OnClickListener() {
