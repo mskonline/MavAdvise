@@ -1,7 +1,5 @@
 package org.web.controllers;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.web.beans.Response;
 import org.web.beans.User;
 import org.web.dao.DBManager;
-import org.web.dao.Response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +30,6 @@ public class SessionController{
 		ObjectMapper mapper = new ObjectMapper();
 
 		User user = dbmanager.getUser(netID);
-		r.setMessage("SUCCESS");
 		r.setResult(user);
 
 		try {
@@ -43,18 +40,20 @@ public class SessionController{
 		}
 	}
 
-	@RequestMapping(value = "/register", method = RequestMethod.GET)
+	//TODO - remove GET
+	@RequestMapping(value = "/register", method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
 	public String register(HttpServletRequest request, @ModelAttribute User user){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		boolean status = dbmanager.saveUser(user);
+		String msg = dbmanager.saveUser(user);
 
-		if(status)
-			r.setType("SUCCESS");
+		if(msg == null)
+			r.setResult("User registered");
 		else
-			r.setType("FAILED");
+			// failure. Send message to App
+			r.setMessage(msg);
 
 		try {
 			return mapper.writeValueAsString(r);

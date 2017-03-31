@@ -1,4 +1,4 @@
-package org.web.dao;
+package org.web.beans;
 
 public class Response {
 	public String type;
@@ -6,8 +6,8 @@ public class Response {
 	public Object result;
 
 	public Response() {
-		type = "success";
-		message = "ok";
+		type = "failed";
+		message = "";
 	}
 
 	public String getType() {
@@ -26,6 +26,7 @@ public class Response {
 		return result;
 	}
 	public void setResult(Object result) {
+		this.type = "success";
 		this.result = result;
 	}
 }

@@ -35,7 +35,7 @@ CREATE TABLE `users` (
   `branch` varchar(45) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
-  `security_question` varchar(1000) DEFAULT NULL,
+  `security_question_id` int(11) NOT NULL,
   `security_answer` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='MavAdvise users table';
 

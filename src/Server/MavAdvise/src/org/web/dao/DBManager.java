@@ -3,7 +3,7 @@ package org.web.dao;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -26,7 +26,9 @@ public class DBManager {
 		}
 	}
 
-	public boolean saveUser(User user){
+	public String saveUser(User user){
+		String msg = null;
+
 		try{
 			Transaction tx = null;
 			Session session = factory.openSession();
@@ -38,23 +40,73 @@ public class DBManager {
 			session.close();
 		} catch(Exception e){
 			logger.error("Error saving the user details. " + e.getMessage());
-			return false;
+
+			// Check for any constraint violations
+			if(doesNetIDExists(user.getNetID()))
+				msg = "Net ID already exists";
+
+			if(doesUTAIDExists(user.getUtaID()))
+				msg = "UTA ID already exists";
+
+			if(doesEmailExists(user.getEmail()))
+				msg = "Email already exists";
+
+			// Other fatal DB error - Needs debugging
+			msg = "There was some error during registeration. Please try later.";
 		}
 
-		return true;
+		return msg;
 	}
 
-	@SuppressWarnings({ "rawtypes", "deprecation" })
+	@SuppressWarnings("unchecked")
 	public User getUser(String netID){
 		Session session = factory.openSession();
-		Query q = session.createQuery("from User where net_id = :netID");
+		Query<User> q =  session.createQuery("from User where net_id = :netID");
 
-		@SuppressWarnings("unchecked")
 		List<User> userList = q.setParameter("netID", netID).list();
 
 		if(userList.size() >= 1)
 			return userList.get(0);
 		else
 			return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean doesNetIDExists(String netID){
+		Session session = factory.openSession();
+		Query<User> q =  session.createQuery("from User where net_id = :netID");
+
+		List<User> userList = q.setParameter("netID", netID).list();
+
+		if(userList.size() >= 1)
+			return true;
+		else
+			return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean doesUTAIDExists(String UTAID){
+		Session session = factory.openSession();
+		Query<User> q =  session.createQuery("from User where uta_id = :UTAID");
+
+		List<User> userList = q.setParameter("UTAID", UTAID).list();
+
+		if(userList.size() >= 1)
+			return true;
+		else
+			return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean doesEmailExists(String email){
+		Session session = factory.openSession();
+		Query<User> q =  session.createQuery("from User where email = :Email");
+
+		List<User> userList = q.setParameter("Email", email).list();
+
+		if(userList.size() >= 1)
+			return true;
+		else
+			return false;
 	}
 }

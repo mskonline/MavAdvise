@@ -10,7 +10,7 @@ public class User {
 	private String netID;
 	private String utaID;
 	private String branch;
-	private String securityQuestion;
+	private int securityQuestionID;
 	private String securityAnswer;
 
 	public String getFirstName() {
@@ -61,11 +61,11 @@ public class User {
 	public void setBranch(String branch) {
 		this.branch = branch;
 	}
-	public String getSecurityQuestion() {
-		return securityQuestion;
+	public int getSecurityQuestionID() {
+		return securityQuestionID;
 	}
-	public void setSecurityQuestion(String securityQuestion) {
-		this.securityQuestion = securityQuestion;
+	public void setSecurityQuestionID(int securityQuestionID) {
+		this.securityQuestionID = securityQuestionID;
 	}
 	public String getSecurityAnswer() {
 		return securityAnswer;
@@ -80,9 +80,6 @@ public class User {
 	}
 
 	public boolean authenticate(String password){
-		if(password.equalsIgnoreCase(this.password))
-			return true;
-		else
-			return false;
+		return password.equalsIgnoreCase(this.password) ? true : false;
 	}
 }

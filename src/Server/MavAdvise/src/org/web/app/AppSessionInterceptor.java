@@ -31,7 +31,7 @@ public class AppSessionInterceptor extends HandlerInterceptorAdapter {
 		if (!excludeURLs.contains(requestMethod)) {
 			HttpSession session = request.getSession(false);
 			if (session == null || session.getAttribute("hasAccess") == null) {
-				logger.info("Access denied for this request : " + request.getRequestURL());
+				logger.error("Access denied for this request : " + request.getRequestURL());
 				return false;
 			}
 		}

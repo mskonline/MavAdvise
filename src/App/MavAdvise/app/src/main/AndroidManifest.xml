@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.mavadvise">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".app.MavAdvise"
         android:allowBackup="true"
@@ -23,5 +25,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

@@ -1,14 +1,15 @@
 package org.mavadvise.app;
 
 public class AppConfig {
-    private String hostName = "localhost";
+    private String hostName = "10.0.2.2";
     private int port = 8080;
+
     private String sessionID;
+    private String rememberMeToken;
 
     private static AppConfig instance;
 
-    private AppConfig(){
-    }
+    private AppConfig(){}
 
     public static  AppConfig getInstance(){
         if(instance == null)
@@ -39,5 +40,13 @@ public class AppConfig {
 
     public void setSessionID(String sessionID) {
         this.sessionID = sessionID;
+    }
+
+    public String getRememberMeToken() {
+        return rememberMeToken;
+    }
+
+    public void setRememberMeToken(String rememberMeToken) {
+        this.rememberMeToken = rememberMeToken;
     }
 }

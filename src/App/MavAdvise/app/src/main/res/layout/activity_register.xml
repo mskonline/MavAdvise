@@ -7,36 +7,41 @@
     android:background="#d3d3d3"
     tools:context="org.mavadvise.activities.Register">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="10dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:background="#FFF"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="3dp"
-                android:textSize="16dp"
+                android:textSize="16sp"
+                android:textColor="#000"
+                android:gravity="center"
                 android:text="Enter your details to register"/>
 
             <EditText
                 android:id="@+id/firstNameET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:inputType="textPersonName"
@@ -46,8 +51,6 @@
                 android:id="@+id/lastNameET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:inputType="textPersonName"
@@ -57,41 +60,33 @@
                 android:id="@+id/emailET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
-                android:inputType="textPersonName"
+                android:inputType="textEmailAddress"
                 android:hint="Email" />
 
             <EditText
                 android:id="@+id/netIDET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:hint="Net ID" />
 
             <EditText
                 android:id="@+id/utaIDET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
-                android:inputType="textPersonName"
+                android:inputType="text"
                 android:hint="UTA ID" />
 
             <Spinner
                 android:id="@+id/branchSP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10" />
 
@@ -99,8 +94,6 @@
                 android:id="@+id/roleSP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10" />
 
@@ -108,8 +101,6 @@
                 android:id="@+id/passwordET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:inputType="textPassword"
@@ -119,8 +110,6 @@
                 android:id="@+id/passwordRetypeET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
                 android:inputType="textPassword"
@@ -130,8 +119,6 @@
                 android:id="@+id/securityQuestionSP"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10" />
 
@@ -139,18 +126,22 @@
                 android:id="@+id/securityAnswerET"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
                 android:ems="10"
-                android:inputType="textPassword"
+                android:inputType="text"
                 android:hint="Security answer" />
 
             <Button
                 android:id="@+id/registerBTN"
-                android:layout_width="wrap_content"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:background="@color/colorAccent"
+                android:textAllCaps="false"
+                android:textColor="#FFF"
+                android:textSize="20sp"
                 android:text="Register"/>
         </LinearLayout>
     </ScrollView>
