@@ -14,7 +14,7 @@
 		<property name="password" column="password"></property>
 		<property name="roleType" column="roletype"></property>
 		<property name="branch" column="branch"></property>
-		<property name="securityQuestion" column="security_question"></property>
+		<property name="securityQuestionID" column="security_question_id"></property>
 		<property name="securityAnswer" column="security_answer"></property>
 	</class>
 
