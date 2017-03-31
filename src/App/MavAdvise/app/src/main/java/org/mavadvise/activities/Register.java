@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +19,9 @@ import android.widget.Toast;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.mavadvise.R;
+import org.mavadvise.app.AppConfig;
+import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.Utils;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -30,14 +32,16 @@ import okhttp3.Response;
 
 public class Register extends AppCompatActivity {
 
-    private DialogFragment mDialog;
     private DialogFragment saveDialog;
+    private AppConfig appConfig;
 
     String firstName, lastName, email,
             netID, utaID, password,
             passwordRtype, securityAnswer;
 
     String branch, role;
+
+    int securityQuestionID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,7 @@ public class Register extends AppCompatActivity {
             }
         });
 
+        appConfig = ((MavAdvise) getApplication()).getAppConfig();
     }
 
     private void validateAndRegisterUser(){
@@ -93,8 +98,8 @@ public class Register extends AppCompatActivity {
         securityAnswer = ((EditText) findViewById(R.id.securityAnswerET)).getText().toString().trim();
 
         Spinner branchSP = (Spinner) findViewById(R.id.branchSP);
-        Spinner roleSP = (Spinner) findViewById(R.id.branchSP);
-        Spinner securityQuestion = (Spinner) findViewById(R.id.branchSP);
+        Spinner roleSP = (Spinner) findViewById(R.id.roleSP);
+        Spinner securityQuestion = (Spinner) findViewById(R.id.securityQuestionSP);
 
         //Empty EditText Check
         if(firstName.length() == 0 ||
@@ -111,8 +116,9 @@ public class Register extends AppCompatActivity {
         }
 
         //Spinner selection check
-        if(branchSP.getSelectedItemId() == 0 ||
-                roleSP.getSelectedItemId() == 0){
+        if(branchSP.getSelectedItemPosition() == 0 ||
+                roleSP.getSelectedItemPosition() == 0 ||
+                securityQuestion.getSelectedItemPosition() == 0){
             Toast.makeText(getApplicationContext(), "All fields are mandatory.",
                     Toast.LENGTH_SHORT).show();
             return;
@@ -127,12 +133,12 @@ public class Register extends AppCompatActivity {
 
         branch = branchSP.getSelectedItem().toString();
         role = roleSP.getSelectedItem().toString();
+        securityQuestionID = securityQuestion.getSelectedItemPosition();
 
         //Register
         saveDialog =  ProgressDialogFragment.newInstance();
         saveDialog.show(getFragmentManager(), "Saving");
-
-
+        new RegisterUser().execute();
     }
 
     private void navigateToLogin(){
@@ -149,18 +155,20 @@ public class Register extends AppCompatActivity {
 
             try {
                 Thread.sleep(500);
-            } catch (Exception e){}
+            } catch (Exception e){Log.e("Register", "Thread exception");}
 
             try {
                 OkHttpClient client = new OkHttpClient();
 
                 HttpUrl url = new HttpUrl.Builder()
                         .scheme("http")
-                        //.host(SessionManager.getInstance().getMavBidsHost())
-                        .port(80)
+                        .host(appConfig.getHostName())
+                        .port(appConfig.getPort())
                         .addPathSegment("MavBids")
                         .addPathSegment("registerUser")
                         .build();
+
+                password = Utils.hashString(password);
 
                 RequestBody formBody = new FormBody.Builder()
                         .add("firstName", firstName)
@@ -171,6 +179,7 @@ public class Register extends AppCompatActivity {
                         .add("branch", branch)
                         .add("roleType", role)
                         .add("password", password)
+                        .add("securityQuestionID", "" + securityQuestionID)
                         .add("securityAnswer", securityAnswer)
                         .build();
 
@@ -191,12 +200,11 @@ public class Register extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-
             saveDialog.dismiss();
 
             try {
                 Thread.sleep(500);
-            } catch (Exception e){}
+            } catch (Exception e){Log.e("Register", "Thread exception");}
 
 
             if(result != null) {
@@ -205,7 +213,7 @@ public class Register extends AppCompatActivity {
                     String resultStr = obj.getString("result");
 
                     if(resultStr.equalsIgnoreCase("true")){
-                        mDialog = AlertDialogFragment.newInstance();
+                        DialogFragment mDialog = AlertDialogFragment.newInstance();
                         mDialog.show(getFragmentManager(), "Info");
                     }
                 } catch (Exception e) {
