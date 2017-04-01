@@ -1,5 +1,7 @@
 package org.mavadvise.app;
 
+import org.mavadvise.data.User;
+
 public class AppConfig {
     private String hostName = "10.0.2.2";
     private int port = 8080;
@@ -8,12 +10,15 @@ public class AppConfig {
     private String rememberMeToken;
 
     private static AppConfig instance;
+    private static User user;
 
     private AppConfig(){}
 
     public static  AppConfig getInstance(){
-        if(instance == null)
+        if(instance == null) {
             instance = new AppConfig();
+            user = User.getUserInstance();
+        }
 
         return instance;
     }
@@ -49,4 +54,9 @@ public class AppConfig {
     public void setRememberMeToken(String rememberMeToken) {
         this.rememberMeToken = rememberMeToken;
     }
+
+    public User getUser() {
+        return user;
+    }
+
 }

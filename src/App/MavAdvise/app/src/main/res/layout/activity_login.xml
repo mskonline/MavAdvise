@@ -7,9 +7,19 @@
     android:background="#d3d3d3"
     tools:context="org.mavadvise.activities.Login">
 
-    <LinearLayout
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
@@ -83,6 +93,7 @@
             android:text="Register here"/>
     </LinearLayout>
 
+    </ScrollView>
 
 
 </RelativeLayout>

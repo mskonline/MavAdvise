@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.content.Intent;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -77,6 +78,7 @@ public class Register extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
+        //Register Button
         Button registerBtn = (Button) findViewById(R.id.registerBTN);
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,10 +145,10 @@ public class Register extends AppCompatActivity {
     }
 
     private void navigateToLogin(){
-        //Intent intent = new Intent(Register.this, Login.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        //startActivity(intent);
-        finish();
+        Intent intent = new Intent(Register.this, Login.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        //finish();
     }
 
     private class RegisterUser extends AsyncTask<Void, Void , String> {
