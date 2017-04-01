@@ -1,6 +1,7 @@
 package org.web.controllers;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,7 @@ public class SessionController{
 	@Autowired
 	private DBManager dbmanager;
 
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
 	public String login(HttpServletRequest request, @RequestParam("netID") String netID,
 			@RequestParam("password") String password){
@@ -30,8 +31,19 @@ public class SessionController{
 		ObjectMapper mapper = new ObjectMapper();
 
 		User user = dbmanager.getUser(netID);
-		r.setResult(user);
+		if(user != null){
+			boolean status;
+			status = user.authenticate(password);
 
+			if(status == true){
+				HttpSession session = request.getSession();
+				session.setAttribute("hasAccess", "true");
+				r.setResult(user);
+			} else {
+				r.setType("failed");
+				r.setMessage("Invalid password");
+			}
+		}
 		try {
 			return mapper.writeValueAsString(r);
 		} catch (JsonProcessingException e) {
