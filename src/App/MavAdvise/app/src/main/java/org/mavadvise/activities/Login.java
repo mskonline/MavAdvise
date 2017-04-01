@@ -21,6 +21,7 @@ import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.Utils;
+import org.mavadvise.data.User;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -82,17 +83,17 @@ public class Login extends AppCompatActivity {
             return;
         }
 
-        saveDialog = Register.ProgressDialogFragment.newInstance();
+        saveDialog = Login.ProgressDialogFragment.newInstance();
         saveDialog.show(getFragmentManager(), "Login");
-        new Login.LoginUser().execute();
+        new LoginUser().execute();
 
     }
 
     private void navigateToDashboard(){
-        //Intent intent = new Intent(Login.this, Dashboard.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        //startActivity(intent);
-        finish();
+        Intent intent = new Intent(Login.this, Register.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        //finish();
     }
 
     private void forgotUser(){
@@ -132,7 +133,7 @@ public class Login extends AppCompatActivity {
                         .addPathSegment("login")
                         .build();
 
-                password = Utils.hashString(password);
+                //password = Utils.hashString(password);
 
                 RequestBody formBody = new FormBody.Builder()
                         .add("netID", userName)
@@ -147,6 +148,7 @@ public class Login extends AppCompatActivity {
                 Response response = client.newCall(request).execute();
 
                 return response.body().string();
+
             } catch (
                     Exception e)
 
@@ -165,23 +167,45 @@ public class Login extends AppCompatActivity {
             try {
                 Thread.sleep(500);
             } catch (Exception e) {
-                Log.e("Register", "Thread exception");
+                Log.e("Login", "Thread exception");
             }
 
 
-            if (result != null) {
+            if(result != null) {
                 try {
                     JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("result");
+                    String resultStr = obj.getString("type");
+                    JSONObject resObj = obj.getJSONObject("result");
 
-                    if (resultStr != null) {
-                        DialogFragment mDialog = Register.AlertDialogFragment.newInstance();
+                    String resFirst = resObj.getString("firstName");
+                    String resLast = resObj.getString("lastName");
+                    String resEmail = resObj.getString("email");
+                    String resRole = resObj.getString("roleType");
+                    String resNet = resObj.getString("netID");
+                    String resUta = resObj.getString("utaID");
+                    String resBranch = resObj.getString("branch");
+
+                    if(resultStr.equalsIgnoreCase("success")){
+                        User user = appConfig.getUser();
+                        user.setFirstName(resFirst);
+                        user.setLastName(resLast);
+                        user.setEmail(resEmail);
+                        user.setDepartment(resBranch);
+                        user.setNetID(resNet);
+                        user.setUtaID(resUta);
+                        user.setRoleType(resRole);
+
+                        DialogFragment mDialog = Login.AlertDialogFragment.newInstance();
                         mDialog.show(getFragmentManager(), "Info");
+
+                    } else {
+                        String msg = obj.getString("message");
+                        Toast.makeText(getApplicationContext(), msg,
+                                Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     Log.e("JSON Parse", e.getMessage());
                 }
-
             }
         }
     }
