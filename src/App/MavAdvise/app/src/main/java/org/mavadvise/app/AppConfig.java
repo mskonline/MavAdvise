@@ -10,14 +10,14 @@ public class AppConfig {
     private String rememberMeToken;
 
     private static AppConfig instance;
-    private static User user;
+    private User user;
 
     private AppConfig(){}
 
     public static  AppConfig getInstance(){
         if(instance == null) {
             instance = new AppConfig();
-            user = User.getUserInstance();
+            instance.user = User.getUserInstance();
         }
 
         return instance;

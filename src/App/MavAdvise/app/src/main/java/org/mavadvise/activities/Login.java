@@ -48,7 +48,8 @@ public class Login extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validateAndLoginUser();
+                //validateAndLoginUser();
+                navigateToDashboard();
             }
         });
 
@@ -90,10 +91,10 @@ public class Login extends AppCompatActivity {
     }
 
     private void navigateToDashboard(){
-        Intent intent = new Intent(Login.this, Register.class);
+        Intent intent = new Intent(Login.this, DashBoard.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        //finish();
+        finish();
     }
 
     private void forgotUser(){

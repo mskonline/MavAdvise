@@ -83,7 +83,8 @@ public class Register extends AppCompatActivity {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validateAndRegisterUser();
+                //validateAndRegisterUser();
+                navigateToLogin();
             }
         });
 
