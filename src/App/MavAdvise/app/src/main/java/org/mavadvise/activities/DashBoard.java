@@ -1,5 +1,6 @@
 package org.mavadvise.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,12 +39,6 @@ public class DashBoard extends AppCompatActivity
 
         appConfig = ((MavAdvise)getApplication()).getAppConfig();
         user = appConfig.getUser();
-
-        //TODO - clean up
-        user.setFirstName("Sai Kumar");
-        user.setLastName("Manakan");
-        user.setEmail("saikumar.manakan@mavs.uta.edu");
-        user.setRoleType("student");
 
         setUpDashboardLayout();
 
@@ -164,6 +159,9 @@ public class DashBoard extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
+            Intent intent = new Intent(DashBoard.this, Login.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             finish();
         }
 
