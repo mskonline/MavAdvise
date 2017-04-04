@@ -56,7 +56,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="10dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         android:hint="Password" />
 
         <Button
