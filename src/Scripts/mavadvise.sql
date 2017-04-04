@@ -40,6 +40,22 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='MavAdvise users table';
 
 --
+-- Table structure for table `session`
+--
+
+CREATE TABLE `session` (
+  `net_id` varchar(30) NOT NULL,
+  `starttime` time DEFAULT NULL,
+  `endtime` time DEFAULT NULL,
+  `Date` date DEFAULT NULL,
+  `session_id` varchar(45) NOT NULL,
+  `no_of_students` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`session_id`),
+  UNIQUE KEY `session_id_UNIQUE` (`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+--
 -- Dumping data for table `users`
 --
 
