@@ -48,8 +48,7 @@ public class Login extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //validateAndLoginUser();
-                navigateToDashboard();
+                validateAndLoginUser();
             }
         });
 
@@ -134,7 +133,7 @@ public class Login extends AppCompatActivity {
                         .addPathSegment("login")
                         .build();
 
-                //password = Utils.hashString(password);
+                password = Utils.hashString(password);
 
                 RequestBody formBody = new FormBody.Builder()
                         .add("netID", userName)
