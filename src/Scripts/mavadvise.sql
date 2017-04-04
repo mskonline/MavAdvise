@@ -55,6 +55,16 @@ CREATE TABLE `session` (
   UNIQUE KEY `session_id_UNIQUE` (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
+CREATE TABLE `appointments` (
+  `appointment_id` int(11) NOT NULL,
+  `net_id` varchar(30) DEFAULT NULL,
+  `session_id` varchar(45) NOT NULL,
+  `date` date DEFAULT NULL,
+  `slot_number` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`appointment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
 --
 -- Dumping data for table `users`
 --
@@ -77,6 +87,7 @@ ALTER TABLE `users`
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION... */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
 
 
