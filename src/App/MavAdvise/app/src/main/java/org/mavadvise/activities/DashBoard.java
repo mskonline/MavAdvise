@@ -43,7 +43,7 @@ public class DashBoard extends AppCompatActivity
         user.setFirstName("Sai Kumar");
         user.setLastName("Manakan");
         user.setEmail("saikumar.manakan@mavs.uta.edu");
-        user.setRoleType("advisor");
+        user.setRoleType("student");
 
         setUpDashboardLayout();
 
@@ -54,6 +54,16 @@ public class DashBoard extends AppCompatActivity
     }
 
     private void setUpStudentOptions(){
+        options = new ArrayList<String>(){{
+            add("View Appointments");
+            add("Schedule Appointments");
+            add("Cancel Appointments");
+            add("View Announcements");
+        }};
+
+        // Configure list view
+        ListView list=(ListView) findViewById(R.id.dashboardLV);
+        list.setAdapter(new OptionsAdapter());
 
         setUpStudentOptionsListener();
     }
