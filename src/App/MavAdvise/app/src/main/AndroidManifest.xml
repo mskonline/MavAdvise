@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.Register"
-            android:label="Register"></activity>
+            android:label="Register" />
         <activity
             android:name=".activities.Login"
             android:label="Sign In">
@@ -27,7 +27,7 @@
         <activity
             android:name=".activities.DashBoard"
             android:label="@string/title_activity_dash_board"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
