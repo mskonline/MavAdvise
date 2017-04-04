@@ -43,7 +43,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`net_id`, `uta_id`, `firstname`, `lastname`, `roletype`, `branch`, `email`, `password`, `security_question`, `security_answer`) VALUES
+INSERT INTO `users` (`net_id`, `uta_id`, `firstname`, `lastname`, `roletype* `branch`, `email`, `password`, `security_question`, `security_answer`) VALUES
 ('123', '123', 'abc', 'efg', 'STUDENT', 'CS', 'abc@gmail.co', '123', 'q', 'a');
 
 --
@@ -61,4 +61,6 @@ ALTER TABLE `users`
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION... */;
+
+
