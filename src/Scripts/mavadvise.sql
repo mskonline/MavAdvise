@@ -65,6 +65,18 @@ CREATE TABLE `appointments` (
   PRIMARY KEY (`appointment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
+ALTER TABLE `mavadvise`.`session` 
+CHANGE COLUMN `session_id` `session_id` INT(10) NOT NULL ,
+CHANGE COLUMN `no_of_students` `no_of_slots` INT NULL DEFAULT NULL ,
+ADD COLUMN `counter` INT NULL DEFAULT 0 AFTER `status`, RENAME TO  `mavadvise`.`sessions` ;
+
+ALTER TABLE `mavadvise`.`sessions` 
+CHANGE COLUMN `session_id` `session_id` INT(10) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `mavadvise`.`appointments` 
+CHANGE COLUMN `appointment_id` `appointment_id` INT(11) NOT NULL AUTO_INCREMENT ,
+CHANGE COLUMN `session_id` `session_id` INT(10) NOT NULL ;
+
 --
 -- Dumping data for table `users`
 --
