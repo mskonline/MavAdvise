@@ -22,9 +22,36 @@ MySQL
 
 ### Installing
 
+* Step 1 - Checkout the project
 
+Checkout the src directory into your system. **src/App/MavAdvise** is the Android project. **src/Server/MavAdvise** is the Java Web project
+
+* Step 2 - Open the Server code in Eclipse IDE
+
+	- Open your Eclipse IDE
+	- Select the Workspace as **src/Server**
+	- File -> Import -> Existing project into workspace -> Select Root directory as **src/Server/MavAdvise**
+	- Create a Tomcat 7 server in the servers tab
+	- Add the project into the server
+
+* Step 3 - Open the Android app code in Android Studio
+
+	- Open your Android Studio
+	- File ->Open project. Select **src/App/MavAdvise**
+	
 ## Deployment
 
+* Step 1 - Maven Build of the Server
+
+Navigate to **src/Server/MavAdvise** and run the following in the command line
+
+```
+mvn clean install
+```
+
+This will generate the WAR file in the  **src/Server/MavAdvise/target** folder, which can be deployed in Tomcat server
+
+* Step 2 - Run the Android App
 
 ## Built With
 
@@ -32,6 +59,6 @@ MySQL
 
 ## Authors
 
-* **Gurleen Kaur** - [GurleenKaur793] (https://github.com/gurleenkaur793) 
-* **Remesh Sreemoolam Venkitachalam** - [RemeshSV] (https://github.com/remeshsv)
+* **Gurleen Kaur** - [GurleenKaur793](https://github.com/gurleenkaur793) 
+* **Remesh Sreemoolam Venkitachalam** - [RemeshSV](https://github.com/remeshsv)
 * **Sai Kumar Manakan** - [MSKOnline](https://github.com/mskonline)
