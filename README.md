@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need to install the following list of software in your system
+You would need to install the following list of software in your system
 
 ```
 Java 7
@@ -16,6 +16,7 @@ Maven
 Eclipse IDE (Mars+)
 Android Studio
 Git
+Tortoise Git (Optional)
 Tomcat Server 7
 MySQL
 ```
@@ -26,18 +27,19 @@ MySQL
 
 Checkout the src directory into your system. **src/App/MavAdvise** is the Android project. **src/Server/MavAdvise** is the Java Web project
 
-* Step 2 - Open the Server code in Eclipse IDE
+* Step 2 - Setting up the Server code in Eclipse
 
 	- Open your Eclipse IDE
 	- Select the Workspace as **src/Server**
-	- File -> Import -> Existing project into workspace -> Select Root directory as **src/Server/MavAdvise**
-	- Create a Tomcat 7 server in the servers tab
+	- File -> Import -> Existing project into workspace -> Select Root directory as **src/Server/MavAdvise**. Press Ok.
+	- Create a Tomcat 7 server in the Eclipe's servers tab
 	- Add the project into the server
 
-* Step 3 - Open the Android app code in Android Studio
+* Step 3 - Setting up the Android app code in Android Studio
 
 	- Open your Android Studio
 	- File ->Open project. Select **src/App/MavAdvise**
+	- Install all plugins / dependencies which might show up in the IDE / gradle console
 	
 ## Deployment
 
@@ -55,7 +57,11 @@ This will generate the WAR file in the  **src/Server/MavAdvise/target** folder, 
 
 ## Built With
 
+* [Android SDK](https://developer.android.com/studio/index.html) - Android SDK
+* [Spring](https://spring.io/) - Java Web Framework
+* [Hibernate](http://hibernate.org/) - Java ORM Framework
 * [Maven](https://maven.apache.org/) - Dependency Management
+* [Gradle](https://gradle.org/) - Android Build tool
 
 ## Authors
 
