@@ -19,6 +19,13 @@
 -- Table structure for table `appointments`
 --
 
+create database mavadvise;
+use mavadvise;
+
+CREATE USER 'mavuser'@'%' IDENTIFIED BY 'GoMavericks123$';
+GRANT SELECT,INSERT,UPDATE,DELETE ON mavadvise.* TO 'mavuser'@'%';
+flush privileges;
+
 DROP TABLE IF EXISTS `appointments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
