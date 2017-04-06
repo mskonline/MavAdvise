@@ -4,3 +4,7 @@ http://localhost:8080/MavAdvise/login?netID=123&password=123
 
 Register
 http://localhost:8080/MavAdvise/register?firstName=abc1&lastName=efg1&email=def@gmail.com&password=234&roleType=STUDENT&netID=234&utaID=234&branch=CS&securityQuestion=q&securityAnswer=a
+
+
+Advisor
+http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-10&endDate=2017-04-25&startTime=12:00:00&endTime=14:00:00&daysOfWeek=135&noOfSlots=20&status=SCHEDULED

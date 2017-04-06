@@ -18,6 +18,18 @@
 		<property name="securityAnswer" column="security_answer"></property>
 	</class>
 
+
+	<class name="org.web.beans.Session" table="sessions">
+		<id name="sessionID" type="int" column="session_id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="netID" column="net_id"></property>
+		<property name="date" column="date" type="date"></property>
+		<property name="startTime" column="starttime" type="time"></property>
+		<property name="endTime" column="endtime" type="time"></property>
+		<property name="noOfSlots" column="no_of_slots"></property>
+		<property name="status" column="status"></property>
+	</class>
 	<!--<class name="org.web.beans.Advertisement" table="advertisement">
 		<id name="advertisementId" type="int" column="adv_id">
 			<generator class="increment"></generator>

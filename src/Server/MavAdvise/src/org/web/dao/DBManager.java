@@ -1,9 +1,11 @@
 package org.web.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.query.Query;
+import org.joda.time.DateTime;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -108,5 +110,57 @@ public class DBManager {
 			return true;
 		else
 			return false;
+	}
+
+	public void addSessions(org.web.beans.Session sessionInfo){
+		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
+		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
+		DateTime tmp = start;
+
+		int[] dayOfWeek = new int[8];
+		java.sql.Date d;
+		org.web.beans.Session session = null;
+		List<org.web.beans.Session> sessions = new ArrayList<org.web.beans.Session>();
+
+		for(int i = 0; i < sessionInfo.getDaysOfWeek().length(); ++i){
+			int index = Character.getNumericValue(sessionInfo.getDaysOfWeek().charAt(i));
+			dayOfWeek[index] = 1;
+		}
+
+        while(!tmp.isAfter(end)) {
+        	if(dayOfWeek[tmp.getDayOfWeek()] == 1){
+        		session = new org.web.beans.Session();
+        		session.setNetID(sessionInfo.getNetID());
+
+        		d = new java.sql.Date(tmp.getMillis());
+        		session.setDate(d);
+
+        		session.setStartTime(sessionInfo.getStartTime());
+        		session.setEndTime(sessionInfo.getEndTime());
+        		session.setNoOfSlots(sessionInfo.getNoOfSlots());
+        		session.setStatus("SCHEDULED");
+
+        		sessions.add(session);
+        	}
+
+            tmp = tmp.plusDays(1);
+        }
+
+        if(sessions.size() != 0){
+        	try{
+    			Transaction tx = null;
+    			Session hSession = factory.openSession();
+    			tx = hSession.beginTransaction();
+
+    			for(org.web.beans.Session s : sessions)
+    				hSession.save(s);
+
+    			tx.commit();
+
+    			hSession.close();
+    		} catch(Exception e){
+    			logger.error("Error saving the sessions. " + e.getMessage());
+    		}
+        }
 	}
 }
