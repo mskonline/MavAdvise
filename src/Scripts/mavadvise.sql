@@ -86,18 +86,15 @@ DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sessions` (
-  `net_id` varchar(30) NOT NULL,
-  `starttime` time DEFAULT NULL,
-  `endtime` time DEFAULT NULL,
-  `Date` date DEFAULT NULL,
+  `date` date DEFAULT NULL,
   `session_id` int(10) NOT NULL AUTO_INCREMENT,
-  `no_of_slots` int(11) DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
-  `counter` int(11) DEFAULT '0',
+  `slot_counter` int(11) DEFAULT '0',
+  `si_id` int(10) NOT NULL,
+  `comment` text,
   PRIMARY KEY (`session_id`),
-  UNIQUE KEY `net_id_UNIQUE` (`net_id`),
   UNIQUE KEY `session_id_UNIQUE` (`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
