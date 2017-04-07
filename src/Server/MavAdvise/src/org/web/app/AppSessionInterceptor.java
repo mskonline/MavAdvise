@@ -21,15 +21,12 @@ public class AppSessionInterceptor extends HandlerInterceptorAdapter {
 		excludeURLs.add("login");
 		excludeURLs.add("register");
 		excludeURLs.add("ping");
-
-		//TODO
-		excludeURLs.add("addSession");
 	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String requestMethod = ((HandlerMethod) handler).getMethod().getName();
+		/*String requestMethod = ((HandlerMethod) handler).getMethod().getName();
 
 		logger.error("Request Method : " + requestMethod);
 
@@ -40,7 +37,7 @@ public class AppSessionInterceptor extends HandlerInterceptorAdapter {
 				return false;
 			}
 		}
-
+*/
 		return true;
 	}
 }
