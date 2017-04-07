@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.query.Query;
-import org.joda.time.DateTime;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+import org.web.beans.SessionInfo;
 import org.web.beans.User;
 
 @Component
@@ -63,9 +64,11 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	public User getUser(String netID){
 		Session session = factory.openSession();
-		Query<User> q =  session.createQuery("from User where net_id = :netID");
+		Query q =  session.createQuery("from User where net_id = :netID");
 
 		List<User> userList = q.setParameter("netID", netID).list();
+
+		session.close();
 
 		if(userList.size() >= 1)
 			return userList.get(0);
@@ -76,9 +79,11 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	private boolean doesNetIDExists(String netID){
 		Session session = factory.openSession();
-		Query<User> q =  session.createQuery("from User where net_id = :netID");
+		Query q =  session.createQuery("from User where net_id = :netID");
 
 		List<User> userList = q.setParameter("netID", netID).list();
+
+		session.close();
 
 		if(userList.size() >= 1)
 			return true;
@@ -89,9 +94,11 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	private boolean doesUTAIDExists(String UTAID){
 		Session session = factory.openSession();
-		Query<User> q =  session.createQuery("from User where uta_id = :UTAID");
+		Query q =  session.createQuery("from User where uta_id = :UTAID");
 
 		List<User> userList = q.setParameter("UTAID", UTAID).list();
+
+		session.close();
 
 		if(userList.size() >= 1)
 			return true;
@@ -102,9 +109,11 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	private boolean doesEmailExists(String email){
 		Session session = factory.openSession();
-		Query<User> q =  session.createQuery("from User where email = :Email");
+		Query q =  session.createQuery("from User where email = :Email");
 
 		List<User> userList = q.setParameter("Email", email).list();
+
+		session.close();
 
 		if(userList.size() >= 1)
 			return true;
@@ -112,7 +121,24 @@ public class DBManager {
 			return false;
 	}
 
-	public void addSessions(org.web.beans.Session sessionInfo){
+	public boolean addSessions(org.web.beans.SessionInfo sessionInfo){
+		int si_id = 0;
+
+		try{
+			Transaction tx = null;
+			Session hSession = factory.openSession();
+			tx = hSession.beginTransaction();
+
+			si_id = (int) hSession.save(sessionInfo);
+
+			tx.commit();
+
+			hSession.close();
+		} catch(Exception e){
+			logger.error("Error saving the sessions. " + e.getMessage());
+			return false;
+		}
+
 		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
 		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
 		DateTime tmp = start;
@@ -122,22 +148,17 @@ public class DBManager {
 		org.web.beans.Session session = null;
 		List<org.web.beans.Session> sessions = new ArrayList<org.web.beans.Session>();
 
-		for(int i = 0; i < sessionInfo.getDaysOfWeek().length(); ++i){
-			int index = Character.getNumericValue(sessionInfo.getDaysOfWeek().charAt(i));
-			dayOfWeek[index] = 1;
-		}
+		for(int i = 0; i < sessionInfo.getFrequency().length(); ++i)
+			dayOfWeek[i + 1] = Character.getNumericValue(sessionInfo.getFrequency().charAt(i));
 
         while(!tmp.isAfter(end)) {
         	if(dayOfWeek[tmp.getDayOfWeek()] == 1){
         		session = new org.web.beans.Session();
-        		session.setNetID(sessionInfo.getNetID());
+        		session.setSiID(si_id);
 
         		d = new java.sql.Date(tmp.getMillis());
         		session.setDate(d);
-
-        		session.setStartTime(sessionInfo.getStartTime());
-        		session.setEndTime(sessionInfo.getEndTime());
-        		session.setNoOfSlots(sessionInfo.getNoOfSlots());
+        		session.setSlotCounter(0);
         		session.setStatus("SCHEDULED");
 
         		sessions.add(session);
@@ -160,7 +181,21 @@ public class DBManager {
     			hSession.close();
     		} catch(Exception e){
     			logger.error("Error saving the sessions. " + e.getMessage());
+    			return false;
     		}
         }
+
+        return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<SessionInfo> getSessionInfoList(String netID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from SessionInfo where netID = :net_id");
+
+		List<SessionInfo> sessionInfoList = q.setParameter("net_id", netID).list();
+
+		session.close();
+		return sessionInfoList;
 	}
 }

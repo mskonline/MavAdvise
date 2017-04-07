@@ -3,8 +3,23 @@ http://localhost:8080/MavAdvise/login?netID=123&password=123
 
 
 Register
-http://localhost:8080/MavAdvise/register?firstName=abc1&lastName=efg1&email=def@gmail.com&password=234&roleType=STUDENT&netID=234&utaID=234&branch=CS&securityQuestion=q&securityAnswer=a
+http://localhost:8080/MavAdvise/register?firstName=Sai Kumar&lastName=Manakan&email=saikumar@gmail.com&password=123&roleType=STUDENT&netID=sxm6131&utaID=1001236131&branch=CS&securityQuestion=q&securityAnswer=a
 
 
 Advisor
-http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-10&endDate=2017-04-25&startTime=12:00:00&endTime=14:00:00&daysOfWeek=135&noOfSlots=20&status=SCHEDULED
+http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-10&endDate=2017-04-25&startTime=12:00:00&endTime=14:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
+
+Same dates, diff timing
+http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-10&endDate=2017-04-25&startTime=14:00:00&endTime=16:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
+
+Diff dates, diff timing
+http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-05-10&endDate=2017-06-25&startTime=12:00:00&endTime=14:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
+
+Start date between previous session, same timing
+http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-20&endDate=2017-05-05&startTime=12:00:00&endTime=14:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
+
+
+End date between previous session, same timing
+http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-30&endDate=2017-05-15&startTime=12:00:00&endTime=14:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
+
+http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-25&endDate=2017-05-09&startTime=12:00:00&endTime=14:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
