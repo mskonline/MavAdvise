@@ -41,4 +41,8 @@
 		<property name="slotCounter" column="slot_counter" type="int"></property>
 		<property name="comment" column="comment"></property>
 	</class>
+
+	<sql-query name="getAllSessions">
+		<![CDATA[SELECT sessions.*, session_info.starttime, session_info.endtime FROM sessions, session_info WHERE session_info.net_id = :netID AND sessions.si_id = session_info.si_id AND sessions.status = 'SCHEDULED' ORDER BY sessions.date ASC]]>
+    </sql-query>
 </hibernate-mapping>

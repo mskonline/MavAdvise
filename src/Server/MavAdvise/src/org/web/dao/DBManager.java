@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import org.web.beans.SessionInfo;
@@ -167,6 +169,7 @@ public class DBManager {
             tmp = tmp.plusDays(1);
         }
 
+        //TODO - Saving records can be optimized
         if(sessions.size() != 0){
         	try{
     			Transaction tx = null;
@@ -197,5 +200,18 @@ public class DBManager {
 
 		session.close();
 		return sessionInfoList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Object> getSessions(String netID){
+		Session session = factory.openSession();
+
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getAllSessions").setString("netID", netID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		List<Object> allSessions = q.list();
+
+		session.close();
+		return allSessions;
 	}
 }
