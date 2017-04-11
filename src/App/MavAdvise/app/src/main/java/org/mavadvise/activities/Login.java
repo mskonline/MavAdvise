@@ -195,8 +195,10 @@ public class Login extends AppCompatActivity {
                         user.setUtaID(resUta);
                         user.setRoleType(resRole);
 
-                        DialogFragment mDialog = Login.AlertDialogFragment.newInstance();
-                        mDialog.show(getFragmentManager(), "Info");
+                        //DialogFragment mDialog = Login.AlertDialogFragment.newInstance();
+                        //mDialog.show(getFragmentManager(), "Info");
+
+                        navigateToDashboard();
 
                     } else {
                         String msg = obj.getString("message");
