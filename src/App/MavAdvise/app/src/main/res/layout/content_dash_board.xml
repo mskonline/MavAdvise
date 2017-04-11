@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:id="@+id/orangestrip"
-        android:layout_width="match_parent"
+        android:layout_width="368dp"
         android:layout_height="5dp"
         android:background="@color/colorAccent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,6 +20,8 @@
         android:id="@+id/dashboardLV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:divider="@color/colorAccent"
+        android:dividerHeight="2px"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/orangestrip" />
 </android.support.constraint.ConstraintLayout>

@@ -137,6 +137,7 @@ public class Register extends AppCompatActivity {
         branch = branchSP.getSelectedItem().toString();
         role = roleSP.getSelectedItem().toString();
         securityQuestionID = securityQuestion.getSelectedItemPosition();
+        netID = netID.toLowerCase();
 
         //Register
         saveDialog =  ProgressDialogFragment.newInstance();
@@ -148,7 +149,7 @@ public class Register extends AppCompatActivity {
         Intent intent = new Intent(Register.this, Login.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        //finish();
+        finish();
     }
 
     private class RegisterUser extends AsyncTask<Void, Void , String> {

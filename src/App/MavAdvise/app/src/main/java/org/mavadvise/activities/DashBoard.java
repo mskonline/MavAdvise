@@ -2,7 +2,6 @@ package org.mavadvise.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -14,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,6 +31,7 @@ public class DashBoard extends AppCompatActivity
     private User user;
     private AppConfig appConfig;
     private ArrayList<String> options;
+    private ListView optionsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +43,15 @@ public class DashBoard extends AppCompatActivity
 
         setUpDashboardLayout();
 
-        if(user.getRoleType().equalsIgnoreCase("student"))
+        //TODO - remove
+        user.setFirstName("Sai Kumar");
+        user.setLastName("Kumar");
+        user.setNetID("sxm6131");
+        user.setEmail("saikumar.manakan@mavs.uta.edu");
+
+        /*if(user.getRoleType().equalsIgnoreCase("student"))
             setUpStudentOptions();
-        else
+        else*/
             setUpAdvisorOptions();
     }
 
@@ -57,8 +64,8 @@ public class DashBoard extends AppCompatActivity
         }};
 
         // Configure list view
-        ListView list=(ListView) findViewById(R.id.dashboardLV);
-        list.setAdapter(new OptionsAdapter());
+        optionsList = (ListView) findViewById(R.id.dashboardLV);
+        optionsList.setAdapter(new OptionsAdapter());
 
         setUpStudentOptionsListener();
     }
@@ -69,22 +76,33 @@ public class DashBoard extends AppCompatActivity
 
     private void setUpAdvisorOptions(){
         options = new ArrayList<String>(){{
-                add("View Sessions");
-                add("Create Sessions");
-                add("Cancel Session");
+                add("Manage Sessions");
                 add("Start a Session");
                 add("Announcements");
         }};
 
         // Configure list view
-        ListView list=(ListView) findViewById(R.id.dashboardLV);
-        list.setAdapter(new OptionsAdapter());
+        optionsList = (ListView) findViewById(R.id.dashboardLV);
+        optionsList.setAdapter(new OptionsAdapter());
 
         setUpAdvisorOptionsListener();
     }
 
     private void setUpAdvisorOptionsListener(){
+        optionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = null;
 
+                switch (position){
+                    case 0:
+                        i = new Intent(view.getContext(), ManageSessions.class);
+                        break;
+                }
+
+                startActivity(i);
+            }
+        });
     }
 
     public class OptionsAdapter extends BaseAdapter {
@@ -93,7 +111,7 @@ public class DashBoard extends AppCompatActivity
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = getLayoutInflater();
             View row;
-            row = inflater.inflate(R.layout.layout_dashboard_option, parent, false);
+            row = inflater.inflate(R.layout.list_dashboard_option, parent, false);
             TextView optionText;
 
             optionText = (TextView) row.findViewById(R.id.optiontext);

@@ -1,0 +1,223 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="org.mavadvise.activities.tabs.SessionsAddTab">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/stDateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:text="Start Date : "/>
+
+            <Button
+                android:id="@+id/ChangeStartDateBT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorAccent"
+                android:textColor="#FFF"
+                android:text="Change"/>
+
+            <TextView
+                android:id="@+id/startDateTV"
+                android:layout_toLeftOf="@id/ChangeStartDateBT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/ChangeStartDateBT"
+                android:textSize="20sp"
+                android:text="20 June 2017"/>
+
+            <RadioButton
+                android:id="@+id/repeatRB"
+                android:layout_below="@id/ChangeStartDateBT"
+                android:layout_alignParentStart="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Repeat"/>
+
+            <RelativeLayout
+                android:id="@+id/repeatRL"
+                android:layout_below="@id/repeatRB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/endtDateLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:text="End Date : " />
+
+                <Button
+                    android:id="@+id/ChangeEndDateBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@color/colorAccent"
+                    android:textColor="#FFF"
+                    android:text="Change"/>
+
+                <TextView
+                    android:id="@+id/endDateTV"
+                    android:layout_toLeftOf="@id/ChangeEndDateBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@id/ChangeEndDateBT"
+                    android:textSize="20sp"
+                    android:text="20 June 2017"/>
+
+                <LinearLayout
+                    android:layout_below="@id/ChangeEndDateBT"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Mon"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Tue"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Wed"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="Thu"/>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fri"/>
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/stTimeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/repeatRL"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:text="Start Time : "/>
+
+            <Button
+                android:id="@+id/ChangeStartTimeBT"
+                android:layout_below="@id/stTimeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorAccent"
+                android:textColor="#FFF"
+                android:text="Change"/>
+
+            <TextView
+                android:id="@+id/startTimeTV"
+                android:layout_toLeftOf="@id/ChangeStartTimeBT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/ChangeStartTimeBT"
+                android:textSize="20sp"
+                android:text="9:00 AM"/>
+
+            <TextView
+                android:id="@+id/endTimeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ChangeStartTimeBT"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:text="End Time : "/>
+
+            <Button
+                android:id="@+id/ChangeEndTimeBT"
+                android:layout_below="@id/endTimeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_alignParentEnd="true"
+                android:background="@color/colorAccent"
+                android:textColor="#FFF"
+                android:text="Change"/>
+
+            <TextView
+                android:id="@+id/endTimeTV"
+                android:layout_toLeftOf="@id/ChangeEndTimeBT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/ChangeEndTimeBT"
+                android:textSize="20sp"
+                android:text="11:00 AM"/>
+
+            <EditText
+                android:id="@+id/slotsET"
+                android:layout_below="@id/ChangeEndTimeBT"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:hint="Slots"/>
+
+            <Button
+                android:id="@+id/addSessionsBT"
+                android:layout_below="@id/slotsET"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@color/colorAccent"
+                android:textColor="#FFF"
+                android:text="Add"/>
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
