@@ -45,4 +45,8 @@
 	<sql-query name="getAllSessions">
 		<![CDATA[SELECT sessions.*, session_info.starttime, session_info.endtime FROM sessions, session_info WHERE session_info.net_id = :netID AND sessions.si_id = session_info.si_id AND sessions.status = 'SCHEDULED' ORDER BY sessions.date ASC]]>
     </sql-query>
+    
+    <sql-query name="getAllAppointments">
+		<![CDATA[SELECT appointments.* FROM appointments WHERE appointments.net_id = :netID AND appointments.status = 'SCHEDULED' ORDER BY appointments.session_id ASC]]>
+    </sql-query>
 </hibernate-mapping>

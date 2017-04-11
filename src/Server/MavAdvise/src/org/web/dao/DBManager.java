@@ -214,4 +214,17 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object> getAppointments(String netID){
+		Session session = factory.openSession();
+
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getAllAppointments").setString("netID", netID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		List<Object> allSessions = q.list();
+
+		session.close();
+		return allSessions;
+	}
 }
