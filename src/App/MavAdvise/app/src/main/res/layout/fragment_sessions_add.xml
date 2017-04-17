@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -9,12 +9,17 @@
     tools:context="org.mavadvise.activities.tabs.SessionsAddTab">
 
     <ScrollView
+        android:id="@+id/sessionsAddSV"
+        android:layout_alignParentStart="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
+            android:id="@+id/sessionsAddRL"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:paddingBottom="50dp"
+            android:fillViewport="true">
 
             <TextView
                 android:id="@+id/stDateLabel"
@@ -24,7 +29,7 @@
                 android:textAllCaps="true"
                 android:textStyle="bold"
                 android:textColor="#000"
-                android:text="Start Date : "/>
+                android:text="Date : "/>
 
             <Button
                 android:id="@+id/ChangeStartDateBT"
@@ -46,8 +51,8 @@
                 android:textSize="20sp"
                 android:text="20 June 2017"/>
 
-            <RadioButton
-                android:id="@+id/repeatRB"
+            <CheckBox
+                android:id="@+id/repeatCB"
                 android:layout_below="@id/ChangeStartDateBT"
                 android:layout_alignParentStart="true"
                 android:layout_width="match_parent"
@@ -56,10 +61,10 @@
 
             <RelativeLayout
                 android:id="@+id/repeatRL"
-                android:layout_below="@id/repeatRB"
+                android:layout_below="@id/repeatCB"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_marginTop="10dp">
 
                 <TextView
@@ -90,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBaseline="@id/ChangeEndDateBT"
                     android:textSize="20sp"
-                    android:text="20 June 2017"/>
+                    android:text=""/>
 
                 <LinearLayout
                     android:layout_below="@id/ChangeEndDateBT"
@@ -101,30 +106,35 @@
                     android:layout_height="wrap_content">
 
                     <CheckBox
+                        android:id="@+id/monCB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="Mon"/>
 
                     <CheckBox
+                        android:id="@+id/tueCB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="Tue"/>
 
                     <CheckBox
+                        android:id="@+id/wedCB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="Wed"/>
 
                     <CheckBox
+                        android:id="@+id/thuCB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
                         android:text="Thu"/>
 
                     <CheckBox
+                        android:id="@+id/friCB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Fri"/>
@@ -205,6 +215,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
+                android:inputType="numberSigned"
                 android:hint="Slots"/>
 
             <Button
@@ -214,6 +225,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="@color/colorAccent"
                 android:textColor="#FFF"
                 android:text="Add"/>

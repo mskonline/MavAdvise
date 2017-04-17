@@ -23,7 +23,7 @@ public class UsersController {
 	@Autowired
 	private DBManager dbmanager;
 
-	@RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String login(HttpServletRequest request, @RequestParam("netID") String netID,
 			@RequestParam("password") String password){
@@ -52,8 +52,7 @@ public class UsersController {
 		}
 	}
 
-	//TODO - remove GET
-	@RequestMapping(value = "/register", method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value = "/register", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String register(HttpServletRequest request, @ModelAttribute User user){
 		Response r = new Response();
@@ -64,7 +63,6 @@ public class UsersController {
 		if(msg == null)
 			r.setResult("User registered");
 		else
-			// failure. Send message to App
 			r.setMessage(msg);
 
 		try {
@@ -75,7 +73,7 @@ public class UsersController {
 		}
 	}
 
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	@RequestMapping(value = "/logout", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public void logout(HttpServletRequest request, @RequestParam("netID") String netID){
 

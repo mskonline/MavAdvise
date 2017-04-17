@@ -2,6 +2,7 @@ package org.mavadvise.activities.tabs;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,19 +59,27 @@ public class SessionsViewTab extends Fragment {
                 row = inflater.inflate(R.layout.list_session_item, parent, false);
             }
 
-            TextView sHeader, sTime, sAppCounter;
+            TextView sHeader, sTime, sAppCounter, sStatus;
 
             sHeader = (TextView) row.findViewById(R.id.session_header);
             sTime = (TextView) row.findViewById(R.id.session_time);
             sAppCounter = (TextView) row.findViewById(R.id.session_appointments_ctr);
-
-            JSONObject obj = null;
+            sStatus = (TextView) row.findViewById(R.id.session_statusTV);
 
             try {
-                obj = sessions.getJSONObject(position);
+                JSONObject obj = sessions.getJSONObject(position);
                 sHeader.setText(obj.getString("date"));
-                sTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
-                sAppCounter.setText(obj.getString("slot_counter"));
+                sTime.setText(obj.getString("startTime") + " - " + obj.getString("endTime"));
+                sAppCounter.setText(obj.getString("slotCounter"));
+
+                String status = obj.getString("status");
+
+                if(status.equalsIgnoreCase("cancelled")){
+                    int color = ResourcesCompat.getColor(getResources(), R.color.colorCancelled, null);
+                    sStatus.setTextColor(color);
+                }
+
+                sStatus.setText(status);
             } catch (Exception e){
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
             }

@@ -22,6 +22,7 @@ public class DatePickerHelper extends DialogFragment {
     }
 
     private DatePickerListener datePickerListener;
+    private Calendar minDate = Calendar.getInstance();
 
     public DatePickerHelper(){}
 
@@ -32,6 +33,7 @@ public class DatePickerHelper extends DialogFragment {
         getDialog().setTitle("Select Date");
 
         final DatePicker dp = (DatePicker) rootView.findViewById(R.id.datePicker);
+        dp.setMinDate(minDate.getTimeInMillis());
 
         Button saveButton = (Button) rootView.findViewById(R.id.dpSelectBT);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -59,5 +61,9 @@ public class DatePickerHelper extends DialogFragment {
 
     public void setOnSumbitListener(DatePickerListener datePickerListener){
         this.datePickerListener = datePickerListener;
+    }
+
+    public void setMinDate(Calendar minDate) {
+        this.minDate = minDate;
     }
 }

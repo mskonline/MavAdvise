@@ -18,35 +18,21 @@
 		<property name="securityAnswer" column="security_answer"></property>
 	</class>
 
-	<class name="org.web.beans.SessionInfo" table="session_info">
-		<id name="siID" type="int" column="si_id">
-			<generator class="increment"></generator>
-		</id>
-		<property name="netID" column="net_id"></property>
-		<property name="startDate" column="startdate" type="date"></property>
-		<property name="endDate" column="enddate" type="date"></property>
-		<property name="startTime" column="starttime" type="time"></property>
-		<property name="endTime" column="endtime" type="time"></property>
-		<property name="noOfSlots" column="no_of_slots"></property>
-		<property name="frequency" column="frequency"></property>
-	</class>
-
 	<class name="org.web.beans.Session" table="sessions">
 		<id name="sessionID" type="int" column="session_id">
 			<generator class="increment"></generator>
 		</id>
-		<property name="siID" column="si_id"></property>
+		<property name="netID" column="net_id"></property>
 		<property name="date" column="date" type="date"></property>
+		<property name="startTime" column="starttime" type="time"></property>
+		<property name="endTime" column="endtime" type="time"></property>
 		<property name="status" column="status"></property>
+		<property name="noOfSlots" column="no_of_slots"></property>
 		<property name="slotCounter" column="slot_counter" type="int"></property>
 		<property name="comment" column="comment"></property>
 	</class>
 
-	<sql-query name="getAllSessions">
-		<![CDATA[SELECT sessions.*, session_info.starttime, session_info.endtime FROM sessions, session_info WHERE session_info.net_id = :netID AND sessions.si_id = session_info.si_id AND sessions.status = 'SCHEDULED' ORDER BY sessions.date ASC]]>
-    </sql-query>
-    
-    <sql-query name="getAllAppointments">
+	<sql-query name="getAllAppointments">
 		<![CDATA[SELECT appointments.* FROM appointments WHERE appointments.net_id = :netID AND appointments.status = 'SCHEDULED' ORDER BY appointments.session_id ASC]]>
     </sql-query>
 </hibernate-mapping>

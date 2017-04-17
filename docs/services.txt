@@ -23,3 +23,7 @@ End date between previous session, same timing
 http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-30&endDate=2017-05-15&startTime=12:00:00&endTime=14:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
 
 http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-25&endDate=2017-05-09&startTime=12:00:00&endTime=14:00:00&frequency=1010100&noOfSlots=20&status=SCHEDULED
+
+Get Sessions
+http://localhost:8080/MavAdvise/getSessions?netID=sxm6131
+

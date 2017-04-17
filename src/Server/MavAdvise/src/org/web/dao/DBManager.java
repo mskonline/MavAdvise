@@ -1,19 +1,24 @@
 package org.web.dao;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
-import org.web.beans.SessionInfo;
 import org.web.beans.User;
 
 @Component
@@ -123,32 +128,23 @@ public class DBManager {
 			return false;
 	}
 
-	public boolean addSessions(org.web.beans.SessionInfo sessionInfo){
-		int si_id = 0;
-
-		try{
-			Transaction tx = null;
-			Session hSession = factory.openSession();
-			tx = hSession.beginTransaction();
-
-			si_id = (int) hSession.save(sessionInfo);
-
-			tx.commit();
-
-			hSession.close();
-		} catch(Exception e){
-			logger.error("Error saving the sessions. " + e.getMessage());
-			return false;
-		}
-
+	public Map<String, List<org.web.beans.Session>> addSessions(org.web.beans.SessionInfo sessionInfo){
 		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
 		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
 		DateTime tmp = start;
 
 		int[] dayOfWeek = new int[8];
-		java.sql.Date d;
+		Date d;
 		org.web.beans.Session session = null;
-		List<org.web.beans.Session> sessions = new ArrayList<org.web.beans.Session>();
+
+		Map<String, List<org.web.beans.Session>> sessions = new HashMap<String, List<org.web.beans.Session>>();
+		List<org.web.beans.Session> addSessions = new ArrayList<org.web.beans.Session>();
+		List<org.web.beans.Session> collidingSessions = new ArrayList<org.web.beans.Session>();
+
+		List<org.web.beans.Session> existingSessions =
+				getAllScheduledSessions(sessionInfo.getNetID(),
+										sessionInfo.getStartDate(),
+										sessionInfo.getEndDate());
 
 		for(int i = 0; i < sessionInfo.getFrequency().length(); ++i)
 			dayOfWeek[i + 1] = Character.getNumericValue(sessionInfo.getFrequency().charAt(i));
@@ -156,65 +152,96 @@ public class DBManager {
         while(!tmp.isAfter(end)) {
         	if(dayOfWeek[tmp.getDayOfWeek()] == 1){
         		session = new org.web.beans.Session();
-        		session.setSiID(si_id);
+        		session.setNetID(sessionInfo.getNetID());
 
-        		d = new java.sql.Date(tmp.getMillis());
+        		d = new Date(tmp.getMillis());
         		session.setDate(d);
+        		session.setStartTime(sessionInfo.getStartTime());
+        		session.setEndTime(sessionInfo.getEndTime());
+        		session.setNoOfSlots(sessionInfo.getNoOfSlots());
         		session.setSlotCounter(0);
         		session.setStatus("SCHEDULED");
 
-        		sessions.add(session);
+        		if(existingSessions == null)
+        			addSessions.add(session);
+        		else{
+        			if(existingSessions.contains(session))
+        				collidingSessions.add(session);
+        			else
+        				addSessions.add(session);
+        		}
         	}
 
             tmp = tmp.plusDays(1);
         }
 
-        //TODO - Saving records can be optimized
-        if(sessions.size() != 0){
+        if(addSessions.size() != 0){
+        	Transaction tx = null;
+			Session hSession = factory.openSession();
+
         	try{
-    			Transaction tx = null;
-    			Session hSession = factory.openSession();
     			tx = hSession.beginTransaction();
 
-    			for(org.web.beans.Session s : sessions)
+    			for(org.web.beans.Session s : addSessions)
     				hSession.save(s);
 
+    			hSession.flush();
+    			hSession.clear();
     			tx.commit();
 
     			hSession.close();
     		} catch(Exception e){
+    			tx.rollback();
+    			hSession.close();
+
     			logger.error("Error saving the sessions. " + e.getMessage());
-    			return false;
+    			return null;
     		}
         }
 
-        return true;
+        List<org.web.beans.Session> allSessions = getSessions(sessionInfo.getNetID());
+
+        sessions.put("allSessions", allSessions);
+        sessions.put("collidingSessions", collidingSessions);
+
+        return sessions;
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<SessionInfo> getSessionInfoList(String netID){
+	public List<org.web.beans.Session> getAllScheduledSessions(String netID, Date startDate, Date endDate){
 		Session session = factory.openSession();
-		Query q =  session.createQuery("from SessionInfo where netID = :net_id");
+		List<org.web.beans.Session> allSessions = null;
 
-		List<SessionInfo> sessionInfoList = q.setParameter("net_id", netID).list();
+		Criteria criteria = session.createCriteria(org.web.beans.Session.class);
+		criteria.addOrder(Order.asc("date"));
+		criteria.add(Restrictions.eq("netID", netID));
+		criteria.add(Restrictions.eq("status", "SCHEDULED"));
 
-		session.close();
-		return sessionInfoList;
-	}
+		if(startDate != null && endDate != null)
+			criteria.add(Restrictions.between("date", startDate, endDate));
 
-	@SuppressWarnings("unchecked")
-	public List<Object> getSessions(String netID){
-		Session session = factory.openSession();
-
-		SQLQuery q = (SQLQuery) session.getNamedQuery("getAllSessions").setString("netID", netID);
-		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
-
-		List<Object> allSessions = q.list();
+		allSessions = criteria.list();
 
 		session.close();
 		return allSessions;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public List<org.web.beans.Session> getSessions(String netID){
+		Session session = factory.openSession();
+		List<org.web.beans.Session> allSessions = null;
+
+		Criteria criteria = session.createCriteria(org.web.beans.Session.class);
+		criteria.addOrder(Order.asc("date"));
+
+		criteria.add(Restrictions.eq("netID", netID));
+
+		allSessions = criteria.list();
+
+		session.close();
+		return allSessions;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Object> getAppointments(String netID){
 		Session session = factory.openSession();
@@ -225,6 +252,36 @@ public class DBManager {
 		List<Object> allSessions = q.list();
 
 		session.close();
+		return allSessions;
+	}
+
+	public List<org.web.beans.Session> deleteSessions(String netID, Integer[] sessionIDs){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<org.web.beans.Session> allSessions = null;
+
+		try {
+			tx = session.beginTransaction();
+
+			Query q =  session.createQuery("delete Session where netID = :netID and sessionID in (:sessionIDs)");
+			q.setParameter("netID", netID);
+			q.setParameterList("sessionIDs", sessionIDs);
+
+			int result = q.executeUpdate();
+			tx.commit();
+
+			session.close();
+
+			if(result > 0)
+				allSessions = getSessions(netID);
+		} catch (Exception e) {
+			tx.rollback();
+
+			if(session.isOpen())
+				session.close();
+
+			e.printStackTrace();
+		}
 		return allSessions;
 	}
 }

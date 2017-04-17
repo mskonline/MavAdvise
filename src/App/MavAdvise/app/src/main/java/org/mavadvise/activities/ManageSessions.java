@@ -1,10 +1,7 @@
 package org.mavadvise.activities;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -25,6 +22,7 @@ import org.mavadvise.activities.tabs.SessionsDeleteTab;
 import org.mavadvise.activities.tabs.SessionsViewTab;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.ProgressDialogHelper;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -38,7 +36,7 @@ public class ManageSessions extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private AppConfig appConfig;
-    private DialogFragment mDialog;
+    private ProgressDialogHelper mDialog;
 
     private JSONArray sessions;
 
@@ -53,7 +51,8 @@ public class ManageSessions extends AppCompatActivity {
         setUpTabLayout();
 
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
-        mDialog =  ProgressDialogFragment.newInstance();
+        mDialog =  ProgressDialogHelper.newInstance();
+        mDialog.setMsg("Loading sessions...");
     }
 
     @Override
@@ -63,11 +62,13 @@ public class ManageSessions extends AppCompatActivity {
         if(!mDialog.isAdded())
             mDialog.show(getSupportFragmentManager(), "Loading");
 
-        refreshSessionsData();
+        new SessionsData().execute();
     }
 
-    private void refreshSessionsData(){
-        new SessionsData().execute();
+    public void refreshSessionsData(JSONArray sessions){
+        this.sessions = sessions;
+        sessionsViewTab.refreshContent(this.sessions);
+        sessionsDeleteTab.refreshContent(this.sessions);
     }
 
     private class SessionsData extends AsyncTask<String, Void , String> {
@@ -131,6 +132,10 @@ public class ManageSessions extends AppCompatActivity {
 
             mDialog.dismiss();
         }
+    }
+
+    public void showViewTab(){
+        mViewPager.setCurrentItem(1);
     }
 
     private void setUpTabLayout(){
@@ -204,23 +209,6 @@ public class ManageSessions extends AppCompatActivity {
                     return "DELETE";
             }
             return null;
-        }
-    }
-
-    public static class ProgressDialogFragment extends DialogFragment {
-
-        public static ProgressDialogFragment newInstance() {
-            return new ProgressDialogFragment();
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-            final ProgressDialog dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Loading Sessions...");
-            dialog.setIndeterminate(true);
-
-            return dialog;
         }
     }
 }

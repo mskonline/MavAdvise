@@ -4,8 +4,6 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class SessionInfo {
-
-	private int siID;
 	private String netID;
 	private Date startDate;
 	private Date endDate;
@@ -14,12 +12,6 @@ public class SessionInfo {
 	private int noOfSlots;
 	private String frequency;
 
-	public int getSiID() {
-		return siID;
-	}
-	public void setSiID(int siID) {
-		this.siID = siID;
-	}
 	public String getNetID() {
 		return netID;
 	}

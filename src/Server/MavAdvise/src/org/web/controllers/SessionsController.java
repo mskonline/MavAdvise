@@ -1,7 +1,7 @@
 package org.web.controllers;
 
-import java.sql.Time;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.web.beans.Response;
+import org.web.beans.Session;
 import org.web.beans.SessionInfo;
 import org.web.dao.DBManager;
 
@@ -25,24 +26,16 @@ public class SessionsController{
 	@Autowired
 	private DBManager dbmanager;
 
-	@RequestMapping(value = "/addSessions", method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value = "/addSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String createSession(HttpServletRequest request, @ModelAttribute SessionInfo sessionInfo){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
 		adjustSessionDates(sessionInfo);
+		Map<String, List<org.web.beans.Session>> sessions = dbmanager.addSessions(sessionInfo);
 
-		if(!checkSessionTimeCollisions(sessionInfo)){
-			r.setResult(sessionInfo);
-
-			boolean status = dbmanager.addSessions(sessionInfo);
-
-			if(!status)
-				r.setMessage("Error : Couldn't save the sessions");
-		} else
-			r.setMessage("Error : Session timing collides with other.");
-
+		r.setResult(sessions);
 		try {
 			return mapper.writeValueAsString(r);
 		} catch (JsonProcessingException e) {
@@ -51,13 +44,13 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/getSessions", method = {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value = "/getSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getSession(@RequestParam("netID") String netID){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<Object> sessions = dbmanager.getSessions(netID);
+		List<Session> sessions = dbmanager.getSessions(netID);
 
 		r.setResult(sessions);
 
@@ -69,43 +62,41 @@ public class SessionsController{
 		}
 	}
 
+	@RequestMapping(value = "/deleteSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String deleteSession(@RequestParam("netID") String netID,
+			@RequestParam("sessionIDs") Integer[] sessionIDs){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
 
-	private boolean checkSessionTimeCollisions(SessionInfo newSessionInfo){
-		boolean collisionFound = false;
+		List<Session> sessions = dbmanager.deleteSessions(netID, sessionIDs);
+		r.setResult(sessions);
 
-		List<SessionInfo> sList = dbmanager.getSessionInfoList(newSessionInfo.getNetID());
-
-		if(sList.isEmpty())
-			return false;
-
-		// Check each sessionInfo
-		for(SessionInfo aSessionInfo : sList){
-
-			if(isNewSessionInBetweenAnother(newSessionInfo, aSessionInfo)){
-
-				int aFrequecny = Integer.parseInt(aSessionInfo.getFrequency(), 2);
-				int newFrequency = Integer.parseInt(newSessionInfo.getFrequency(), 2);
-
-				// Check collision in the days of week
-				if((aFrequecny & newFrequency) != 0){
-					Time endTime = aSessionInfo.getEndTime();
-					Time startTime = newSessionInfo.getStartTime();
-
-					if(startTime.getTime() < endTime.getTime()){
-						collisionFound = true;
-						break;
-					}
-				}
-			}
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
 		}
-
-		return collisionFound;
 	}
 
 	private void adjustSessionDates(SessionInfo sessionInfo){
+
+		if(sessionInfo.getStartDate().equals(sessionInfo.getEndDate()))
+			return;
+
+		/**
+		 *   M T W T F S S
+		 * 0 0 0 0 0 0 0 0
+		 */
 		int[] dayOfWeek = new int[8];
 		java.sql.Date d;
 
+		/**
+		 * Frequency
+		 * M T W T F S S
+		 * 0 0 0 0 0 0 0
+		 */
 		for(int i = 0; i < sessionInfo.getFrequency().length(); ++i)
 			dayOfWeek[i + 1] = Character.getNumericValue(sessionInfo.getFrequency().charAt(i));
 
@@ -140,27 +131,5 @@ public class SessionsController{
 
 		d = new java.sql.Date(end.getMillis());
 		sessionInfo.setEndDate(d);
-	}
-
-	private boolean isNewSessionInBetweenAnother(SessionInfo newSessionInfo, SessionInfo aSessionInfo){
-		DateTime newstartDate = DateTime.parse(newSessionInfo.getStartDate().toString());
-		DateTime newendDate = DateTime.parse(newSessionInfo.getEndDate().toString());
-
-		DateTime startDate = DateTime.parse(aSessionInfo.getStartDate().toString());
-		DateTime endDate = DateTime.parse(aSessionInfo.getEndDate().toString());
-
-		if(newstartDate.isEqual(startDate))
-			return true;
-
-		if(newstartDate.isAfter(startDate) && newstartDate.isBefore(endDate))
-			return true;
-
-		if(newendDate.equals(endDate))
-			return true;
-
-		if(newendDate.isBefore(endDate) && newendDate.isAfter(startDate))
-			return true;
-
-		return false;
 	}
 }
