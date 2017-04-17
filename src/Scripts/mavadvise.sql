@@ -50,35 +50,6 @@ LOCK TABLES `appointments` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `session_info`
---
-
-DROP TABLE IF EXISTS `session_info`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `session_info` (
-  `si_id` int(10) NOT NULL AUTO_INCREMENT,
-  `net_id` varchar(30) NOT NULL,
-  `starttime` time DEFAULT NULL,
-  `endtime` time DEFAULT NULL,
-  `startdate` date DEFAULT NULL,
-  `enddate` date DEFAULT NULL,
-  `no_of_slots` int(11) DEFAULT NULL,
-  `frequency` varchar(7) NOT NULL,
-  PRIMARY KEY (`si_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `session_info`
---
-
-LOCK TABLES `session_info` WRITE;
-/*!40000 ALTER TABLE `session_info` DISABLE KEYS */;
-/*!40000 ALTER TABLE `session_info` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `sessions`
 --
 
@@ -86,15 +57,18 @@ DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sessions` (
-  `date` date DEFAULT NULL,
   `session_id` int(10) NOT NULL AUTO_INCREMENT,
+  `net_id` varchar(30) NOT NULL,
+  `date` date DEFAULT NULL,
+  `starttime` time DEFAULT NULL,
+  `endtime` time DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
+  `no_of_slots` int(11) DEFAULT NULL,
   `slot_counter` int(11) DEFAULT '0',
-  `si_id` int(10) NOT NULL,
   `comment` text,
   PRIMARY KEY (`session_id`),
   UNIQUE KEY `session_id_UNIQUE` (`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
