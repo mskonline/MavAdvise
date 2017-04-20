@@ -50,7 +50,11 @@ public class AppointmentsAddTab extends Fragment{
     private AppConfig appConfig;
     private ProgressDialogHelper saveDialog;
 
-    private JSONArray sessions;
+    private JSONArray appointments;
+    private RelativeLayout repeatRL;
+    TextView dateTV;
+
+    private Calendar appDate = Calendar.getInstance();
 
     public AppointmentsAddTab() {
     }
@@ -73,6 +77,38 @@ public class AppointmentsAddTab extends Fragment{
     }
 
     private void initControls(View view){
+
+        dateTV = (TextView) view.findViewById(R.id.DateTV);
+
+        TextView advTV = (TextView) view.findViewById(R.id.AdvTV);
+
+        appDate = Calendar.getInstance();
+        dateTV.setText(DateFormat.format("MM/dd/yyyy", appDate.getTimeInMillis()).toString());
+
+        Button dateBtn = (Button) view.findViewById(R.id.ChangeDateBT);
+        Button advBtn = (Button) view.findViewById(R.id.SelectAdvBT);
+
+        repeatRL = (RelativeLayout) view.findViewById(R.id.appAddRL);
+
+
+        dateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                FragmentManager fm = getFragmentManager();
+                DatePickerHelper datePickerHelper = new DatePickerHelper();
+
+                datePickerHelper.setOnSumbitListener(new DatePickerHelper.DatePickerListener(){
+                    @Override
+                    public void onDatePickerFinish(Calendar date){
+                        appDate = date;
+                        String d = DateFormat.format("MM/dd/yyyy", date.getTimeInMillis()).toString();
+                        dateTV.setText(d);
+                    }
+                });
+
+                datePickerHelper.show(fm, "DatePick");
+            }
+        });
 
     }
 

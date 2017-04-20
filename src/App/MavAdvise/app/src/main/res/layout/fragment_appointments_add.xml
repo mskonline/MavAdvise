@@ -3,4 +3,108 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="3dp"
+        android:textSize="16dp"
+        android:text="ADD AN APPOINTMENT"
+        />
+
+    <ScrollView
+        android:id="@+id/appAddSV"
+        android:layout_alignParentStart="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/appAddRL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="50dp"
+        android:fillViewport="true">
+
+    <TextView
+        android:id="@+id/advLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:text="Select Advisor : "/>
+
+    <Button
+        android:id="@+id/SelectAdvBT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentEnd="true"
+        android:background="@color/colorAccent"
+        android:textColor="#FFF"
+        android:text="Select"/>
+
+        <TextView
+            android:id="@+id/AdvTV"
+            android:layout_toLeftOf="@id/SelectAdvBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/SelectAdvBT"
+            android:textSize="20sp"
+            android:text="Tony Stark"/>
+
+        <TextView
+            android:id="@+id/appDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SelectAdvBT"
+            android:layout_marginTop="20dp"
+            android:textSize="14sp"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:text="Date : "/>
+
+        <Button
+            android:id="@+id/ChangeDateBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/SelectAdvBT"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentEnd="true"
+            android:background="@color/colorAccent"
+            android:textColor="#FFF"
+            android:text="Change"/>
+
+        <TextView
+            android:id="@+id/DateTV"
+            android:layout_below="@id/SelectAdvBT"
+            android:layout_toLeftOf="@id/ChangeDateBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/ChangeDateBT"
+            android:textSize="20sp"
+            android:text="20 June 2017"/>
+
+        <Button
+            android:id="@+id/createAppBT"
+            android:layout_below="@id/DateTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/colorAccent"
+            android:textColor="#FFF"
+            android:text="Create"/>
+
+    </RelativeLayout>
+    </ScrollView>
+
+
 </LinearLayout>

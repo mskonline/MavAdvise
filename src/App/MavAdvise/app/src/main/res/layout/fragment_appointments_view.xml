@@ -14,6 +14,8 @@ tools:context="org.mavadvise.activities.tabs.AppointmentsViewTab">
         android:layout_marginTop="10dp"
         android:layout_marginLeft="3dp"
         android:textSize="16dp"
+        android:id="@+id/appointmenttext"
+        android:textColor="@color/colorAccent"
         android:text="UPCOMING APPOINTMENTS"
         />
 
@@ -22,6 +24,7 @@ tools:context="org.mavadvise.activities.tabs.AppointmentsViewTab">
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:divider="@color/colorAccent"
+    android:layout_below="@+id/appointmenttext"
     android:dividerHeight="2px"
     android:layout_alignParentTop="true"
     android:layout_centerHorizontal="true" />

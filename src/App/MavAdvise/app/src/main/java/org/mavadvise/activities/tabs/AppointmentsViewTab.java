@@ -23,7 +23,7 @@ import org.mavadvise.R;
 public class AppointmentsViewTab extends Fragment{
 
     private JSONArray appointments;
-    private AppointmentsViewTab.OptionsAdapter optionsAdapter;
+    private OptionsAdapter optionsAdapter;
 
 
     public AppointmentsViewTab(){}
@@ -34,6 +34,7 @@ public class AppointmentsViewTab extends Fragment{
 
     public void refreshContent(JSONArray appointments){
         this.appointments = appointments;
+        Log.i("refresh","Refreshed");
         optionsAdapter.notifyDataSetChanged();
     }
 
@@ -42,9 +43,10 @@ public class AppointmentsViewTab extends Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_appointments_view, container, false);
 Log.i("view", "in view");
-
-
-        ListView list = (ListView) rootView.findViewById(R.id.appointmentlist);
+//        TextView textView = (TextView) rootView.findViewById(R.id.appointmenttext);
+//        textView.setText("Text");
+//
+       ListView list = (ListView) rootView.findViewById(R.id.appointmentlist);
 
         optionsAdapter = new OptionsAdapter();
         list.setAdapter(optionsAdapter);

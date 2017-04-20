@@ -122,6 +122,11 @@ public class ManageAppointments extends AppCompatActivity {
                 if(result != null) {
                     JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
                     appointments = obj.getJSONArray("result");
+                    if(appointments !=null){
+                        Log.i("no","not null");
+                    }
+                    Log.i("In", "In post execute");
+                    Log.i("jso", obj.getString("result"));
 
                     appointmentsViewTab.refreshContent(appointments);
                     appointmentsDeleteTab.refreshContent(appointments);
