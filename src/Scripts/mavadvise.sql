@@ -65,6 +65,7 @@ CREATE TABLE `sessions` (
   `status` varchar(50) DEFAULT NULL,
   `no_of_slots` int(11) DEFAULT NULL,
   `slot_counter` int(11) DEFAULT '0',
+  `location` varchar(250) DEFAULT NULL,
   `comment` text,
   PRIMARY KEY (`session_id`),
   UNIQUE KEY `session_id_UNIQUE` (`session_id`)
