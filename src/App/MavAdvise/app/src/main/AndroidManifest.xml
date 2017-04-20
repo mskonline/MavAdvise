@@ -15,9 +15,7 @@
         <activity
             android:name=".activities.Register"
             android:label="Register" />
-        <activity
-            android:name=".activities.Login"
-            android:label="Sign In">
+        <activity android:name=".activities.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,6 +26,9 @@
             android:name=".activities.DashBoard"
             android:label="@string/title_activity_dash_board"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.ManageAppointments"
+            android:label="Your Appointments"/>
+
     </application>
 
 </manifest>
