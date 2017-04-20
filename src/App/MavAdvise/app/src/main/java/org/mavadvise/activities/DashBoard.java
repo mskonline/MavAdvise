@@ -43,6 +43,13 @@ public class DashBoard extends AppCompatActivity
 
         setUpDashboardLayout();
 
+        //TODO - remove
+        /*user.setFirstName("Sai Kumar");
+        user.setLastName("Kumar");
+        user.setNetID("sxm6131");
+        user.setEmail("saikumar.manakan@mavs.uta.edu");
+        */
+
         if(user.getRoleType().equalsIgnoreCase("student"))
             setUpStudentOptions();
         else
@@ -51,10 +58,8 @@ public class DashBoard extends AppCompatActivity
 
     private void setUpStudentOptions(){
         options = new ArrayList<String>(){{
-            add("View Appointments");
-            add("Schedule Appointments");
-            add("Cancel Appointments");
-            add("View Announcements");
+            add("Appointments");
+            add("Announcements");
         }};
 
         // Configure list view
@@ -65,6 +70,20 @@ public class DashBoard extends AppCompatActivity
     }
 
     private void setUpStudentOptionsListener(){
+        optionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = null;
+
+                switch (position){
+                    case 0:
+                        i = new Intent(view.getContext(), ManageAppointments.class);
+                        break;
+                }
+
+                startActivity(i);
+            }
+        });
 
     }
 
