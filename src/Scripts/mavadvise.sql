@@ -16,15 +16,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `appointments`
+-- Database
 --
 
+DROP DATABASE IF EXISTS `mavadvise`;
 CREATE DATABASE mavadvise;
 USE mavadvise;
 
+--
+-- User
+--
+
+DROP USER IF EXISTS `mavuser`;
 CREATE USER 'mavuser'@'%' IDENTIFIED BY 'GoMavericks123$';
 GRANT SELECT,INSERT,UPDATE,DELETE ON mavadvise.* TO 'mavuser'@'%';
 FLUSH PRIVILEGES; 
+
+--
+-- Table structure for table `appointments`
+--
 
 DROP TABLE IF EXISTS `appointments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -92,6 +102,7 @@ CREATE TABLE `users` (
 -- Table structure for table `announcements`
 --
 
+DROP TABLE IF EXISTS `announcements`;
 CREATE TABLE `announcements` (
   `net_id` VARCHAR(30) NULL,
   `message` TEXT NULL,
@@ -104,3 +115,5 @@ CREATE TABLE `announcements` (
 INSERT INTO `users` (`net_id`, `uta_id`, `firstname`, `lastname`, `roletype`, `branch`, `email`, `password`, `security_question_id`, `security_answer`) VALUES
 ('bxs1234', '1001231234', 'Bob', 'Smith', 'Advisor', 'CSE', 'bob.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas'),
 ('wxs1234', '1001231235', 'Will', 'Smith', 'Student', 'CSE', 'will.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas');
+
+COMMIT;

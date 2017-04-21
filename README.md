@@ -41,6 +41,15 @@ Checkout the src directory into your system. **src/App/MavAdvise** is the Androi
 	- File ->Open project. Select **src/App/MavAdvise**
 	- Install all plugins / dependencies which might show up in the IDE / gradle console
 	
+* Step 4 - Setting up the MySQL Database
+
+	- Setup MySQL Server in your system, along with adding MySQL/bin directory in your System Environment variables
+	- Start the server
+	- In command line, navigate to **src/Scripts/** and execute the following
+		```
+		mysql -u <root_user> -p <root_password> < mavadvise.sql
+		```
+		
 ## Deployment
 
 * Step 1 - Maven Build of the Server
