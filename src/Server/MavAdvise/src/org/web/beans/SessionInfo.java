@@ -11,6 +11,7 @@ public class SessionInfo {
 	private Time endTime;
 	private int noOfSlots;
 	private String frequency;
+	private String location;
 
 	public String getNetID() {
 		return netID;
@@ -53,5 +54,11 @@ public class SessionInfo {
 	}
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
 	}
 }

@@ -119,4 +119,12 @@ INSERT INTO `users` (`net_id`, `uta_id`, `firstname`, `lastname`, `roletype`, `b
 ('bxs1234', '1001231234', 'Bob', 'Smith', 'Advisor', 'CSE', 'bob.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas'),
 ('wxs1234', '1001231235', 'Will', 'Smith', 'Student', 'CSE', 'will.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas');
 
+
+INSERT INTO `sessions` (`session_id`, `net_id`, `date`, `starttime`, `endtime`, `status`, `no_of_slots`, `slot_counter`, `location`, `comment`) VALUES
+(1, 'bxs1234', '2017-06-02', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
+(2, 'bxs1234', '2017-06-05', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
+(3, 'bxs1234', '2017-06-07', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
+(4, 'bxs1234', '2017-06-09', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
+(5, 'bxs1234', '2017-06-12', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
+(6, 'bxs1234', '2017-06-14', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL);
 COMMIT;
