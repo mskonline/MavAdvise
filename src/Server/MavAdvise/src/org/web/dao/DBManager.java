@@ -50,19 +50,26 @@ public class DBManager {
 			session.close();
 		} catch(Exception e){
 			logger.error("Error saving the user details. " + e.getMessage());
-
 			// Check for any constraint violations
-			if(doesNetIDExists(user.getNetID()))
-				msg = "Net ID already exists";
 
-			if(doesUTAIDExists(user.getUtaID()))
-				msg = "UTA ID already exists";
-
-			if(doesEmailExists(user.getEmail()))
+			if(doesEmailExists(user.getEmail())){
 				msg = "Email already exists";
+				return msg;
+			}
+
+			if(doesNetIDExists(user.getNetID())){
+				msg = "Net ID already exists";
+				return msg;
+			}
+
+			if(doesUTAIDExists(user.getUtaID())){
+				msg = "UTA ID already exists";
+				return msg;
+			}
 
 			// Other fatal DB error - Needs debugging
-			msg = "There was some error during registeration. Please try later.";
+			if(msg == null)
+				msg = "There was some error during registeration. Please try later.";
 		}
 
 		return msg;
@@ -128,7 +135,7 @@ public class DBManager {
 			return false;
 	}
 
-	public Map<String, List<org.web.beans.Session>> addSessions(org.web.beans.SessionInfo sessionInfo){
+	public Map<String, List<Object>> addSessions(org.web.beans.SessionInfo sessionInfo){
 		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
 		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
 		DateTime tmp = start;
@@ -137,9 +144,9 @@ public class DBManager {
 		Date d;
 		org.web.beans.Session session = null;
 
-		Map<String, List<org.web.beans.Session>> sessions = new HashMap<String, List<org.web.beans.Session>>();
+		Map<String, List<Object>> sessions = new HashMap<String, List<Object>>();
 		List<org.web.beans.Session> addSessions = new ArrayList<org.web.beans.Session>();
-		List<org.web.beans.Session> collidingSessions = new ArrayList<org.web.beans.Session>();
+		List<Object> conflictingSessions = new ArrayList<Object>();
 
 		List<org.web.beans.Session> existingSessions =
 				getAllScheduledSessions(sessionInfo.getNetID(),
@@ -166,7 +173,7 @@ public class DBManager {
         			addSessions.add(session);
         		else{
         			if(existingSessions.contains(session))
-        				collidingSessions.add(session);
+        				conflictingSessions.add(session);
         			else
         				addSessions.add(session);
         		}
@@ -199,10 +206,10 @@ public class DBManager {
     		}
         }
 
-        List<org.web.beans.Session> allSessions = getSessions(sessionInfo.getNetID());
+        List<Object> allSessions = getSessions(sessionInfo.getNetID());
 
         sessions.put("allSessions", allSessions);
-        sessions.put("collidingSessions", collidingSessions);
+        sessions.put("conflictingSessions", conflictingSessions);
 
         return sessions;
 	}
@@ -227,16 +234,13 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<org.web.beans.Session> getSessions(String netID){
+	public List<Object> getSessions(String netID){
 		Session session = factory.openSession();
-		List<org.web.beans.Session> allSessions = null;
 
-		Criteria criteria = session.createCriteria(org.web.beans.Session.class);
-		criteria.addOrder(Order.asc("date"));
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getAllSessions").setString("netID", netID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
-		criteria.add(Restrictions.eq("netID", netID));
-
-		allSessions = criteria.list();
+		List<Object> allSessions = q.list();
 
 		session.close();
 		return allSessions;
@@ -255,10 +259,10 @@ public class DBManager {
 		return allSessions;
 	}
 
-	public List<org.web.beans.Session> deleteSessions(String netID, Integer[] sessionIDs){
+	public List<Object> deleteSessions(String netID, Integer[] sessionIDs){
 		Session session = factory.openSession();
 		Transaction tx = null;
-		List<org.web.beans.Session> allSessions = null;
+		List<Object> allSessions = null;
 
 		try {
 			tx = session.beginTransaction();

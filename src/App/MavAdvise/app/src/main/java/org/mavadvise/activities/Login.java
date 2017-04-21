@@ -1,10 +1,8 @@
 package org.mavadvise.activities;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -175,17 +173,19 @@ public class Login extends AppCompatActivity {
                 try {
                     JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
                     String resultStr = obj.getString("type");
-                    JSONObject resObj = obj.getJSONObject("result");
-
-                    String resFirst = resObj.getString("firstName");
-                    String resLast = resObj.getString("lastName");
-                    String resEmail = resObj.getString("email");
-                    String resRole = resObj.getString("roleType");
-                    String resNet = resObj.getString("netID");
-                    String resUta = resObj.getString("utaID");
-                    String resBranch = resObj.getString("branch");
 
                     if(resultStr.equalsIgnoreCase("success")){
+
+                        JSONObject resObj = obj.getJSONObject("result");
+
+                        String resFirst = resObj.getString("firstName");
+                        String resLast = resObj.getString("lastName");
+                        String resEmail = resObj.getString("email");
+                        String resRole = resObj.getString("roleType");
+                        String resNet = resObj.getString("netID");
+                        String resUta = resObj.getString("utaID");
+                        String resBranch = resObj.getString("branch");
+
                         User user = appConfig.getUser();
                         user.setFirstName(resFirst);
                         user.setLastName(resLast);
@@ -194,9 +194,6 @@ public class Login extends AppCompatActivity {
                         user.setNetID(resNet);
                         user.setUtaID(resUta);
                         user.setRoleType(resRole);
-
-                        //DialogFragment mDialog = Login.AlertDialogFragment.newInstance();
-                        //mDialog.show(getFragmentManager(), "Info");
 
                         navigateToDashboard();
 
@@ -209,28 +206,6 @@ public class Login extends AppCompatActivity {
                     Log.e("JSON Parse", e.getMessage());
                 }
             }
-        }
-    }
-
-
-
-    public static class AlertDialogFragment extends DialogFragment {
-        public static AlertDialogFragment newInstance() {
-            return new AlertDialogFragment();
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
-                    .setMessage("You will be logged in.")
-                    .setCancelable(false)
-                    .setPositiveButton("Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(
-                                        final DialogInterface dialog, int id) {
-                                    ((Login) getActivity()).navigateToDashboard();
-                                }
-                            }).create();
         }
     }
 

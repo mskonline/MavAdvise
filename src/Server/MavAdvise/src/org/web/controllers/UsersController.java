@@ -40,10 +40,12 @@ public class UsersController {
 				session.setAttribute("hasAccess", "true");
 				r.setResult(user);
 			} else {
-				r.setType("failed");
 				r.setMessage("Invalid password");
 			}
+		} else {
+			r.setMessage("NetID doesn't exists");
 		}
+
 		try {
 			return mapper.writeValueAsString(r);
 		} catch (JsonProcessingException e) {
@@ -73,10 +75,19 @@ public class UsersController {
 		}
 	}
 
-	@RequestMapping(value = "/logout", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public void logout(HttpServletRequest request, @RequestParam("netID") String netID){
+	public String logout(HttpSession session, @RequestParam("netID") String netID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+		session.removeAttribute("hasAccess");
 
+		try {
+			r.setMessage("Successfully logged out");
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
 	}
-
 }

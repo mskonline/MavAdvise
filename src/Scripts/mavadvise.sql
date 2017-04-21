@@ -16,15 +16,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `appointments`
+-- Database
 --
 
-create database mavadvise;
-use mavadvise;
+DROP DATABASE IF EXISTS `mavadvise`;
+CREATE DATABASE mavadvise;
+USE mavadvise;
 
+--
+-- User
+--
+
+DROP USER IF EXISTS `mavuser`;
 CREATE USER 'mavuser'@'%' IDENTIFIED BY 'GoMavericks123$';
 GRANT SELECT,INSERT,UPDATE,DELETE ON mavadvise.* TO 'mavuser'@'%';
-flush privileges;
+FLUSH PRIVILEGES; 
+
+--
+-- Table structure for table `appointments`
+--
 
 DROP TABLE IF EXISTS `appointments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -39,15 +49,6 @@ CREATE TABLE `appointments` (
   PRIMARY KEY (`appointment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `appointments`
---
-
-LOCK TABLES `appointments` WRITE;
-/*!40000 ALTER TABLE `appointments` DISABLE KEYS */;
-/*!40000 ALTER TABLE `appointments` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `sessions`
@@ -65,20 +66,12 @@ CREATE TABLE `sessions` (
   `status` varchar(50) DEFAULT NULL,
   `no_of_slots` int(11) DEFAULT NULL,
   `slot_counter` int(11) DEFAULT '0',
+  `location` varchar(250) DEFAULT NULL,
   `comment` text,
   PRIMARY KEY (`session_id`),
   UNIQUE KEY `session_id_UNIQUE` (`session_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sessions`
---
-
-LOCK TABLES `sessions` WRITE;
-/*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `users`
@@ -106,29 +99,21 @@ CREATE TABLE `users` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users`
+-- Table structure for table `announcements`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
-
-
-CREATE TABLE `mavadvise`.`announcements` (
+DROP TABLE IF EXISTS `announcements`;
+CREATE TABLE `announcements` (
   `net_id` VARCHAR(30) NULL,
   `message` TEXT NULL,
   `date` DATE NULL,
   `priority` INT NULL,
   `title` VARCHAR(50) NULL);
--- Dump completed on 2017-04-06 15:37:25
+
+-- Data inserts
+
+INSERT INTO `users` (`net_id`, `uta_id`, `firstname`, `lastname`, `roletype`, `branch`, `email`, `password`, `security_question_id`, `security_answer`) VALUES
+('bxs1234', '1001231234', 'Bob', 'Smith', 'Advisor', 'CSE', 'bob.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas'),
+('wxs1234', '1001231235', 'Will', 'Smith', 'Student', 'CSE', 'will.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas');
+
+COMMIT;

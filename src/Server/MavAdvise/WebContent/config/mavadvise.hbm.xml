@@ -32,6 +32,23 @@
 		<property name="comment" column="comment"></property>
 	</class>
 
+	<sql-query name="getAllSessions">
+		<![CDATA[SELECT
+			sessions.session_id as sessionID,
+			sessions.net_id as netID,
+			sessions.status,
+			sessions.slot_counter as slotCounter,
+			sessions.no_of_slots as noOfSlots,
+			sessions.comment,
+			sessions.location,
+			DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
+			TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
+			TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime
+			FROM sessions
+			WHERE sessions.net_id = :netID
+			ORDER BY sessions.date ASC]]>
+    </sql-query>
+
 	<sql-query name="getAllAppointments">
 		<![CDATA[SELECT appointments.* FROM appointments WHERE appointments.net_id = :netID AND appointments.status = 'SCHEDULED' ORDER BY appointments.session_id ASC]]>
     </sql-query>

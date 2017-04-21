@@ -1,5 +1,6 @@
 package org.mavadvise.app;
 
+import org.json.JSONArray;
 import org.mavadvise.data.User;
 
 public class AppConfig {
@@ -11,6 +12,7 @@ public class AppConfig {
 
     private static AppConfig instance;
     private User user;
+    private JSONArray conflictingSessions;
 
     private AppConfig(){}
 
@@ -22,6 +24,14 @@ public class AppConfig {
 
         return instance;
     }
+
+    public static final String
+            SESSIONS_STIME_VALIDATION_ERR = "Start time cannot be in the past",
+            SESSIONS_ETIME_VALIDATION_ERR = "End time cannot be before start time",
+            SESSIONS_FREQ_VALIDATION_ERR = "Please select frequency",
+            SESSIONS_SLOTS_VALIDATION_ERR = "Please enter No. of Slots",
+            SESSIONS_ADD_SUCCESS = "Sessions added",
+            SESSIONS_DELETE_ONLY_SCHD_ERR = "Only scheduled sessions with no appointments can be deleted.\nCancel it instead";
 
     public String getHostName() {
         return hostName;
@@ -59,4 +69,11 @@ public class AppConfig {
         return user;
     }
 
+    public JSONArray getConflictingSessions() {
+        return conflictingSessions;
+    }
+
+    public void setConflictingSessions(JSONArray conflictingSessions) {
+        this.conflictingSessions = conflictingSessions;
+    }
 }

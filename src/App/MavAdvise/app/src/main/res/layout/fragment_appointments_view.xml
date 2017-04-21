@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context="org.mavadvise.activities.tabs.AppointmentsViewTab">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.mavadvise.activities.tabs.AppointmentsViewTab">
 
     <TextView
+        android:id="@+id/appointmenttext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="3dp"
-        android:textSize="16dp"
-        android:id="@+id/appointmenttext"
-        android:textColor="@color/colorAccent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:text="UPCOMING APPOINTMENTS"
-        />
+        android:textColor="@color/colorAccent"
+        android:textSize="16dp" />
 
-<ListView
-    android:id="@+id/appointmentlist"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:divider="@color/colorAccent"
-    android:layout_below="@+id/appointmenttext"
-    android:dividerHeight="2px"
-    android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true" />
-
+    <ListView
+        android:id="@+id/appointmentlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appointmenttext"
+        android:layout_centerHorizontal="true"
+        android:divider="@color/colorAccent"
+        android:dividerHeight="2px" />
 
 </RelativeLayout>

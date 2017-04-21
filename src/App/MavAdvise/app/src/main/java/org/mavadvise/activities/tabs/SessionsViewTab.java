@@ -1,11 +1,13 @@
 package org.mavadvise.activities.tabs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,6 +16,10 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mavadvise.R;
+import org.mavadvise.activities.ViewSession;
+import org.mavadvise.adaptors.SessionsDataAdaptor;
+import org.mavadvise.app.AppConfig;
+import org.mavadvise.app.MavAdvise;
 
 /**
  * Created by SaiKumar on 4/7/2017.
@@ -22,9 +28,10 @@ import org.mavadvise.R;
 public class SessionsViewTab extends Fragment {
 
     private JSONArray sessions;
-    private OptionsAdapter optionsAdapter;
+    private SessionsDataAdaptor sessionsDataAdaptor;
 
     public SessionsViewTab(){}
+    private AppConfig appConfig;
 
     public static SessionsViewTab newInstance() {
         return new SessionsViewTab();
@@ -32,7 +39,8 @@ public class SessionsViewTab extends Fragment {
 
     public void refreshContent(JSONArray sessions){
         this.sessions = sessions;
-        optionsAdapter.notifyDataSetChanged();
+        sessionsDataAdaptor.setSessions(sessions);
+        sessionsDataAdaptor.notifyDataSetChanged();
     }
 
     @Override
@@ -42,63 +50,32 @@ public class SessionsViewTab extends Fragment {
 
         ListView list = (ListView) rootView.findViewById(R.id.sessionslist);
 
-        optionsAdapter = new OptionsAdapter();
-        list.setAdapter(optionsAdapter);
+        sessionsDataAdaptor = new SessionsDataAdaptor(sessions, this);
+        list.setAdapter(sessionsDataAdaptor);
+        appConfig = ((MavAdvise) getActivity().getApplication()).getAppConfig();
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    JSONObject obj = sessions.getJSONObject(position);
+                    Intent i = new Intent(getActivity(), ViewSession.class);
+                    i.putExtra("sessionID", obj.getInt("sessionID"));
+                    i.putExtra("date", obj.getString("date"));
+                    i.putExtra("starttime", obj.getString("starttime"));
+                    i.putExtra("endtime", obj.getString("endtime"));
+                    i.putExtra("slotCounter", obj.getInt("slotCounter"));
+                    i.putExtra("noOfSlots", obj.getInt("noOfSlots"));
+                    i.putExtra("location", obj.getString("location"));
+                    i.putExtra("comment", obj.getString("comment"));
+                    startActivity(i);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
 
         return rootView;
-    }
-
-    public class OptionsAdapter extends BaseAdapter {
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-
-            if(row == null){
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.list_session_item, parent, false);
-            }
-
-            TextView sHeader, sTime, sAppCounter, sStatus;
-
-            sHeader = (TextView) row.findViewById(R.id.session_header);
-            sTime = (TextView) row.findViewById(R.id.session_time);
-            sAppCounter = (TextView) row.findViewById(R.id.session_appointments_ctr);
-            sStatus = (TextView) row.findViewById(R.id.session_statusTV);
-
-            try {
-                JSONObject obj = sessions.getJSONObject(position);
-                sHeader.setText(obj.getString("date"));
-                sTime.setText(obj.getString("startTime") + " - " + obj.getString("endTime"));
-                sAppCounter.setText(obj.getString("slotCounter"));
-
-                String status = obj.getString("status");
-
-                if(status.equalsIgnoreCase("cancelled")){
-                    int color = ResourcesCompat.getColor(getResources(), R.color.colorCancelled, null);
-                    sStatus.setTextColor(color);
-                }
-
-                sStatus.setText(status);
-            } catch (Exception e){
-                Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
-            }
-
-            return row;
-        }
-
-        public OptionsAdapter(){}
-
-        public int getCount() {
-            return sessions != null ? sessions.length() : 0;
-        }
-
-        public Object getItem(int arg0) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
     }
 }

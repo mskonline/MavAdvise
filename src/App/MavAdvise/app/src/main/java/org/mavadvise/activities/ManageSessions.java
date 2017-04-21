@@ -124,7 +124,7 @@ public class ManageSessions extends AppCompatActivity {
                     sessionsDeleteTab.refreshContent(sessions);
                 } else {
                     Toast.makeText(getApplicationContext(),
-                            "Error retrieving the sessions.", Toast.LENGTH_LONG).show();
+                            "Error retrieving the sessions", Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e){
                 Log.e("JSON Parse", e.getMessage());
