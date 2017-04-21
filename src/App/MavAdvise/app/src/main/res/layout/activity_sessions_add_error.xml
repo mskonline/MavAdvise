@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="org.mavadvise.activities.SessionsAddError">
+
+    <TextView
+        android:id="@+id/sessionErrorTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sessions_add_error"
+        android:layout_marginBottom="5dp"
+        android:textSize="20sp"/>
+
+
+
+    <Button
+        android:id="@+id/sessionokBT"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/colorAccent"
+        android:layout_alignParentBottom="true"
+        android:textColor="#FFF"
+        android:text="Ok"/>
+
+    <ListView
+        android:id="@+id/sessionsAddErrorLV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sessionErrorTV"
+        android:layout_above="@id/sessionokBT"
+        android:layout_marginBottom="10dp"></ListView>
+</RelativeLayout>
