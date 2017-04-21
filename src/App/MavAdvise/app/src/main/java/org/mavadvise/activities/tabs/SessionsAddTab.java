@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,11 +26,13 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.activities.ManageSessions;
+import org.mavadvise.activities.SessionsAddError;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.DatePickerHelper;
 import org.mavadvise.commons.ProgressDialogHelper;
 import org.mavadvise.commons.TimePickerHelper;
+import org.mavadvise.commons.Utils;
 import org.mavadvise.data.User;
 
 import okhttp3.FormBody;
@@ -43,8 +46,7 @@ import okhttp3.Response;
  * Created by SaiKumar on 4/7/2017.
  */
 
-public class SessionsAddTab
-        extends Fragment {
+public class SessionsAddTab extends Fragment {
 
     private String startTime = "09:00:00",
                      endTime = "11:00:00",
@@ -63,6 +65,7 @@ public class SessionsAddTab
     private ProgressDialogHelper saveDialog;
 
     private JSONArray sessions;
+    int sHrs, eHrs;
 
     public SessionsAddTab() {
     }
@@ -103,6 +106,9 @@ public class SessionsAddTab
 
         repeatRL = (RelativeLayout) view.findViewById(R.id.repeatRL);
         endDate = Calendar.getInstance();
+
+        sHrs = 9;
+        eHrs = 11;
 
         startDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,8 +183,8 @@ public class SessionsAddTab
                             e.printStackTrace();
                             text = startTime;
                         }
-
                         startTimeTV.setText(text);
+                        sHrs = hrs;
                     }
                 });
 
@@ -206,6 +212,7 @@ public class SessionsAddTab
                             text = endTime;
                         }
                         endTimeTV.setText(text);
+                        eHrs = hrs;
                     }
                 });
 
@@ -224,6 +231,25 @@ public class SessionsAddTab
     }
 
     private void validateAndSubmit() {
+        Calendar today = Calendar.getInstance();
+        if(Utils.isSameDay(startDate, today)){
+            Log.i("validateAndSubmit", "dates are equal");
+            int hrs = today.get(Calendar.HOUR_OF_DAY);
+
+            if(sHrs < hrs){
+                Toast.makeText(getContext(),
+                        AppConfig.SESSIONS_STIME_VALIDATION_ERR,
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        if(eHrs < sHrs){
+            Toast.makeText(getContext(),
+                    AppConfig.SESSIONS_ETIME_VALIDATION_ERR,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
         StringBuffer fq = new StringBuffer();
         if (repeatRL.getVisibility() == View.VISIBLE) {
@@ -272,7 +298,9 @@ public class SessionsAddTab
         frequency = fq.toString();
 
         if (frequency.equalsIgnoreCase("0000000")) {
-            Toast.makeText(getContext(), "Please select frequency", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),
+                    AppConfig.SESSIONS_FREQ_VALIDATION_ERR,
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -280,7 +308,9 @@ public class SessionsAddTab
         noOfSlots = slotsET.getText().toString().trim();
 
         if(noOfSlots.length() == 0){
-            Toast.makeText(getContext(), "Please enter No. of Slots", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(),
+                    AppConfig.SESSIONS_SLOTS_VALIDATION_ERR,
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -334,7 +364,6 @@ public class SessionsAddTab
 
                 Response response = client.newCall(request).execute();
                 String result = response.body().string();
-                Log.i("SessionSAddTab", result);
                 return result;
             } catch (Exception e){
                 Log.e("HTTP Error", e.getMessage());
@@ -362,17 +391,24 @@ public class SessionsAddTab
                         JSONObject res = obj.getJSONObject("result");
                         sessions = res.getJSONArray("allSessions");
 
-                        JSONArray collidingSessions = res.getJSONArray("collidingSessions");
+                        JSONArray conflictingSessions = res.getJSONArray("collidingSessions");
 
                         ((ManageSessions) getActivity()).refreshSessionsData(sessions);
                         ((ManageSessions) getActivity()).showViewTab();
 
-                        if(collidingSessions.length() > 0)
+                        try {
+                            Thread.sleep(500);
+                        } catch (Exception e){
+                            Log.e("AddSessions", "Thread exception");
+                        }
+
+                        if(conflictingSessions.length() > 0)
                         {
-                            Toast.makeText(getContext(), "Some sessions were not added as they were colliding with others",
-                                    Toast.LENGTH_LONG).show();
+                            appConfig.setConflictingSessions(conflictingSessions);
+                            Intent i = new Intent(getActivity(), SessionsAddError.class);
+                            startActivity(i);
                         } else {
-                            Toast.makeText(getContext(), "Sessions added",
+                            Toast.makeText(getContext(), AppConfig.SESSIONS_ADD_SUCCESS,
                                     Toast.LENGTH_LONG).show();
                         }
 
@@ -397,5 +433,22 @@ public class SessionsAddTab
 
         CheckBox repeatCB = (CheckBox) thisView.findViewById(R.id.repeatCB);
         repeatCB.setChecked(false);
+
+        startDate = Calendar.getInstance();
+        startDateTV.setText(DateFormat.format("MM/dd/yyyy", startDate.getTimeInMillis()).toString());
+
+        endDate = Calendar.getInstance();
+        endDateTV.setText(DateFormat.format("MM/dd/yyyy", endDate.getTimeInMillis()).toString());
+
+        frequency = "0000000";
+
+        startTime = "09:00:00";
+        startTimeTV.setText("9:00 AM");
+
+        endTime = "11:00:00";
+        endTimeTV.setText("11:00 AM");
+
+        sHrs = 9;
+        eHrs = 11;
     }
 }

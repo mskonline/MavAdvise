@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,6 +21,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.activities.ManageSessions;
+import org.mavadvise.adaptors.SessionsDataAdaptor;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.AlertDialogHelper;
@@ -46,7 +46,7 @@ public class SessionsDeleteTab extends Fragment {
     private JSONArray sessions;
 
     private ListView deleteSessionsList;
-    private OptionsAdapter optionsAdapter;
+    private SessionsDataAdaptor sessionsDataAdaptor;
     private ArrayList<Integer> selectedSessions = new ArrayList<Integer>();
 
     private AppConfig appConfig;
@@ -68,7 +68,8 @@ public class SessionsDeleteTab extends Fragment {
 
     public void refreshContent(JSONArray sessions){
         this.sessions = sessions;
-        optionsAdapter.notifyDataSetChanged();
+        sessionsDataAdaptor.setSessions(sessions);
+        sessionsDataAdaptor.notifyDataSetChanged();
     }
 
     @Override
@@ -81,34 +82,40 @@ public class SessionsDeleteTab extends Fragment {
         deleteButton = (Button) rootView.findViewById(R.id.sessionDeleteBT);
         cancelButton = (Button) rootView.findViewById(R.id.sessionCancelBT);
 
-        optionsAdapter = new OptionsAdapter();
-        deleteSessionsList.setAdapter(optionsAdapter);
+        sessionsDataAdaptor = new SessionsDataAdaptor(sessions, this);
+        deleteSessionsList.setAdapter(sessionsDataAdaptor);
 
         deleteSessionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                final View aView = view;
                 try {
                     tempobj = sessions.getJSONObject(position);
                     String status = tempobj.getString("status");
+                    boolean vError = false;
 
                     if(!status.startsWith("S"))
-                    {
-                        Toast.makeText(getContext(), "Only scheduled sessions can be deleted",
-                                Toast.LENGTH_LONG).show();
-                        view.setActivated(false);
-                        return;
-                    }
+                        vError = true;
 
                     String appts = tempobj.getString("slotCounter");
 
-                    if(!appts.equalsIgnoreCase("0")){
-                        Toast.makeText(getContext(), "This sessions has appointments. Cancel the session instead",
-                                Toast.LENGTH_LONG).show();
-                        view.setActivated(false);
+                    if(!appts.equalsIgnoreCase("0"))
+                        vError = true;
+
+                    if(vError){
+                        AlertDialogHelper helper =
+                            AlertDialogHelper.newInstance(AppConfig.SESSIONS_DELETE_ONLY_SCHD_ERR,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        deleteSessionsList.clearChoices();
+                                        deleteSessionsList.requestLayout();
+                                    }
+                                });
+                        helper.setCancelable(false);
+                        helper.show(getFragmentManager(), "Alert");
                         return;
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return;
@@ -119,8 +126,12 @@ public class SessionsDeleteTab extends Fragment {
                 } else
                     selectedSessions.remove(new Integer(position));
 
-                String str = "Delete (" + selectedSessions.size() + ")";
-                deleteButton.setText(str);
+                if(selectedSessions.size() == 0)
+                    deleteButton.setText("Delete");
+                else{
+                    String str = "Delete (" + selectedSessions.size() + ")";
+                    deleteButton.setText(str);
+                }
             }
         });
 
@@ -275,60 +286,5 @@ public class SessionsDeleteTab extends Fragment {
 
         deleteSessionsList.clearChoices();
         deleteSessionsList.requestLayout();
-    }
-
-    public class OptionsAdapter extends BaseAdapter {
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View row = convertView;
-
-            if(row == null){
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.list_session_item, parent, false);
-            }
-
-            TextView sHeader, sTime, sAppCounter, sStatus;
-
-            sHeader = (TextView) row.findViewById(R.id.session_header);
-            sTime = (TextView) row.findViewById(R.id.session_time);
-            sAppCounter = (TextView) row.findViewById(R.id.session_appointments_ctr);
-            sStatus = (TextView) row.findViewById(R.id.session_statusTV);
-
-            try {
-                JSONObject obj = sessions.getJSONObject(position);
-                sHeader.setText(obj.getString("date"));
-                sTime.setText(obj.getString("startTime") + " - " + obj.getString("endTime"));
-                sAppCounter.setText(obj.getString("slotCounter"));
-
-                String status = obj.getString("status");
-
-                if(status.equalsIgnoreCase("cancelled")){
-                    int color = ResourcesCompat.getColor(getResources(), R.color.colorCancelled, null);
-                    sStatus.setTextColor(color);
-                }
-
-                sStatus.setText(status);
-            } catch (Exception e){
-                Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
-            }
-
-            return row;
-        }
-
-        public OptionsAdapter(){}
-
-        public int getCount() {
-            return sessions != null ? sessions.length() : 0;
-        }
-
-        public Object getItem(int arg0) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
     }
 }

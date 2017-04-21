@@ -1,7 +1,10 @@
 package org.mavadvise.activities;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -17,12 +20,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.mavadvise.R;
-import org.mavadvise.activities.tabs.SessionsAddTab;
-import org.mavadvise.activities.tabs.SessionsDeleteTab;
-import org.mavadvise.activities.tabs.SessionsViewTab;
+import org.mavadvise.activities.tabs.AppointmentsAddTab;
+import org.mavadvise.activities.tabs.AppointmentsDeleteTab;
+import org.mavadvise.activities.tabs.AppointmentsViewTab;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
-import org.mavadvise.commons.ProgressDialogHelper;
 
 import okhttp3.FormBody;
 import okhttp3.HttpUrl;
@@ -31,28 +33,31 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ManageSessions extends AppCompatActivity {
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+public class ManageAppointments extends AppCompatActivity {
+
+    private ManageAppointments.SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private AppConfig appConfig;
-    private ProgressDialogHelper mDialog;
+    private DialogFragment mDialog;
 
-    private JSONArray sessions;
+    private JSONArray appointments;
 
-    private SessionsViewTab sessionsViewTab;
-    private SessionsDeleteTab sessionsDeleteTab;
+    private AppointmentsViewTab appointmentsViewTab;
+    private AppointmentsDeleteTab appointmentsDeleteTab;
+    private AppointmentsAddTab appointmentsAddTab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_sessions);
+        Log.i("Final","here");
+        setContentView(R.layout.activity_manage_appointments);
+
 
         setUpTabLayout();
 
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
-        mDialog =  ProgressDialogHelper.newInstance();
-        mDialog.setMsg("Loading sessions...");
+        mDialog =  ManageAppointments.ProgressDialogFragment.newInstance();
     }
 
     @Override
@@ -62,16 +67,14 @@ public class ManageSessions extends AppCompatActivity {
         if(!mDialog.isAdded())
             mDialog.show(getSupportFragmentManager(), "Loading");
 
-        new SessionsData().execute();
+        refreshSessionsData();
     }
 
-    public void refreshSessionsData(JSONArray sessions){
-        this.sessions = sessions;
-        sessionsViewTab.refreshContent(this.sessions);
-        sessionsDeleteTab.refreshContent(this.sessions);
+    private void refreshSessionsData(){
+        new ManageAppointments.AppointmentsData().execute();
     }
 
-    private class SessionsData extends AsyncTask<String, Void , String> {
+    private class AppointmentsData extends AsyncTask<String, Void , String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -88,7 +91,7 @@ public class ManageSessions extends AppCompatActivity {
                         .host(appConfig.getHostName())
                         .port(appConfig.getPort())
                         .addPathSegment("MavAdvise")
-                        .addPathSegment("getSessions")
+                        .addPathSegment("getAppointments")
                         .build();
 
                 //String sessionId = SessionManager.getInstance().getSessionId();
@@ -118,13 +121,18 @@ public class ManageSessions extends AppCompatActivity {
             try {
                 if(result != null) {
                     JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    sessions = obj.getJSONArray("result");
+                    appointments = obj.getJSONArray("result");
+                    if(appointments !=null){
+                        Log.i("no","not null");
+                    }
+                    Log.i("In", "In post execute");
+                    Log.i("jso", obj.getString("result"));
 
-                    sessionsViewTab.refreshContent(sessions);
-                    sessionsDeleteTab.refreshContent(sessions);
+                    appointmentsViewTab.refreshContent(appointments);
+                    appointmentsDeleteTab.refreshContent(appointments);
                 } else {
                     Toast.makeText(getApplicationContext(),
-                            "Error retrieving the sessions", Toast.LENGTH_LONG).show();
+                            "Error retrieving the sessions.", Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e){
                 Log.e("JSON Parse", e.getMessage());
@@ -139,13 +147,15 @@ public class ManageSessions extends AppCompatActivity {
     }
 
     private void setUpTabLayout(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarapp);
         setSupportActionBar(toolbar);
+        Log.i("First", "reached first");
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mSectionsPagerAdapter = new ManageAppointments.SectionsPagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.containerapp);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
+        Log.i("Hello", "Reached here");
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -161,10 +171,9 @@ public class ManageSessions extends AppCompatActivity {
             }
         });
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.apptabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
-
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -177,15 +186,16 @@ public class ManageSessions extends AppCompatActivity {
 
             switch (position) {
                 case 0:
-                    instance =  SessionsAddTab.newInstance();
+                    appointmentsAddTab =  AppointmentsAddTab.newInstance();
+                    instance = appointmentsAddTab;
                     break;
                 case 1:
-                    sessionsViewTab =  SessionsViewTab.newInstance();
-                    instance = sessionsViewTab;
+                    appointmentsViewTab =  AppointmentsViewTab.newInstance();
+                    instance = appointmentsViewTab;
                     break;
                 case 2:
-                    sessionsDeleteTab = SessionsDeleteTab.newInstance();
-                    instance = sessionsDeleteTab;
+                    appointmentsDeleteTab = AppointmentsDeleteTab.newInstance();
+                    instance = appointmentsDeleteTab;
                     break;
             }
 
@@ -209,6 +219,23 @@ public class ManageSessions extends AppCompatActivity {
                     return "DELETE";
             }
             return null;
+        }
+    }
+
+    public static class ProgressDialogFragment extends DialogFragment {
+
+        public static ManageAppointments.ProgressDialogFragment newInstance() {
+            return new ProgressDialogFragment();
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final ProgressDialog dialog = new ProgressDialog(getActivity());
+            dialog.setMessage("Loading Appointments...");
+            dialog.setIndeterminate(true);
+
+            return dialog;
         }
     }
 }

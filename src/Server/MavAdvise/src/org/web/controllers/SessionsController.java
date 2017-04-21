@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.web.beans.Response;
-import org.web.beans.Session;
 import org.web.beans.SessionInfo;
 import org.web.dao.DBManager;
 
@@ -33,7 +32,7 @@ public class SessionsController{
 		ObjectMapper mapper = new ObjectMapper();
 
 		adjustSessionDates(sessionInfo);
-		Map<String, List<org.web.beans.Session>> sessions = dbmanager.addSessions(sessionInfo);
+		Map<String, List<Object>> sessions = dbmanager.addSessions(sessionInfo);
 
 		r.setResult(sessions);
 		try {
@@ -50,7 +49,7 @@ public class SessionsController{
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<Session> sessions = dbmanager.getSessions(netID);
+		List<Object> sessions = dbmanager.getSessions(netID);
 
 		r.setResult(sessions);
 
@@ -69,7 +68,7 @@ public class SessionsController{
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<Session> sessions = dbmanager.deleteSessions(netID, sessionIDs);
+		List<Object> sessions = dbmanager.deleteSessions(netID, sessionIDs);
 		r.setResult(sessions);
 
 		try {

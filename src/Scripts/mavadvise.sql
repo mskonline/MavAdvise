@@ -124,4 +124,12 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+
+
+CREATE TABLE `mavadvise`.`announcements` (
+  `net_id` VARCHAR(30) NULL,
+  `message` TEXT NULL,
+  `date` DATE NULL,
+  `priority` INT NULL,
+  `title` VARCHAR(50) NULL);
 -- Dump completed on 2017-04-06 15:37:25

@@ -27,4 +27,5 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_manage_sessions">Manage Sessions</string>
+    <string name="sessions_add_error">The following sessions couldn\'t be added as they conflict with existing sessions.</string>
 </resources>
