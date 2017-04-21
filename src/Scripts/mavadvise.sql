@@ -81,16 +81,16 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
-  `net_id` varchar(30) CHARACTER SET latin1 NOT NULL,
-  `uta_id` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
-  `firstname` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `lastname` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `roletype` varchar(10) CHARACTER SET latin1 DEFAULT NULL,
-  `branch` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
-  `email` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `password` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
+  `net_id` varchar(30) NOT NULL,
+  `uta_id` varchar(45) DEFAULT NULL,
+  `firstname` varchar(100) DEFAULT NULL,
+  `lastname` varchar(100) DEFAULT NULL,
+  `roletype` varchar(10) DEFAULT NULL,
+  `branch` varchar(45) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `password` varchar(100) DEFAULT NULL,
   `security_question_id` int(11) NOT NULL,
-  `security_answer` varchar(1000) CHARACTER SET latin1 DEFAULT NULL,
+  `security_answer` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`net_id`),
   UNIQUE KEY `net_id_UNIQUE` (`net_id`),
   UNIQUE KEY `uta_id_UNIQUE` (`uta_id`),
@@ -104,11 +104,14 @@ CREATE TABLE `users` (
 
 DROP TABLE IF EXISTS `announcements`;
 CREATE TABLE `announcements` (
-  `net_id` VARCHAR(30) NULL,
-  `message` TEXT NULL,
-  `date` DATE NULL,
-  `priority` INT NULL,
-  `title` VARCHAR(50) NULL);
+  `net_id` varchar(30) DEFAULT NULL,
+  `message` text,
+  `date` date DEFAULT NULL,
+  `priority` int(11) DEFAULT NULL,
+  `title` varchar(50) DEFAULT NULL,
+  `annoucement_id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`annoucement_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data inserts
 
