@@ -80,7 +80,7 @@ public class SessionsDeleteTab extends Fragment {
         sColor = ResourcesCompat.getColor(getResources(), R.color.colorAccent, null);
         deleteSessionsList = (ListView) rootView.findViewById(R.id.sessionsDeletelist);
         deleteButton = (Button) rootView.findViewById(R.id.sessionDeleteBT);
-        cancelButton = (Button) rootView.findViewById(R.id.sessionCancelBT);
+        cancelButton = (Button) rootView.findViewById(R.id.sessionCancelDeleteBT);
 
         sessionsDataAdaptor = new SessionsDataAdaptor(sessions, this);
         deleteSessionsList.setAdapter(sessionsDataAdaptor);

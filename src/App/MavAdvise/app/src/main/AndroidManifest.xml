@@ -26,13 +26,17 @@
             android:name=".activities.DashBoard"
             android:label="@string/title_activity_dash_board"
             android:theme="@style/AppTheme.NoActionBar" />
-		<activity android:name=".activities.ManageAppointments"
-            android:label="Your Appointments"/>
-		<activity
-            android:name=".activities.ManageSessions"            
-			android:label="@string/title_activity_manage_sessions"
-			android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".activities.SessionsAddError"></activity>
+        <activity
+            android:name=".activities.ManageAppointments"
+            android:label="Your Appointments"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.ManageSessions"
+            android:label="@string/title_activity_manage_sessions"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.SessionsAddError" />
+        <activity android:name=".activities.StartSession" />
+        <activity android:name=".activities.ViewSession"></activity>
     </application>
+
 </manifest>

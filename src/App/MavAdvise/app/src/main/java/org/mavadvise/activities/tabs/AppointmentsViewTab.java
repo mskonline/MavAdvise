@@ -20,21 +20,22 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mavadvise.R;
 
-public class AppointmentsViewTab extends Fragment{
+public class AppointmentsViewTab extends Fragment {
 
     private JSONArray appointments;
     private OptionsAdapter optionsAdapter;
 
 
-    public AppointmentsViewTab(){}
+    public AppointmentsViewTab() {
+    }
 
     public static AppointmentsViewTab newInstance() {
         return new AppointmentsViewTab();
     }
 
-    public void refreshContent(JSONArray appointments){
+    public void refreshContent(JSONArray appointments) {
         this.appointments = appointments;
-        Log.i("refresh","Refreshed");
+        Log.i("refresh", "Refreshed");
         optionsAdapter.notifyDataSetChanged();
     }
 
@@ -42,19 +43,19 @@ public class AppointmentsViewTab extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_appointments_view, container, false);
-Log.i("view", "in view");
+        Log.i("view", "in view");
 //        TextView textView = (TextView) rootView.findViewById(R.id.appointmenttext);
 //        textView.setText("Text");
 //
-       ListView list = (ListView) rootView.findViewById(R.id.appointmentlist);
+        ListView list = (ListView) rootView.findViewById(R.id.appointmentlist);
 
         optionsAdapter = new OptionsAdapter();
         list.setAdapter(optionsAdapter);
-if(rootView == null){
-    Log.i("roo","Root view is null");
-}else{
-    Log.i("roo1", "Root view is not null");
-}
+        if (rootView == null) {
+            Log.i("roo", "Root view is null");
+        } else {
+            Log.i("roo1", "Root view is not null");
+        }
         return rootView;
     }
 
@@ -63,9 +64,9 @@ if(rootView == null){
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            Log.i("H","Inside View");
+            Log.i("H", "Inside View");
 
-            if(row == null){
+            if (row == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.list_appointments_item, parent, false);
             }
@@ -84,14 +85,15 @@ if(rootView == null){
                 Log.i("jso", obj.getString("status"));
                 aTime.setText(obj.getString("session_id") + " - " + obj.getString("net_id"));
                 aDate.setText(obj.getString("date"));
-            } catch (Exception e){
+            } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
             }
 
             return row;
         }
 
-        public OptionsAdapter(){}
+        public OptionsAdapter() {
+        }
 
         public int getCount() {
             return appointments != null ? appointments.length() : 0;

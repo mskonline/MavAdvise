@@ -1,7 +1,6 @@
 package org.web.dao;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,19 +50,26 @@ public class DBManager {
 			session.close();
 		} catch(Exception e){
 			logger.error("Error saving the user details. " + e.getMessage());
-
 			// Check for any constraint violations
-			if(doesNetIDExists(user.getNetID()))
-				msg = "Net ID already exists";
 
-			if(doesUTAIDExists(user.getUtaID()))
-				msg = "UTA ID already exists";
-
-			if(doesEmailExists(user.getEmail()))
+			if(doesEmailExists(user.getEmail())){
 				msg = "Email already exists";
+				return msg;
+			}
+
+			if(doesNetIDExists(user.getNetID())){
+				msg = "Net ID already exists";
+				return msg;
+			}
+
+			if(doesUTAIDExists(user.getUtaID())){
+				msg = "UTA ID already exists";
+				return msg;
+			}
 
 			// Other fatal DB error - Needs debugging
-			msg = "There was some error during registeration. Please try later.";
+			if(msg == null)
+				msg = "There was some error during registeration. Please try later.";
 		}
 
 		return msg;
@@ -140,7 +146,7 @@ public class DBManager {
 
 		Map<String, List<Object>> sessions = new HashMap<String, List<Object>>();
 		List<org.web.beans.Session> addSessions = new ArrayList<org.web.beans.Session>();
-		List<Object> collidingSessions = new ArrayList<Object>();
+		List<Object> conflictingSessions = new ArrayList<Object>();
 
 		List<org.web.beans.Session> existingSessions =
 				getAllScheduledSessions(sessionInfo.getNetID(),
@@ -167,7 +173,7 @@ public class DBManager {
         			addSessions.add(session);
         		else{
         			if(existingSessions.contains(session))
-        				collidingSessions.add(session);
+        				conflictingSessions.add(session);
         			else
         				addSessions.add(session);
         		}
@@ -203,7 +209,7 @@ public class DBManager {
         List<Object> allSessions = getSessions(sessionInfo.getNetID());
 
         sessions.put("allSessions", allSessions);
-        sessions.put("collidingSessions", collidingSessions);
+        sessions.put("conflictingSessions", conflictingSessions);
 
         return sessions;
 	}

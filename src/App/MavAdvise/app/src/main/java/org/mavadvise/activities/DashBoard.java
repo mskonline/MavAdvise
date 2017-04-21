@@ -43,13 +43,6 @@ public class DashBoard extends AppCompatActivity
 
         setUpDashboardLayout();
 
-        //TODO - remove
-        /*user.setFirstName("Sai Kumar");
-        user.setLastName("Kumar");
-        user.setNetID("sxm6131");
-        user.setEmail("saikumar.manakan@mavs.uta.edu");
-        */
-
         if(user.getRoleType().equalsIgnoreCase("student"))
             setUpStudentOptions();
         else

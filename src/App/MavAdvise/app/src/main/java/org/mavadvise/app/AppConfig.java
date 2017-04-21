@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.mavadvise.data.User;
 
 public class AppConfig {
-    private String hostName = "10.0.2.2";//"a90c0256.ngrok.io";
+    private String hostName = "10.0.2.2";
     private int port = 8080;
 
     private String sessionID;
@@ -20,13 +20,6 @@ public class AppConfig {
         if(instance == null) {
             instance = new AppConfig();
             instance.user = User.getUserInstance();
-
-            //TODO - remove
-            instance.user.setFirstName("Sai Kumar");
-            instance.user.setLastName("Kumar");
-            instance.user.setNetID("sxm6131");
-            instance.user.setEmail("saikumar.manakan@mavs.uta.edu");
-            instance.user.setRoleType("advisor");
         }
 
         return instance;

@@ -391,7 +391,7 @@ public class SessionsAddTab extends Fragment {
                         JSONObject res = obj.getJSONObject("result");
                         sessions = res.getJSONArray("allSessions");
 
-                        JSONArray conflictingSessions = res.getJSONArray("collidingSessions");
+                        JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
 
                         ((ManageSessions) getActivity()).refreshSessionsData(sessions);
                         ((ManageSessions) getActivity()).showViewTab();
