@@ -30,6 +30,18 @@
 		<property name="noOfSlots" column="no_of_slots"></property>
 		<property name="slotCounter" column="slot_counter" type="int"></property>
 		<property name="comment" column="comment"></property>
+		<property name="location" column="location"></property>
+	</class>
+	
+	<class name="org.web.beans.Announcement" table="announcements">
+		<id name="announcementID" type="int" column="announcement_id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="netID" column="net_id"></property>
+		<property name="date" column="date" type="date"></property>
+		<property name="message" column="message"></property>
+		<property name="priority" column="priority" type="int"></property>
+		<property name="title" column="title"></property>
 	</class>
 
 	<sql-query name="getAllSessions">
@@ -50,6 +62,26 @@
     </sql-query>
 
 	<sql-query name="getAllAppointments">
-		<![CDATA[SELECT appointments.* FROM appointments WHERE appointments.net_id = :netID AND appointments.status = 'SCHEDULED' ORDER BY appointments.session_id ASC]]>
+		<![CDATA[SELECT appointments.* FROM appointments 
+			WHERE appointments.net_id = :netID AND appointments.status = 'SCHEDULED'
+			ORDER BY appointments.session_id ASC]]>
     </sql-query>
+    
+    <sql-query name="getAllAnnouncements">
+		<![CDATA[SELECT 
+		announcements.announcement_id as announcementId,
+		announcements.net_id as netId,
+		DATE_FORMAT(announcements.date, '%b %d %Y') as date,
+		announcements.priority,
+		announcements.title,
+		users.firstname as firstName,
+		users.lastname as lastName 
+		FROM users, announcements 
+		WHERE #BRANCH_CONDITION# 
+		announcements.net_id=users.net_id
+		AND announcements.date BETWEEN :startDate AND :endDate
+		ORDER BY announcements.priority DESC,announcements.date DESC, users.lastname ASC ;]]>
+    </sql-query>
+    
+    
 </hibernate-mapping>

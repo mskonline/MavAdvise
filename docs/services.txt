@@ -27,3 +27,8 @@ http://localhost:8080/MavAdvise/addSessions?netID=sxm6131&startDate=2017-04-25&e
 Get Sessions
 http://localhost:8080/MavAdvise/getSessions?netID=sxm6131
 
+Get Announcements with date limitations and branch
+http://localhost:8080/MavAdvise/getAllAnnouncements?startDate=2016-01-01&endDate=2017-02-01&branch=CSE
+
+Create Announcement
+http://localhost:8080/MavAdvise/createAnnouncement?message=hello there&date=2017-04-21&priority=0&title=helllio there&netID=bxs1234

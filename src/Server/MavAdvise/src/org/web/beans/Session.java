@@ -13,6 +13,7 @@ public class Session {
 	private int slotCounter;
 	private String status;
 	private String comment;
+	private String location;
 
 	public int getSessionID() {
 		return sessionID;
@@ -67,6 +68,12 @@ public class Session {
 	}
 	public void setNoOfSlots(int noOfSlots) {
 		this.noOfSlots = noOfSlots;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	@Override
 	public boolean equals(Object obj) {
