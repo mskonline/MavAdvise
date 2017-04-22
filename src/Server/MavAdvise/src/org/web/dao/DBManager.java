@@ -19,6 +19,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+import org.web.beans.Announcement;
 import org.web.beans.User;
 
 @Component
@@ -288,4 +289,55 @@ public class DBManager {
 		}
 		return allSessions;
 	}
+	
+	public String saveAnnouncement(Announcement announ){
+		String msg = null;
+
+		try{
+			Transaction tx = null;
+			Session session = factory.openSession();
+			tx = session.beginTransaction();
+
+			session.save(announ);
+			tx.commit();
+
+			session.close();
+		} catch(Exception e){
+			logger.error("Error saving the announcement details. " + e.getMessage());
+
+			// Other fatal DB error - Needs debugging
+			if(msg == null)
+				msg = "There was some error during registeration. Please try later.";
+		}
+
+		return msg;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object> getAllAnnouncements(String startDate, String endDate, String branch){
+		Session session = factory.openSession();
+		
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("users.branch = \"");
+		stringBuilder.append(branch);
+		stringBuilder.append("\" and");
+		
+		String sql = session.getNamedQuery("getAllAnnouncements").getQueryString();
+		
+		if(branch.equalsIgnoreCase("ALL"))
+			//q.setString("BRANCH_CONDITION","");
+			sql=sql.replace("#BRANCH_CONDITION#", "");
+		else
+			sql=sql.replace("#BRANCH_CONDITION#",stringBuilder.toString());
+		
+		SQLQuery q = (SQLQuery) session.createSQLQuery(sql).setString("startDate", startDate).setString("endDate",endDate);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		List<Object> allAnnouncements = q.list();
+
+		session.close();
+		return allAnnouncements;
+	}
+
+
 }
