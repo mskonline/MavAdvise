@@ -38,6 +38,10 @@ public class UsersController {
 			if(status == true){
 				HttpSession session = request.getSession();
 				session.setAttribute("hasAccess", "true");
+
+				user.setPassword(null);
+				user.setSecurityQuestionID(-1);
+				user.setSecurityAnswer(null);
 				r.setResult(user);
 			} else {
 				r.setMessage("Invalid password");

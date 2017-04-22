@@ -169,6 +169,7 @@ public class DBManager {
         		session.setNoOfSlots(sessionInfo.getNoOfSlots());
         		session.setSlotCounter(0);
         		session.setStatus("SCHEDULED");
+        		session.setLocation(sessionInfo.getLocation());
 
         		if(existingSessions == null)
         			addSessions.add(session);

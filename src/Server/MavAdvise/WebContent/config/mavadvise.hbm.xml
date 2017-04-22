@@ -30,6 +30,7 @@
 		<property name="noOfSlots" column="no_of_slots"></property>
 		<property name="slotCounter" column="slot_counter" type="int"></property>
 		<property name="comment" column="comment"></property>
+		<property name="location" column="location"></property>
 	</class>
 	
 	<class name="org.web.beans.Announcement" table="announcements">
