@@ -260,6 +260,25 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
+	
+	
+	public List<org.web.beans.User> getAdvisors(String branch){
+		Session session = factory.openSession();
+		List<org.web.beans.User> allAdvisors = null;
+
+		Criteria criteria = session.createCriteria(org.web.beans.User.class);
+		criteria.addOrder(Order.asc("firstName"));
+		criteria.add(Restrictions.eq("branch", branch));
+		criteria.add(Restrictions.eq("roleType", "Advisor"));
+		
+
+		allAdvisors = criteria.list();
+
+		session.close();
+		return allAdvisors;
+		
+		
+	}
 
 	public List<Object> deleteSessions(String netID, Integer[] sessionIDs){
 		Session session = factory.openSession();

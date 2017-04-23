@@ -62,7 +62,6 @@
     </sql-query>
 
 	<sql-query name="getAllAppointments">
-<<<<<<< Updated upstream
 		<![CDATA[Select users.firstname, users.lastname, sessions.session_id,  
                  DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
