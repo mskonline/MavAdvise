@@ -126,6 +126,7 @@ public class AppointmentsAddTab extends Fragment {
                 FragmentManager fm = getFragmentManager();
                 AdvisorPickerHelper advisorPicker = new AdvisorPickerHelper();
                 advisorPicker.setAdvisors(advisors);
+                Log.i("me6", "Clicked6");
 
                 advisorPicker.setOnSelectListener(new AdvisorPickerHelper.AdvisorPickerListener() {
                     @Override
@@ -166,10 +167,8 @@ public class AppointmentsAddTab extends Fragment {
                         .addPathSegment("getAdvisors")
                         .build();
 
-                //String sessionId = SessionManager.getInstance().getSessionId();
-
                 RequestBody formBody = new FormBody.Builder()
-                        .add("branch", appConfig.getUser().getNetID())
+                        .add("branch", appConfig.getUser().getDepartment())
                         .build();
 
                 Request request = new Request.Builder()
@@ -207,8 +206,7 @@ public class AppointmentsAddTab extends Fragment {
             } catch (Exception e) {
                 Log.e("JSON Parse", e.getMessage());
             }
-
-            mDialog.dismiss();
+ //           mDialog.dismiss();
         }
     }
 

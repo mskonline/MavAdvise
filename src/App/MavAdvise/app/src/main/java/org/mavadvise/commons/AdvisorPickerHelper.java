@@ -30,13 +30,13 @@ public class AdvisorPickerHelper extends DialogFragment {
     OptionsAdapter optionsAdapter;
     String advisor;
 
-    public void setAdvisors(JSONArray advisors) {
-        this.advisors = advisors;
-    }
-
     private JSONArray advisors;
     private AdvisorPickerListener advPickerListener;
     private ListView list;
+
+    public void setAdvisors(JSONArray advisors) {
+        this.advisors = advisors;
+    }
 
     public interface AdvisorPickerListener {
         public void onAdvisorPickerFinish(String adv);
@@ -67,6 +67,13 @@ public class AdvisorPickerHelper extends DialogFragment {
             }
         });
 
+        Button cancelButton = (Button) rootView.findViewById(R.id.advCancelBT);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDialog().dismiss();
+            }
+        });
 
 
         return rootView;
