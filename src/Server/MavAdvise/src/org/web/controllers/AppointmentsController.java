@@ -28,13 +28,32 @@ public class AppointmentsController {
 
 	@RequestMapping(value = "/getAppointments", method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
-	public String getSession(@RequestParam("netID") String netID){
+	public String getAppointments(@RequestParam("netID") String netID){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
 		List<Object> appointments = dbmanager.getAppointments(netID);
 
 		r.setResult(appointments);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+	
+	
+	@RequestMapping(value = "/getAdvisors", method = {RequestMethod.GET, RequestMethod.POST})
+	@ResponseBody
+	public String getAdvisors(@RequestParam("branch") String branch){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		List<org.web.beans.User> advisors = dbmanager.getAdvisors(branch);
+
+		r.setResult(advisors);
 
 		try {
 			return mapper.writeValueAsString(r);
