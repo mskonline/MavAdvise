@@ -260,6 +260,12 @@ public class DBManager {
 		return allSessions;
 	}
 
+
+	public void getSessionAppointments(Integer sessionID){
+		Session session = factory.openSession();
+
+	}
+
 	public List<Object> deleteSessions(String netID, Integer[] sessionIDs){
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -288,5 +294,36 @@ public class DBManager {
 			e.printStackTrace();
 		}
 		return allSessions;
+	}
+
+	public String cancelSession(Integer sessionID, String cancelReason){
+		String msg = null;
+
+		Session session = factory.openSession();
+		Transaction tx = null;
+
+		try {
+			tx = session.beginTransaction();
+			org.web.beans.Session advSession = session.get(org.web.beans.Session.class, sessionID);
+			advSession.setStatus("CANCELLED");
+			advSession.setComment(cancelReason);
+
+			session.update(advSession);
+			session.flush();
+
+			tx.commit();
+			session.close();
+		} catch (Exception e) {
+			tx.rollback();
+
+			if(session.isOpen())
+				session.close();
+
+			e.printStackTrace();
+
+			msg = "Failed to cancel this session. Try again later.";
+		}
+
+		return msg;
 	}
 }
