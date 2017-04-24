@@ -109,8 +109,8 @@ CREATE TABLE `announcements` (
   `date` date DEFAULT NULL,
   `priority` int(11) DEFAULT NULL,
   `title` varchar(50) DEFAULT NULL,
-  `annoucement_id` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`annoucement_id`)
+  `announcement_id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`announcement_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data inserts

@@ -19,6 +19,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+import org.web.beans.Announcement;
 import org.web.beans.User;
 
 @Component
@@ -261,6 +262,54 @@ public class DBManager {
 	}
 
 
+	public List<org.web.beans.User> getAdvisors(String branch){
+		Session session = factory.openSession();
+		List<org.web.beans.User> allAdvisors = null;
+
+		Criteria criteria = session.createCriteria(org.web.beans.User.class);
+		criteria.addOrder(Order.asc("firstName"));
+		criteria.add(Restrictions.eq("branch", branch));
+		criteria.add(Restrictions.eq("roleType", "Advisor"));
+
+
+		allAdvisors = criteria.list();
+
+		session.close();
+		return allAdvisors;
+
+
+	}
+
+	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<Object> allAppointments = null;
+
+		try {
+			tx = session.beginTransaction();
+
+			Query q =  session.createQuery("delete Session where netID = :netID and appointmentID in (:appointmentIDs)");
+			q.setParameter("netID", netID);
+			q.setParameterList("appointmentIDs", appointmentIDs);
+
+			int result = q.executeUpdate();
+			tx.commit();
+
+			session.close();
+
+			if(result > 0)
+				allAppointments = getSessions(netID);
+		} catch (Exception e) {
+			tx.rollback();
+
+			if(session.isOpen())
+				session.close();
+
+			e.printStackTrace();
+		}
+		return allAppointments;
+	}
+
 	public void getSessionAppointments(Integer sessionID){
 		Session session = factory.openSession();
 
@@ -322,8 +371,59 @@ public class DBManager {
 			e.printStackTrace();
 
 			msg = "Failed to cancel this session. Try again later.";
+
 		}
 
 		return msg;
+	}
+
+	public String saveAnnouncement(Announcement announ){
+		String msg = null;
+
+		try{
+			Transaction tx = null;
+			Session session = factory.openSession();
+			tx = session.beginTransaction();
+
+			session.save(announ);
+			tx.commit();
+
+			session.close();
+		} catch(Exception e){
+			logger.error("Error saving the announcement details. " + e.getMessage());
+
+			// Other fatal DB error - Needs debugging
+			if(msg == null)
+				msg = "There was some error during registeration. Please try later.";
+
+		}
+
+		return msg;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Object> getAllAnnouncements(String startDate, String endDate, String branch){
+		Session session = factory.openSession();
+
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("users.branch = \"");
+		stringBuilder.append(branch);
+		stringBuilder.append("\" and");
+
+		String sql = session.getNamedQuery("getAllAnnouncements").getQueryString();
+
+		if(branch.equalsIgnoreCase("ALL"))
+			//q.setString("BRANCH_CONDITION","");
+			sql=sql.replace("#BRANCH_CONDITION#", "");
+		else
+			sql=sql.replace("#BRANCH_CONDITION#",stringBuilder.toString());
+
+		SQLQuery q = (SQLQuery) session.createSQLQuery(sql).setString("startDate", startDate).setString("endDate",endDate);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		List<Object> allAnnouncements = q.list();
+
+		session.close();
+		return allAnnouncements;
 	}
 }

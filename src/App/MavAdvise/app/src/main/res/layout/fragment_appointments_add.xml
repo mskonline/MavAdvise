@@ -11,7 +11,9 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="3dp"
         android:textSize="16dp"
+        android:layout_marginBottom="10dp"
         android:text="ADD AN APPOINTMENT"
+        android:textColor="@color/colorAccent"
         />
 
     <ScrollView
@@ -31,13 +33,28 @@
         android:id="@+id/advLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
         android:textSize="14sp"
         android:textAllCaps="true"
         android:textStyle="bold"
         android:textColor="#000"
-        android:text="Select Advisor : "/>
+        android:text="Advisor : "
+        android:layout_alignBottom="@+id/AdvTV"
+        android:layout_alignParentStart="true" />
 
-    <Button
+        <TextView
+            android:id="@+id/AdvTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="Tony Stark"
+            android:layout_alignBaseline="@+id/SelectAdvBT"
+            android:layout_alignBottom="@+id/SelectAdvBT"
+            android:layout_alignEnd="@+id/createAppBT"
+            android:layout_marginEnd="20dp" />
+
+
+        <Button
         android:id="@+id/SelectAdvBT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,33 +65,25 @@
         android:textColor="#FFF"
         android:text="Select"/>
 
-        <TextView
-            android:id="@+id/AdvTV"
-            android:layout_toLeftOf="@id/SelectAdvBT"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/SelectAdvBT"
-            android:textSize="20sp"
-            android:text="Tony Stark"/>
 
         <TextView
             android:id="@+id/appDateLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/SelectAdvBT"
-            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
             android:textSize="14sp"
             android:textAllCaps="true"
             android:textStyle="bold"
             android:textColor="#000"
-            android:text="Date : "/>
+            android:text="Date : "
+            android:layout_alignTop="@+id/DateTV" />
 
         <Button
             android:id="@+id/ChangeDateBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/SelectAdvBT"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="20dp"
             android:layout_alignParentEnd="true"
             android:background="@color/colorAccent"
@@ -83,25 +92,23 @@
 
         <TextView
             android:id="@+id/DateTV"
-            android:layout_below="@id/SelectAdvBT"
-            android:layout_toLeftOf="@id/ChangeDateBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/ChangeDateBT"
             android:textSize="20sp"
-            android:text="20 June 2017"/>
+            android:text="20 June 2017"
+            android:layout_alignBottom="@+id/ChangeDateBT"
+            android:layout_alignStart="@+id/AdvTV" />
 
         <Button
             android:id="@+id/createAppBT"
-            android:layout_below="@id/DateTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="72dp"
             android:background="@color/colorAccent"
             android:textColor="#FFF"
-            android:text="Create"/>
+            android:text="Create"
+            android:layout_below="@+id/DateTV"
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
     </ScrollView>

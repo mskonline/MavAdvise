@@ -81,9 +81,9 @@ public class AppointmentsViewTab extends Fragment {
 
             try {
                 obj = appointments.getJSONObject(position);
-                aHeader.setText(obj.getString("status"));
-                Log.i("jso", obj.getString("status"));
-                aTime.setText(obj.getString("session_id") + " - " + obj.getString("net_id"));
+                aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
+                Log.i("jso", obj.getString("firstname"));
+                aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
                 aDate.setText(obj.getString("date"));
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
