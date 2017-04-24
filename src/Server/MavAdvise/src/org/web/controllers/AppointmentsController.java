@@ -62,6 +62,25 @@ public class AppointmentsController {
 			return "{}";
 		}
 	}
+	
+	
+	@RequestMapping(value = "/deleteAppointments", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String deleteSession(@RequestParam("netID") String netID,
+			@RequestParam("appointmentID") Integer[] appointmentID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		List<Object> appointments = dbmanager.deleteSessions(netID, appointmentID);
+		r.setResult(appointments);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
 
 
 //	private boolean checkSessionTimeCollisions(SessionInfo newSessionInfo){

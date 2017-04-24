@@ -279,6 +279,37 @@ public class DBManager {
 		
 		
 	}
+	
+	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		List<Object> allAppointments = null;
+
+		try {
+			tx = session.beginTransaction();
+
+			Query q =  session.createQuery("delete Session where netID = :netID and appointmentID in (:appointmentIDs)");
+			q.setParameter("netID", netID);
+			q.setParameterList("appointmentIDs", appointmentIDs);
+
+			int result = q.executeUpdate();
+			tx.commit();
+
+			session.close();
+
+			if(result > 0)
+				allAppointments = getSessions(netID);
+		} catch (Exception e) {
+			tx.rollback();
+
+			if(session.isOpen())
+				session.close();
+
+			e.printStackTrace();
+		}
+		return allAppointments;
+	}
+	
 
 	public List<Object> deleteSessions(String netID, Integer[] sessionIDs){
 		Session session = factory.openSession();
