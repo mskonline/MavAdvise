@@ -79,12 +79,13 @@ public class SessionsDataAdaptor extends BaseAdapter {
         if(row == null)
             row = layoutInflater.inflate(R.layout.list_session_item, parent, false);
 
-        TextView sHeader, sTime, sAppCounter, sStatus;
+        TextView sHeader, sTime, sAppCounter, sStatus, sLocation;
 
         sHeader = (TextView) row.findViewById(R.id.session_header);
         sTime = (TextView) row.findViewById(R.id.session_time);
         sAppCounter = (TextView) row.findViewById(R.id.session_appointments_ctr);
         sStatus = (TextView) row.findViewById(R.id.session_statusTV);
+        sLocation = (TextView) row.findViewById(R.id.session_location);
 
         try {
             JSONObject obj = sessions.getJSONObject(position);
@@ -100,6 +101,7 @@ public class SessionsDataAdaptor extends BaseAdapter {
                 endTime = toTimeFormat.format(fromTimeFormat.parse(endTime));
 
                 sTime.setText(startTime + " - " + endTime);
+                sLocation.setText(obj.getString("location"));
             } else {
                 sHeader.setText(obj.getString("date"));
                 sTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));

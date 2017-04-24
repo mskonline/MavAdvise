@@ -68,6 +68,7 @@ public class SessionsViewTab extends Fragment {
                     i.putExtra("noOfSlots", obj.getInt("noOfSlots"));
                     i.putExtra("location", obj.getString("location"));
                     i.putExtra("comment", obj.getString("comment"));
+                    i.putExtra("status", obj.getString("status"));
                     startActivity(i);
 
                 }catch (Exception e){
