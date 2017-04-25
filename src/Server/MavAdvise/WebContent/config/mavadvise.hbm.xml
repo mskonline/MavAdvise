@@ -32,7 +32,7 @@
 		<property name="comment" column="comment"></property>
 		<property name="location" column="location"></property>
 	</class>
-	
+
 	<class name="org.web.beans.Announcement" table="announcements">
 		<id name="announcementID" type="int" column="announcement_id">
 			<generator class="increment"></generator>
@@ -62,36 +62,33 @@
     </sql-query>
 
 	<sql-query name="getAllAppointments">
-		<![CDATA[Select users.firstname, users.lastname, sessions.session_id,  
+		<![CDATA[Select users.firstname, users.lastname, sessions.session_id,
                  DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
-			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime, 
-                 sessions.status as sesStatus, sessions.location, appointments.net_id, 
-                 appointments.slot_number, appointments.status as appStatus from appointments 
-                 join sessions on appointments.session_id=sessions.session_id 
-                 join users on users.net_id=sessions.net_id 
-                 where appointments.net_id= :netID 
+			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
+                 sessions.status as sesStatus, sessions.location, appointments.net_id,
+                 appointments.slot_number, appointments.status as appStatus from appointments
+                 join sessions on appointments.session_id=sessions.session_id
+                 join users on users.net_id=sessions.net_id
+                 where appointments.net_id= :netID
                  ORDER BY appointments.session_id ASC]]>
     </sql-query>
-    
+
     <sql-query name="getAllAnnouncements">
-		<![CDATA[SELECT 
+		<![CDATA[SELECT
 		announcements.announcement_id as announcementId,
 		announcements.net_id as netId,
 		DATE_FORMAT(announcements.date, '%b %d %Y') as date,
 		announcements.priority,
 		announcements.title,
 		users.firstname as firstName,
-		users.lastname as lastName 
-		FROM users, announcements 
-		WHERE #BRANCH_CONDITION# 
+		users.lastname as lastName
+		FROM users, announcements
+		WHERE #BRANCH_CONDITION#
 		announcements.net_id=users.net_id
 		AND announcements.date BETWEEN :startDate AND :endDate
 		ORDER BY announcements.priority DESC,announcements.date DESC, users.lastname ASC ;]]>
-=======
-		
->>>>>>> Stashed changes
     </sql-query>
-    
-    
+
+
 </hibernate-mapping>
