@@ -260,8 +260,8 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
-	
-	
+
+
 	public List<org.web.beans.User> getAdvisors(String branch){
 		Session session = factory.openSession();
 		List<org.web.beans.User> allAdvisors = null;
@@ -270,16 +270,16 @@ public class DBManager {
 		criteria.addOrder(Order.asc("firstName"));
 		criteria.add(Restrictions.eq("branch", branch));
 		criteria.add(Restrictions.eq("roleType", "Advisor"));
-		
+
 
 		allAdvisors = criteria.list();
 
 		session.close();
 		return allAdvisors;
-		
-		
+
+
 	}
-	
+
 	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -309,7 +309,11 @@ public class DBManager {
 		}
 		return allAppointments;
 	}
-	
+
+	public void getSessionAppointments(Integer sessionID){
+		Session session = factory.openSession();
+
+	}
 
 	public List<Object> deleteSessions(String netID, Integer[] sessionIDs){
 		Session session = factory.openSession();
@@ -340,7 +344,39 @@ public class DBManager {
 		}
 		return allSessions;
 	}
-	
+
+	public String cancelSession(Integer sessionID, String cancelReason){
+		String msg = null;
+
+		Session session = factory.openSession();
+		Transaction tx = null;
+
+		try {
+			tx = session.beginTransaction();
+			org.web.beans.Session advSession = session.get(org.web.beans.Session.class, sessionID);
+			advSession.setStatus("CANCELLED");
+			advSession.setComment(cancelReason);
+
+			session.update(advSession);
+			session.flush();
+
+			tx.commit();
+			session.close();
+		} catch (Exception e) {
+			tx.rollback();
+
+			if(session.isOpen())
+				session.close();
+
+			e.printStackTrace();
+
+			msg = "Failed to cancel this session. Try again later.";
+
+		}
+
+		return msg;
+	}
+
 	public String saveAnnouncement(Announcement announ){
 		String msg = null;
 
@@ -359,28 +395,29 @@ public class DBManager {
 			// Other fatal DB error - Needs debugging
 			if(msg == null)
 				msg = "There was some error during registeration. Please try later.";
+
 		}
 
 		return msg;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Object> getAllAnnouncements(String startDate, String endDate, String branch){
 		Session session = factory.openSession();
-		
+
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("users.branch = \"");
 		stringBuilder.append(branch);
 		stringBuilder.append("\" and");
-		
+
 		String sql = session.getNamedQuery("getAllAnnouncements").getQueryString();
-		
+
 		if(branch.equalsIgnoreCase("ALL"))
 			//q.setString("BRANCH_CONDITION","");
 			sql=sql.replace("#BRANCH_CONDITION#", "");
 		else
 			sql=sql.replace("#BRANCH_CONDITION#",stringBuilder.toString());
-		
+
 		SQLQuery q = (SQLQuery) session.createSQLQuery(sql).setString("startDate", startDate).setString("endDate",endDate);
 		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
@@ -389,6 +426,4 @@ public class DBManager {
 		session.close();
 		return allAnnouncements;
 	}
-
-
 }

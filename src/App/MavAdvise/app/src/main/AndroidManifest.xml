@@ -36,7 +36,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.SessionsAddError" />
         <activity android:name=".activities.StartSession" />
-        <activity android:name=".activities.ViewSession"></activity>
+        <activity
+            android:name=".activities.ViewSession"
+            android:label="View Session"/>
+        <activity
+            android:name=".activities.CancelSession"
+            android:label="Cancel Session" />
     </application>
 
 </manifest>

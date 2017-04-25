@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel"/>
+            android:text="Clear"/>
 
         <Button
             android:id="@+id/sessionDeleteBT"
@@ -36,6 +36,7 @@
         android:divider="@color/colorAccent"
         android:dividerHeight="2px"
         android:layout_alignParentTop="true"
+        android:layout_above="@id/sessionsDeleteActions"
         android:choiceMode="multipleChoice"
         android:fastScrollEnabled="false"/>
 </RelativeLayout>

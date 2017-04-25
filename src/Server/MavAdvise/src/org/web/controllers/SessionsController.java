@@ -61,6 +61,20 @@ public class SessionsController{
 		}
 	}
 
+	@RequestMapping(value = "/getSessionAppointments", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getSessionAppointments(@RequestParam("sessionID") Integer sessionID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
 	@RequestMapping(value = "/deleteSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String deleteSession(@RequestParam("netID") String netID,
@@ -70,6 +84,28 @@ public class SessionsController{
 
 		List<Object> sessions = dbmanager.deleteSessions(netID, sessionIDs);
 		r.setResult(sessions);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
+	@RequestMapping(value = "/cancelSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String cancelSession(@RequestParam("sessionID") Integer sessionID,
+			@RequestParam("cancelReason") String cancelReason){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		String msg = dbmanager.cancelSession(sessionID, cancelReason);
+
+		if(msg == null)
+			r.setResult("Session Cancelled");
+		else
+			r.setMessage(msg);
 
 		try {
 			return mapper.writeValueAsString(r);

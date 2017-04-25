@@ -13,50 +13,68 @@
         android:text="Cancel Session"
         android:layout_alignParentBottom="true"/>
 
-    <LinearLayout
-        android:id="@+id/sessionDetailsLL"
+    <RelativeLayout
+        android:id="@+id/sessionDetailsRL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentTop="true">
 
         <TextView
+            android:id="@+id/vsession_header"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Session Details"
+            android:text="20 Apr 2017"
             android:textSize="20sp"
-            android:layout_marginBottom="10dp"/>
+            android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/vsession_time"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date : 14 Jul 2017"
-            android:textSize="18sp"/>
+            android:layout_marginTop="2dp"
+            android:text="2:00pm - 4:00pm"
+            android:layout_below="@id/vsession_header"/>
 
         <TextView
+            android:id="@+id/vsession_location"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Timings : 2:00 PM to 4:00PM"
-            android:textSize="18sp"/>
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:text="ERB 501"
+            android:layout_below="@id/vsession_time"/>
 
         <TextView
+            android:id="@+id/vsession_appointments_ctr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Appointments : 10 / 20"
-            android:textSize="18sp"/>
-
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:text="20"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"/>
 
         <TextView
+            android:id="@+id/vsession_statusTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Location : ERB 501"
-            android:textSize="18sp"/>
-    </LinearLayout>
+            android:layout_below="@id/vsession_appointments_ctr"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBaseline="@id/vsession_time"
+            android:layout_marginRight="10dp"
+            android:textSize="12sp"
+            android:textColor="@color/colorAccent"
+            android:text="SCHEDULED"/>
+    </RelativeLayout>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/sessionCancelBT"
-        android:layout_below="@id/sessionDetailsLL" />
+        android:layout_below="@id/sessionDetailsRL" />
 
 </RelativeLayout>
