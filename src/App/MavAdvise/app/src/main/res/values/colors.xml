@@ -5,4 +5,5 @@
     <color name="colorAccent">#D85C1C</color>
     <color name="colorDone">#008B00</color>
     <color name="colorCancelled">#ea1b26</color>
+    <color name="colorDisabled">#d3d3d3</color>
 </resources>

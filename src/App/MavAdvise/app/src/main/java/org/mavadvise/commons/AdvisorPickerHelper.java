@@ -1,6 +1,7 @@
 package org.mavadvise.commons;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -16,10 +17,20 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.activities.ManageAppointments;
+import org.mavadvise.activities.tabs.AppointmentsAddTab;
+import org.mavadvise.app.AppConfig;
 
 import java.util.Calendar;
+
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by Remesh on 4/21/2017.
@@ -30,16 +41,23 @@ public class AdvisorPickerHelper extends DialogFragment {
     OptionsAdapter optionsAdapter;
     String advisor;
 
-    private JSONArray advisors;
+    private AppConfig appConfig;
+    private DialogFragment mDialog;
+    private ProgressDialogHelper saveDialog;
+
+
+    private JSONArray advisorslist;
     private AdvisorPickerListener advPickerListener;
     private ListView list;
 
     public void setAdvisors(JSONArray advisors) {
-        this.advisors = advisors;
+        this.advisorslist = advisors;
+        //optionsAdapter.notifyDataSetChanged();
+        Log.i("constr",advisorslist.toString());
     }
 
     public interface AdvisorPickerListener {
-        public void onAdvisorPickerFinish(String adv);
+        public void onAdvisorPickerFinish(JSONObject adv);
     }
 
 
@@ -52,6 +70,13 @@ public class AdvisorPickerHelper extends DialogFragment {
         getDialog().setTitle("Select Advisor");
         Log.i("me3","Clicked3");
 
+        if(advisorslist != null) {
+            Log.i("no1", "not null 1");
+        }else
+            Log.i("no2","it is null");
+
+        //setAdvisorlist();
+
         list = (ListView) rootView.findViewById(R.id.advisorlist);
 
         optionsAdapter = new OptionsAdapter();
@@ -59,21 +84,21 @@ public class AdvisorPickerHelper extends DialogFragment {
 
         setUpAdvisorListener();
 
-        Button saveButton = (Button) rootView.findViewById(R.id.advSelectBT);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                 onAdvisorPickerFinish(advisor);
-            }
-        });
-
-        Button cancelButton = (Button) rootView.findViewById(R.id.advCancelBT);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDialog().dismiss();
-            }
-        });
+//        Button saveButton = (Button) rootView.findViewById(R.id.advSelectBT);
+//        saveButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View arg0) {
+//                 onAdvisorPickerFinish(advisor);
+//            }
+//        });
+//
+//        Button cancelButton = (Button) rootView.findViewById(R.id.advCancelBT);
+//        cancelButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getDialog().dismiss();
+//            }
+//        });
 
 
         return rootView;
@@ -87,8 +112,12 @@ public class AdvisorPickerHelper extends DialogFragment {
                 JSONObject obj = null;
                 try{
 
-                    obj = advisors.getJSONObject(position);
-                    advisor = obj.getString("firstname") + " " + obj.getString("lastname");
+                    obj = advisorslist.getJSONObject(position);
+                    Log.i("pos",Integer.toString(position));
+                    Log.i("Here", obj.getString("firstName"));
+
+                   // advisor = obj.getString("firstName") + " " + obj.getString("lastName");
+                    onAdvisorPickerFinish(obj);
                     
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
@@ -103,11 +132,79 @@ public class AdvisorPickerHelper extends DialogFragment {
         Log.i("me4","Clicked4");
     }
 
-    private void onAdvisorPickerFinish(String adv){
+    private void onAdvisorPickerFinish(JSONObject adv){
         Log.i("me5","Clicked5");
         advPickerListener.onAdvisorPickerFinish(adv);
         getDialog().dismiss();
     }
+
+//    private void setAdvisorlist() {
+//        new AdvisorsData().execute();
+//    }
+//
+//    private class AdvisorsData extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//
+//            try {
+//                //Thread.sleep(500);
+//            } catch (Exception e) {
+//            }
+//
+//            try {
+//                OkHttpClient client = new OkHttpClient();
+//
+//                HttpUrl url = new HttpUrl.Builder()
+//                        .scheme("http")
+//                        .host(appConfig.getHostName())
+//                        .port(appConfig.getPort())
+//                        .addPathSegment("MavAdvise")
+//                        .addPathSegment("getAdvisors")
+//                        .build();
+//
+//                RequestBody formBody = new FormBody.Builder()
+//                        .add("branch", appConfig.getUser().getDepartment())
+//                        .build();
+//
+//                Request request = new Request.Builder()
+//                        .url(url)
+//                        //.addHeader("Cookie",sessionId)
+//                        .post(formBody)
+//                        .build();
+//
+//                Response response = client.newCall(request).execute();
+//
+//                return response.body().string();
+//            } catch (Exception e) {
+//                Log.e("HTTP Error", e.getMessage());
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            try {
+//                if (result != null) {
+//                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
+//                    advisors = obj.getJSONArray("result");
+//                    if (advisors != null) {
+//                        Log.i("no", "not null");
+//                    }
+//                    Log.i("In", "In post execute");
+//                    Log.i("jso", obj.getString("result"));
+//
+//                } else {
+//                    Toast.makeText(getContext(),
+//                            "Error retrieving the sessions.", Toast.LENGTH_LONG).show();
+//                }
+//            } catch (Exception e) {
+//                Log.e("JSON Parse", e.getMessage());
+//            }
+//            //           mDialog.dismiss();
+//        }
+//    }
 
     public class OptionsAdapter extends BaseAdapter {
 
@@ -115,7 +212,7 @@ public class AdvisorPickerHelper extends DialogFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View row = convertView;
-            Log.i("me6","Clicked6");
+            Log.i("me8","Clicked8");
             if (row == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.list_advisor_select, parent, false);
@@ -123,12 +220,20 @@ public class AdvisorPickerHelper extends DialogFragment {
 
             TextView adv = (TextView) row.findViewById(R.id.advisorTV);
 
+           //Log.i("nlst",);
+
+            adv.setText("Advisors");
             JSONObject obj = null;
 
+            Log.i("me9","Clicked9");
+
             try {
-                obj = advisors.getJSONObject(position);
-                adv.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
-                advisor = obj.getString("firstname");
+                obj = advisorslist.getJSONObject(position);
+                Log.i("lst",obj.toString());
+                Log.i("pos",Integer.toString(position));
+                Log.i("Here", obj.getString("firstName"));
+                adv.setText(obj.getString("firstName") + " " + obj.getString("lastName"));
+                advisor = obj.getString("firstName");
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
             }
@@ -139,7 +244,8 @@ public class AdvisorPickerHelper extends DialogFragment {
         }
 
         public int getCount() {
-            return advisors != null ? advisors.length() : 0;
+            Log.i("posi",""+advisorslist.length());
+            return advisorslist != null ? advisorslist.length() : 0;
         }
 
         public Object getItem(int arg0) {

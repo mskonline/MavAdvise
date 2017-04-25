@@ -64,7 +64,7 @@ public class AppointmentsDeleteTab extends Fragment {
 
     public void refreshContent(JSONArray appointments){
         this.appointments = appointments;
-        //optionsAdapter.notifyDataSetChanged();
+        optionsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -74,8 +74,8 @@ public class AppointmentsDeleteTab extends Fragment {
 
         sColor = ResourcesCompat.getColor(getResources(), R.color.colorAccent, null);
         deleteAppointmentsList = (ListView) rootView.findViewById(R.id.appsDeletelist);
-        deleteButton = (Button) rootView.findViewById(R.id.sessionDeleteBT);
-        cancelButton = (Button) rootView.findViewById(R.id.sessionCancelDeleteBT);
+        //deleteButton = (Button) rootView.findViewById(R.id.sessionDeleteBT);
+        cancelButton = (Button) rootView.findViewById(R.id.appCancelBT);
 
         optionsAdapter = new OptionsAdaptor();
         deleteAppointmentsList.setAdapter(optionsAdapter);
@@ -130,30 +130,34 @@ public class AppointmentsDeleteTab extends Fragment {
             }
         });
 
+//        cancelButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                selectedAppointments.clear();
+//               // deleteButton.setText("Delete");
+//                deleteDialog = ProgressDialogHelper.newInstance();
+////                                    deleteDialog.setMsg("Deleting...");
+////                                    deleteDialog.show(getFragmentManager(), "Delete");
+//                                    new DeleteAppointments().execute();
+//
+//                deleteAppointmentsList.clearChoices();
+//                deleteAppointmentsList.requestLayout();
+//            }
+//        });
+
         cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedAppointments.clear();
-                deleteButton.setText("Delete");
-
-                deleteAppointmentsList.clearChoices();
-                deleteAppointmentsList.requestLayout();
-            }
-        });
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(selectedAppointments.size() != 0){
                     int count = selectedAppointments.size();
-                    String msg = "Do you want to delete " + count + " session(s)?";
+                    String msg = "Do you want to cancel " + count + " Appointment(s)?";
 
                     alertDialog = AlertDialogHelper.newInstance(msg,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     deleteDialog = ProgressDialogHelper.newInstance();
-                                    deleteDialog.setMsg("Deleting...");
+                                    deleteDialog.setMsg("Cancelling...");
                                     deleteDialog.show(getFragmentManager(), "Delete");
                                     new DeleteAppointments().execute();
                                 }
@@ -182,9 +186,106 @@ public class AppointmentsDeleteTab extends Fragment {
         @Override
         protected String doInBackground(Void... params) {
 
+            try {
+                Thread.sleep(500);
+            } catch (Exception e) {
+                Log.e("DeleteAppointments", "Thread exception");
+            }
+
+            StringBuilder appIDsBuilder = new StringBuilder();
+            JSONObject obj = null;
+
+            for(int i : selectedAppointments){
+                try {
+                    obj = appointments.getJSONObject(i);
+                    appIDsBuilder.append(obj.getString("appointment_id") + ",");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            String appIDs = appIDsBuilder.toString();
+            appIDs = appIDs.replaceAll(",$", "");
+
+            Log.i("AppointmentsDeleteTab",appIDs);
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                HttpUrl url = new HttpUrl.Builder()
+                        .scheme("http")
+                        .host(appConfig.getHostName())
+                        .port(appConfig.getPort())
+                        .addPathSegment("MavAdvise")
+                        .addPathSegment("deleteAppointments")
+                        .build();
+
+                User user = appConfig.getUser();
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("netID", user.getNetID())
+                        .add("appIDs",appIDs)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .post(formBody)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+
+                return response.body().string();
+            } catch (Exception e){
+                Log.e("HTTP Error", e.getMessage());
+            }
+
             return null;
         }
+
+        @Override
+        protected void onPostExecute(String result) {
+            deleteDialog.dismiss();
+
+            try {
+                Thread.sleep(500);
+            } catch (Exception e){
+                Log.e("AddApps", "Thread exception");
+            }
+
+            if(result != null) {
+                try {
+                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
+                    String resultStr = obj.getString("type");
+
+                    if(resultStr.equalsIgnoreCase("success")){
+                        Toast.makeText(getContext(), "Appointment(s) deleted",
+                                Toast.LENGTH_LONG).show();
+
+                        appointments = obj.getJSONArray("result");
+                        ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
+
+                        resetForm();
+                    } else {
+                        String msg = obj.getString("message");
+
+                        Toast.makeText(getContext(), msg,
+                                Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    Log.e("AddSessions.onPostExec", e.getMessage());
+                }
+            }
+
         }
+    }
+
+    private void resetForm(){
+        selectedAppointments.clear();
+        deleteButton.setText("Delete");
+
+        deleteAppointmentsList.clearChoices();
+        deleteAppointmentsList.requestLayout();
+    }
 
     public class OptionsAdaptor extends BaseAdapter {
 
@@ -207,12 +308,39 @@ public class AppointmentsDeleteTab extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View row = convertView;
-            
+
+            if (row == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                row = inflater.inflate(R.layout.list_appointments_item, parent, false);
+            }
+
+            TextView aHeader, aDate, aTime;
+
+            aHeader = (TextView) row.findViewById(R.id.appmnt_header);
+            aTime = (TextView) row.findViewById(R.id.appmnt_time);
+            aDate = (TextView) row.findViewById(R.id.appmnt_date);
+
+            JSONObject obj = null;
+
+            try {
+                obj = appointments.getJSONObject(position);
+                aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
+                Log.i("jso", obj.getString("firstname"));
+                aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
+                aDate.setText(obj.getString("date"));
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
+            }
+
+
             return row;
         }
     }
 
-
-
-
 }
+
+
+
+
+
+

@@ -67,11 +67,16 @@ public class ManageAppointments extends AppCompatActivity {
         if(!mDialog.isAdded())
             mDialog.show(getSupportFragmentManager(), "Loading");
 
-        refreshSessionsData();
+        new AppointmentsData().execute();
     }
 
-    private void refreshSessionsData(){
-        new ManageAppointments.AppointmentsData().execute();
+    public void refreshAppointmentsData(JSONArray appointments){
+
+       // new AppointmentsData().execute();
+
+        this.appointments = appointments;
+        appointmentsViewTab.refreshContent(this.appointments);
+        appointmentsDeleteTab.refreshContent(this.appointments);
     }
 
     private class AppointmentsData extends AsyncTask<String, Void , String> {
