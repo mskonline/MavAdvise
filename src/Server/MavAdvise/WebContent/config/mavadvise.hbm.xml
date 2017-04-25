@@ -59,7 +59,7 @@
 			FROM sessions
 			WHERE sessions.net_id = :netID
 			ORDER BY sessions.date ASC]]>
-    </sql-query>
+	</sql-query>
 
 	<sql-query name="getAllAppointments">
 		<![CDATA[Select users.firstname, users.lastname, sessions.session_id,
@@ -72,9 +72,9 @@
                  join users on users.net_id=sessions.net_id
                  where appointments.net_id= :netID
                  ORDER BY appointments.session_id ASC]]>
-    </sql-query>
+	</sql-query>
 
-    <sql-query name="getAllAnnouncements">
+	<sql-query name="getAllAnnouncements">
 		<![CDATA[SELECT
 		announcements.announcement_id as announcementId,
 		announcements.net_id as netId,
@@ -88,7 +88,5 @@
 		announcements.net_id=users.net_id
 		AND announcements.date BETWEEN :startDate AND :endDate
 		ORDER BY announcements.priority DESC,announcements.date DESC, users.lastname ASC ;]]>
-    </sql-query>
-
-
+	</sql-query>
 </hibernate-mapping>
