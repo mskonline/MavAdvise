@@ -73,6 +73,18 @@
                  where appointments.net_id= :netID
                  ORDER BY appointments.session_id ASC]]>
 	</sql-query>
+	
+	<sql-query name="getDateSessions">
+		<![CDATA[Select sessions.session_id,
+		         DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
+			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
+			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime
+                 from sessions
+                 where sessions.net_id= :netID
+                 and sessions.status = "SCHEDULED"
+                 and sessions.slot_counter < sessions.no_of_slots
+                 ORDER BY sessions.date ASC]]>
+	</sql-query>
 
 	<sql-query name="getAllAnnouncements">
 		<![CDATA[SELECT

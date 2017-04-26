@@ -38,6 +38,7 @@ package org.mavadvise.activities.tabs;
         import org.mavadvise.app.AppConfig;
         import org.mavadvise.app.MavAdvise;
         import org.mavadvise.commons.AdvisorPickerHelper;
+        import org.mavadvise.commons.DateListPickerHelper;
         import org.mavadvise.commons.DatePickerHelper;
         import org.mavadvise.commons.ProgressDialogHelper;
         import org.mavadvise.commons.TimePickerHelper;
@@ -60,7 +61,7 @@ public class AppointmentsAddTab extends Fragment {
     String netid;
     Button dateBtn;
 
-    private JSONArray appointments, advisors;
+    private JSONArray appointments, advisors, sessions;
     private RelativeLayout repeatRL;
     TextView dateTV;
 
@@ -120,16 +121,22 @@ public class AppointmentsAddTab extends Fragment {
                     dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
                 }
 
-                datePickerHelper.setOnSumbitListener(new DatePickerHelper.DatePickerListener() {
+                FragmentManager fmDate = getFragmentManager();
+                DateListPickerHelper datePicker = new DateListPickerHelper();
+                if(sessions != null) {
+                    datePicker.setSessionDates(sessions);
+                }
+
+                datePicker.setOnClickListener(new DateListPickerHelper.DateListPickerListener() {
                     @Override
-                    public void onDatePickerFinish(Calendar date) {
-                        appDate = date;
-                        String d = DateFormat.format("MM/dd/yyyy", date.getTimeInMillis()).toString();
+                    public void onDatePickerFinish(JSONObject sess) {
+
+                        String d = sess.getString("startdate");
                         dateTV.setText(d);
                     }
                 });
 
-                datePickerHelper.show(fm, "DatePick");
+                datePicker.show(fm, "DatePick");
             }
         });
 
@@ -167,6 +174,9 @@ public class AppointmentsAddTab extends Fragment {
                                 dateBtn.setEnabled(false);
                                 dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
                             }
+
+                            setDateList();
+
 
                         }catch(JSONException e){
 
@@ -248,6 +258,75 @@ public class AppointmentsAddTab extends Fragment {
                 Log.e("JSON Parse", e.getMessage());
             }
  //           mDialog.dismiss();
+        }
+    }
+
+
+    private void setDateList() {
+        new AppointmentsAddTab.DateData().execute();
+    }
+
+    private class DateData extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                //Thread.sleep(500);
+            } catch (Exception e) {
+            }
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                HttpUrl url = new HttpUrl.Builder()
+                        .scheme("http")
+                        .host(appConfig.getHostName())
+                        .port(appConfig.getPort())
+                        .addPathSegment("MavAdvise")
+                        .addPathSegment("getSessionDates")
+                        .build();
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("branch", netid)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        //.addHeader("Cookie",sessionId)
+                        .post(formBody)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+
+                return response.body().string();
+            } catch (Exception e) {
+                Log.e("HTTP Error", e.getMessage());
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                if (result != null) {
+                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
+                    sessions = obj.getJSONArray("result");
+                    if (sessions != null) {
+                        Log.i("no", "not null");
+                    }
+                    Log.i("In", "In post execute");
+                    Log.i("jso", obj.getString("result"));
+
+                } else {
+                    Toast.makeText(getContext(),
+                            "Error retrieving the sessions.", Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                Log.e("JSON Parse", e.getMessage());
+            }
+            //           mDialog.dismiss();
         }
     }
 

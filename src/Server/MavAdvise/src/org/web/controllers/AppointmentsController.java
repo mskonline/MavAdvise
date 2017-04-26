@@ -66,7 +66,7 @@ public class AppointmentsController {
 	
 	@RequestMapping(value = "/deleteAppointments", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String deleteSession(@RequestParam("netID") String netID,
+	public String deleteAppointments(@RequestParam("netID") String netID,
 			@RequestParam("appointmentID") Integer[] appointmentID){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
@@ -82,6 +82,24 @@ public class AppointmentsController {
 		}
 	}
 
+	
+	@RequestMapping(value = "/getSessionDates", method = {RequestMethod.GET, RequestMethod.POST})
+	@ResponseBody
+	public String getSessionDates(@RequestParam("netID") String netID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		List<Object> sessions = dbmanager.getSessionDates(netID);
+
+		r.setResult(sessions);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
 
 //	private boolean checkSessionTimeCollisions(SessionInfo newSessionInfo){
 //		boolean collisionFound = false;

@@ -279,6 +279,22 @@ public class DBManager {
 
 
 	}
+	
+	
+	public List<Object> getSessionDates(String netID){
+		Session session = factory.openSession();
+
+		System.out.println("Inside Dates");
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getDateSessions").setString("netID", netID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		System.out.println("Inside Dates1");
+		List<Object> allSessions = q.list();
+
+		session.close();
+		return allSessions;
+	}
+	
 
 	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
 		Session session = factory.openSession();
@@ -288,7 +304,7 @@ public class DBManager {
 		try {
 			tx = session.beginTransaction();
 
-			Query q =  session.createQuery("delete Session where netID = :netID and appointmentID in (:appointmentIDs)");
+			Query q =  session.createQuery("update Appointment set status = \"CANCELLED\" where netID = :netID and appointmentID in (:appointmentIDs)");
 			q.setParameter("netID", netID);
 			q.setParameterList("appointmentIDs", appointmentIDs);
 
@@ -310,11 +326,7 @@ public class DBManager {
 		return allAppointments;
 	}
 
-	public void getSessionAppointments(Integer sessionID){
-		Session session = factory.openSession();
-
-	}
-
+	
 	public List<Object> deleteSessions(String netID, Integer[] sessionIDs){
 		Session session = factory.openSession();
 		Transaction tx = null;
