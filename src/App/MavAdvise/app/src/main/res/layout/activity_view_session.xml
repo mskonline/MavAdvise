@@ -71,10 +71,26 @@
             android:text="SCHEDULED"/>
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/appointmentsLV_label"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Appointments"
+        android:background="@color/colorPrimary"
+        android:textColor="#FFF"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@id/sessionDetailsRL"/>
+
     <ListView
+        android:id="@+id/sessionApptsLV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/sessionCancelBT"
-        android:layout_below="@id/sessionDetailsRL" />
+        android:layout_below="@id/appointmentsLV_label"
+        android:divider="@color/colorAccent"
+        android:dividerHeight="2px"/>
 
 </RelativeLayout>

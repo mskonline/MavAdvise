@@ -13,11 +13,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.URLResourceHelper;
 import org.mavadvise.commons.Utils;
 import org.mavadvise.data.User;
 
@@ -83,8 +85,58 @@ public class Login extends AppCompatActivity {
 
         saveDialog = Login.ProgressDialogFragment.newInstance();
         saveDialog.show(getFragmentManager(), "Login");
-        new LoginUser().execute();
+        //new LoginUser().execute();
+        doLogin();
+    }
 
+    private void doLogin(){
+        password = Utils.hashString(password);
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", userName)
+                .add("password", password)
+                .build();
+
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("login", formBody, new URLResourceHelper.onFinishListener() {
+                    @Override
+                    public void onFinishSuccess(JSONObject obj) {
+                        saveDialog.dismiss();
+                        try {
+                            JSONObject resObj = obj.getJSONObject("result");
+
+                            String resFirst = resObj.getString("firstName");
+                            String resLast = resObj.getString("lastName");
+                            String resEmail = resObj.getString("email");
+                            String resRole = resObj.getString("roleType");
+                            String resNet = resObj.getString("netID");
+                            String resUta = resObj.getString("utaID");
+                            String resBranch = resObj.getString("branch");
+
+                            User user = appConfig.getUser();
+                            user.setFirstName(resFirst);
+                            user.setLastName(resLast);
+                            user.setEmail(resEmail);
+                            user.setDepartment(resBranch);
+                            user.setNetID(resNet);
+                            user.setUtaID(resUta);
+                            user.setRoleType(resRole);
+
+                            navigateToDashboard();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFinishFailed(String msg) {
+                        saveDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), msg,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        urlResourceHelper.execute();
     }
 
     private void navigateToDashboard(){

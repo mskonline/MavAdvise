@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.activities.ManageSessions;
 import org.mavadvise.activities.SessionsAddError;
@@ -32,15 +30,12 @@ import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.DatePickerHelper;
 import org.mavadvise.commons.ProgressDialogHelper;
 import org.mavadvise.commons.TimePickerHelper;
+import org.mavadvise.commons.URLResourceHelper;
 import org.mavadvise.commons.Utils;
 import org.mavadvise.data.User;
 
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by SaiKumar on 4/7/2017.
@@ -51,6 +46,7 @@ public class SessionsAddTab extends Fragment {
     private String startTime = "09:00:00",
                      endTime = "11:00:00",
                    noOfSlots = "",
+                    location = "",
                    frequency = "0000000";
 
     private Calendar startDate = Calendar.getInstance();
@@ -233,7 +229,6 @@ public class SessionsAddTab extends Fragment {
     private void validateAndSubmit() {
         Calendar today = Calendar.getInstance();
         if(Utils.isSameDay(startDate, today)){
-            Log.i("validateAndSubmit", "dates are equal");
             int hrs = today.get(Calendar.HOUR_OF_DAY);
 
             if(sHrs < hrs){
@@ -314,116 +309,88 @@ public class SessionsAddTab extends Fragment {
             return;
         }
 
-        saveDialog = ProgressDialogHelper.newInstance();
-        saveDialog.show(getFragmentManager(), "Saving");
-        new AddSessions().execute();
-    }
+        EditText locationET = (EditText) thisView.findViewById(R.id.locationET);
+        location = locationET.getText().toString().trim();
 
-    private class AddSessions extends AsyncTask<Void, Void , String> {
-
-        @Override
-        protected String doInBackground(Void... params){
-
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("AddSessions", "Thread exception");
-            }
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("addSessions")
-                        .build();
-
-                String stDate = DateFormat.format("yyyy-MM-dd", startDate.getTimeInMillis()).toString();
-                String edDate = DateFormat.format("yyyy-MM-dd", endDate.getTimeInMillis()).toString();
-
-                User user = appConfig.getUser();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("netID", user.getNetID())
-                        .add("startDate", stDate)
-                        .add("endDate", edDate)
-                        .add("startTime", startTime)
-                        .add("endTime", endTime)
-                        .add("noOfSlots", noOfSlots)
-                        .add("frequency", frequency)
-                        .add("status", "SCHEDULED")
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-                String result = response.body().string();
-                return result;
-            } catch (Exception e){
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
+        if(location.length() == 0){
+            Toast.makeText(getContext(),
+                    AppConfig.SESSIONS_LOCATION_VALIDATION_ERR,
+                    Toast.LENGTH_LONG).show();
+            return;
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            saveDialog.dismiss();
+        postSessionData();
+    }
 
-            try {
-                Thread.sleep(500);
-            } catch (Exception e){
-                Log.e("AddSessions", "Thread exception");
-            }
+    private void postSessionData(){
+        saveDialog = ProgressDialogHelper.newInstance();
+        saveDialog.show(getFragmentManager(), "Saving");
 
-            if(result != null) {
-                try {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("type");
+        String stDate = DateFormat.format("yyyy-MM-dd", startDate.getTimeInMillis()).toString();
+        String edDate = DateFormat.format("yyyy-MM-dd", endDate.getTimeInMillis()).toString();
 
-                    if(resultStr.equalsIgnoreCase("success")){
-                        JSONObject res = obj.getJSONObject("result");
-                        sessions = res.getJSONArray("allSessions");
+        User user = appConfig.getUser();
 
-                        JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", user.getNetID())
+                .add("startDate", stDate)
+                .add("endDate", edDate)
+                .add("startTime", startTime)
+                .add("endTime", endTime)
+                .add("noOfSlots", noOfSlots)
+                .add("frequency", frequency)
+                .add("location", location)
+                .add("status", "SCHEDULED")
+                .build();
 
-                        ((ManageSessions) getActivity()).refreshSessionsData(sessions);
-                        ((ManageSessions) getActivity()).showViewTab();
+        URLResourceHelper urlResourceHelper =
+            new URLResourceHelper("addSessions", formBody,
+                new URLResourceHelper.onFinishListener() {
+                    @Override
+                    public void onFinishSuccess(JSONObject obj) {
+                        saveDialog.dismiss();
 
                         try {
-                            Thread.sleep(500);
+                            JSONObject res = obj.getJSONObject("result");
+                            sessions = res.getJSONArray("allSessions");
+
+                            JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
+
+                            ((ManageSessions) getActivity()).refreshSessionsData(sessions);
+                            ((ManageSessions) getActivity()).showViewTab();
+
+                            try {
+                                Thread.sleep(500);
+                            } catch (Exception e){
+                                Log.e("AddSessions", "Thread exception");
+                            }
+
+                            if(conflictingSessions.length() > 0)
+                            {
+                                appConfig.setConflictingSessions(conflictingSessions);
+                                Intent i = new Intent(getActivity(), SessionsAddError.class);
+                                startActivity(i);
+                            } else {
+                                Toast.makeText(getContext(), AppConfig.SESSIONS_ADD_SUCCESS,
+                                        Toast.LENGTH_LONG).show();
+                            }
+
+                            resetForm();
                         } catch (Exception e){
-                            Log.e("AddSessions", "Thread exception");
                         }
+                    }
 
-                        if(conflictingSessions.length() > 0)
-                        {
-                            appConfig.setConflictingSessions(conflictingSessions);
-                            Intent i = new Intent(getActivity(), SessionsAddError.class);
-                            startActivity(i);
-                        } else {
-                            Toast.makeText(getContext(), AppConfig.SESSIONS_ADD_SUCCESS,
-                                    Toast.LENGTH_LONG).show();
-                        }
+                    @Override
+                    public void onFinishFailed(String msg) {
+                        saveDialog.dismiss();
 
-                        resetForm();
-                    } else {
-                        String msg = obj.getString("message");
                         Toast.makeText(getContext(), msg,
                                 Toast.LENGTH_LONG).show();
                     }
-                } catch (Exception e) {
-                    Log.e("AddSessions.onPostExec", e.getMessage());
-                }
-            }
+                });
 
-        }
+        urlResourceHelper.execute();
+
     }
 
     private void resetForm(){

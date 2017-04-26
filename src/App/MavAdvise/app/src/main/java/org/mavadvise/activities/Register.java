@@ -17,11 +17,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.content.Intent;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.URLResourceHelper;
 import org.mavadvise.commons.Utils;
 
 import okhttp3.FormBody;
@@ -140,9 +142,7 @@ public class Register extends AppCompatActivity {
         netID = netID.toLowerCase();
 
         //Register
-        saveDialog =  ProgressDialogFragment.newInstance();
-        saveDialog.show(getFragmentManager(), "Saving...");
-        new RegisterUser().execute();
+        registerUser();
     }
 
     private void navigateToLogin(){
@@ -152,87 +152,44 @@ public class Register extends AppCompatActivity {
         finish();
     }
 
-    private class RegisterUser extends AsyncTask<Void, Void , String> {
+    private void registerUser(){
+        saveDialog =  ProgressDialogFragment.newInstance();
+        saveDialog.show(getFragmentManager(), "Saving...");
 
-        @Override
-        protected String doInBackground(Void... params){
+        password = Utils.hashString(password);
 
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("Register", "Thread exception");
-            }
+        RequestBody formBody = new FormBody.Builder()
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .add("email", email)
+                .add("utaID", utaID)
+                .add("netID", netID)
+                .add("branch", branch)
+                .add("roleType", role)
+                .add("password", password)
+                .add("securityQuestionID", "" + securityQuestionID)
+                .add("securityAnswer", securityAnswer)
+                .build();
 
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("register")
-                        .build();
-
-                password = Utils.hashString(password);
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("firstName", firstName)
-                        .add("lastName", lastName)
-                        .add("email", email)
-                        .add("utaID", utaID)
-                        .add("netID", netID)
-                        .add("branch", branch)
-                        .add("roleType", role)
-                        .add("password", password)
-                        .add("securityQuestionID", "" + securityQuestionID)
-                        .add("securityAnswer", securityAnswer)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e){
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            saveDialog.dismiss();
-
-            try {
-                Thread.sleep(500);
-            } catch (Exception e){
-                Log.e("Register", "Thread exception");
-            }
-
-            if(result != null) {
-                try {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("type");
-
-                    if(resultStr.equalsIgnoreCase("success")){
+        URLResourceHelper urlResourceHelper =
+            new URLResourceHelper("register", formBody,
+                new URLResourceHelper.onFinishListener() {
+                    @Override
+                    public void onFinishSuccess(JSONObject obj) {
+                        saveDialog.dismiss();
                         DialogFragment mDialog = AlertDialogFragment.newInstance();
                         mDialog.show(getFragmentManager(), "Info");
-                    } else {
-                        String msg = obj.getString("message");
-                        Toast.makeText(getApplicationContext(), msg,
-                                Toast.LENGTH_SHORT).show();
                     }
-                } catch (Exception e) {
-                    Log.e("JSON Parse", e.getMessage());
-                }
-            }
 
-        }
+                    @Override
+                    public void onFinishFailed(String msg) {
+                        saveDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), msg,
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        urlResourceHelper.execute();
     }
 
     public static class AlertDialogFragment extends DialogFragment {

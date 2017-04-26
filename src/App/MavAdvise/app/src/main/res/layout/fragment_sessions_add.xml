@@ -218,9 +218,19 @@
                 android:inputType="numberSigned"
                 android:hint="Slots"/>
 
+
+            <EditText
+                android:id="@+id/locationET"
+                android:layout_below="@id/slotsET"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:inputType="text"
+                android:hint="Location"/>
+
             <Button
                 android:id="@+id/addSessionsBT"
-                android:layout_below="@id/slotsET"
+                android:layout_below="@id/locationET"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"

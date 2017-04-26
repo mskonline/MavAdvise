@@ -5,22 +5,36 @@ import android.content.Intent;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mavadvise.R;
+import org.mavadvise.commons.ProgressDialogHelper;
+import org.mavadvise.commons.URLResourceHelper;
 
-import java.text.SimpleDateFormat;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+
 
 public class ViewSession extends AppCompatActivity {
-
-    private SimpleDateFormat fromDateFormat, toDateFormat;
-    private SimpleDateFormat fromTimeFormat, toTimeFormat;
 
     private int cColor, dColor;
     private TextView sStatus;
     private Button cancelSessionBtn;
+
+    private int sessionID;
+    private ProgressDialogHelper apptsDialog;
+
+    private JSONArray appointments;
+    private AppointmentsAdapter appointmentsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +54,7 @@ public class ViewSession extends AppCompatActivity {
         sLocation = (TextView) findViewById(R.id.vsession_location);
         cancelSessionBtn = (Button) findViewById(R.id.sessionCancelBT);
 
+        sessionID = extras.getInt("sessionID");
         String date = extras.getString("date");
         sHeader.setText(date);
 
@@ -53,11 +68,11 @@ public class ViewSession extends AppCompatActivity {
 
         String status = extras.getString("status");
         // Done
-        if(status.startsWith("D"))
+        if (status.startsWith("D"))
             sStatus.setTextColor(dColor);
 
         // Cancelled
-        if(status.startsWith("C")){
+        if (status.startsWith("C")) {
             sStatus.setTextColor(cColor);
             cancelSessionBtn.setVisibility(View.GONE);
         } else {
@@ -66,12 +81,18 @@ public class ViewSession extends AppCompatActivity {
                 public void onClick(View view) {
                     Intent i = new Intent(ViewSession.this, CancelSession.class);
                     i.putExtra("sessionID", extras.getInt("sessionID"));
-                    startActivityForResult(i,1);
+                    startActivityForResult(i, 1);
                 }
             });
         }
 
         sStatus.setText(status);
+
+        ListView apptsView = (ListView) findViewById(R.id.sessionApptsLV);
+        appointmentsAdapter = new AppointmentsAdapter();
+        apptsView.setAdapter(appointmentsAdapter);
+
+        getAppointments();
     }
 
     @Override
@@ -88,6 +109,81 @@ public class ViewSession extends AppCompatActivity {
             }
             if (resultCode == Activity.RESULT_CANCELED) {
             }
+        }
+    }
+
+    private void getAppointments(){
+        apptsDialog = ProgressDialogHelper.newInstance();
+        apptsDialog.setMsg("Fetching appointments...");
+        apptsDialog.show(getSupportFragmentManager(),"appointments");
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("sessionID", "" + sessionID)
+                .build();
+
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("getSessionAppointments", formBody,
+                    new URLResourceHelper.onFinishListener() {
+                        @Override
+                        public void onFinishSuccess(JSONObject obj) {
+                            apptsDialog.dismiss();
+                            try {
+                                appointments = obj.getJSONArray("result");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            appointmentsAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFinishFailed(String msg) {
+                            apptsDialog.dismiss();
+                        }
+                    });
+
+        urlResourceHelper.execute();
+    }
+
+    public class AppointmentsAdapter extends BaseAdapter {
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+
+            if(row == null){
+                LayoutInflater inflater = getLayoutInflater();
+                row = inflater.inflate(R.layout.list_session_appointments_item, parent, false);
+            }
+
+            try {
+                JSONObject obj = appointments.getJSONObject(position);
+
+                TextView apptName, apptSlotNumber;
+
+                apptName = (TextView) row.findViewById(R.id.session_apptnameTV);
+                apptSlotNumber = (TextView) row.findViewById(R.id.session_appntslotTV);
+
+                apptName.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
+                apptSlotNumber.setText(obj.getString("slot_number"));
+            } catch (Exception e){
+
+            }
+
+            return row;
+        }
+
+        public AppointmentsAdapter(){}
+
+        public int getCount() {
+            return appointments != null ? appointments.length() : 0;
+        }
+
+        public Object getItem(int arg0) {
+            return null;
+        }
+
+        public long getItemId(int position) {
+            return position;
         }
     }
 }
