@@ -4,6 +4,7 @@ package org.mavadvise.activities.tabs;
  * Created by Remesh on 4/12/2017.
  */
 
+        import java.io.IOException;
         import java.text.SimpleDateFormat;
         import java.util.Calendar;
         import java.util.Date;
@@ -24,11 +25,12 @@ package org.mavadvise.activities.tabs;
         import android.widget.CheckBox;
         import android.widget.EditText;
         import android.widget.ListView;
-        import android.widget.RelativeLayout;;
+        import android.widget.RelativeLayout;
         import android.widget.TextView;
         import android.widget.Toast;
 
         import org.json.JSONArray;
+        import org.json.JSONException;
         import org.json.JSONObject;
         import org.json.JSONTokener;
         import org.mavadvise.R;
@@ -55,6 +57,8 @@ public class AppointmentsAddTab extends Fragment {
     private AppConfig appConfig;
     private DialogFragment mDialog;
     private ProgressDialogHelper saveDialog;
+    String netid;
+    Button dateBtn;
 
     private JSONArray appointments, advisors;
     private RelativeLayout repeatRL;
@@ -93,17 +97,28 @@ public class AppointmentsAddTab extends Fragment {
         appDate = Calendar.getInstance();
         dateTV.setText(DateFormat.format("MM/dd/yyyy", appDate.getTimeInMillis()).toString());
 
-        Button dateBtn = (Button) view.findViewById(R.id.ChangeDateBT);
+        dateBtn = (Button) view.findViewById(R.id.ChangeDateBT);
         Button advBtn = (Button) view.findViewById(R.id.SelectAdvBT);
 
-        repeatRL = (RelativeLayout) view.findViewById(R.id.appAddRL);
+        netid=null;
+        dateBtn.setEnabled(false);
+        dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
 
+
+        repeatRL = (RelativeLayout) view.findViewById(R.id.appAddRL);
+        setAdvisorlist();
 
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 FragmentManager fm = getFragmentManager();
                 DatePickerHelper datePickerHelper = new DatePickerHelper();
+
+                if(netid==null){
+
+                    dateBtn.setEnabled(false);
+                    dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+                }
 
                 datePickerHelper.setOnSumbitListener(new DatePickerHelper.DatePickerListener() {
                     @Override
@@ -118,27 +133,53 @@ public class AppointmentsAddTab extends Fragment {
             }
         });
 
+
+
         advBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 Log.i("me", "Clicked");
-                setAdvisorlist();
+
                 FragmentManager fm = getFragmentManager();
                 AdvisorPickerHelper advisorPicker = new AdvisorPickerHelper();
-                advisorPicker.setAdvisors(advisors);
+                if(advisors != null) {
+                    Log.i("no", "not null");
+                    advisorPicker.setAdvisors(advisors);
+                }
+
                 Log.i("me6", "Clicked6");
+                advisorPicker.show(fm, "AdvisorPick");
 
                 advisorPicker.setOnSelectListener(new AdvisorPickerHelper.AdvisorPickerListener() {
                     @Override
-                    public void onAdvisorPickerFinish(String adv) {
+                    public void onAdvisorPickerFinish(JSONObject adv) {
                         Log.i("me1", "Clicked1");
-                        advTV.setText(adv);
+                        try {
+
+                            String name = adv.getString("firstName") + " " + adv.getString("lastName");
+                            advTV.setText(name);
+                            netid=adv.getString("netID");
+
+                            if(netid!=null){
+                                dateBtn.setEnabled(true);
+                                dateBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                            }else{
+                                dateBtn.setEnabled(false);
+                                dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+                            }
+
+                        }catch(JSONException e){
+
+                        }
                     }
+
+
                 });
 
 
-            }
+                          }
         });
+
 
     }
 
@@ -152,7 +193,7 @@ public class AppointmentsAddTab extends Fragment {
         protected String doInBackground(String... params) {
 
             try {
-                Thread.sleep(500);
+                //Thread.sleep(500);
             } catch (Exception e) {
             }
 
