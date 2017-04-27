@@ -42,6 +42,7 @@ package org.mavadvise.activities.tabs;
         import org.mavadvise.commons.DatePickerHelper;
         import org.mavadvise.commons.ProgressDialogHelper;
         import org.mavadvise.commons.TimePickerHelper;
+        import org.mavadvise.commons.URLResourceHelper;
         import org.mavadvise.data.User;
 
         import okhttp3.FormBody;
@@ -58,8 +59,8 @@ public class AppointmentsAddTab extends Fragment {
     private AppConfig appConfig;
     private DialogFragment mDialog;
     private ProgressDialogHelper saveDialog;
-    String netid;
-    Button dateBtn;
+    String netid, sessionid;
+    Button dateBtn, createBtn;
 
     private JSONArray appointments, advisors, sessions;
     private RelativeLayout repeatRL;
@@ -100,10 +101,13 @@ public class AppointmentsAddTab extends Fragment {
 
         dateBtn = (Button) view.findViewById(R.id.ChangeDateBT);
         Button advBtn = (Button) view.findViewById(R.id.SelectAdvBT);
+        createBtn = (Button) view.findViewById(R.id.createAppBT);
 
         netid=null;
         dateBtn.setEnabled(false);
         dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+        createBtn.setEnabled(false);
+        createBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
 
 
         repeatRL = (RelativeLayout) view.findViewById(R.id.appAddRL);
@@ -133,6 +137,16 @@ public class AppointmentsAddTab extends Fragment {
                         try {
                                  String d = sess.getString("date");
                                  dateTV.setText(d);
+                                 sessionid = sess.getString("session_id");
+
+                            if(sessionid!=null){
+                                createBtn.setEnabled(true);
+                                createBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                            }else{
+                                createBtn.setEnabled(false);
+                                createBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+                            }
+
                             }catch(JSONException e){
 
                        }
@@ -193,8 +207,59 @@ public class AppointmentsAddTab extends Fragment {
                           }
         });
 
+        createBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                validateAndCreateAppointment();
+            }
+        });
+
 
     }
+
+    private void validateAndCreateAppointment() {
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("sessionID", sessionid)
+                .add("netID", netid)
+                .build();
+
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("createAppointment", formBody, new URLResourceHelper.onFinishListener() {
+                    @Override
+                    public void onFinishSuccess(JSONObject obj) {
+                        saveDialog.dismiss();
+                        try {
+                            JSONObject res = obj.getJSONObject("result");
+                            appointments = res.getJSONArray("allSessions");
+
+                            //JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
+
+                            ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
+                            ((ManageAppointments) getActivity()).showViewTab();
+
+                            try {
+                                Thread.sleep(500);
+                            } catch (Exception e){
+                                Log.e("AddAppointments", "Thread exception");
+                            }
+
+                        } catch (Exception e){
+                        }
+
+                    }
+
+                    @Override
+                    public void onFinishFailed(String msg) {
+                        saveDialog.dismiss();
+                        Toast.makeText(getContext(), msg,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        urlResourceHelper.execute();
+    }
+
 
     private void setAdvisorlist() {
         new AppointmentsAddTab.AdvisorsData().execute();
