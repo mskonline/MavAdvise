@@ -86,6 +86,9 @@ public class UsersController {
 		ObjectMapper mapper = new ObjectMapper();
 		session.removeAttribute("hasAccess");
 
+		session.invalidate();
+		session = null;
+
 		try {
 			r.setMessage("Successfully logged out");
 			return mapper.writeValueAsString(r);
