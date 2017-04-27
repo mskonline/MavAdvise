@@ -1,11 +1,9 @@
 package org.mavadvise.activities.tabs;
 
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.activities.ManageSessions;
 import org.mavadvise.adaptors.SessionsDataAdaptor;
@@ -26,16 +23,13 @@ import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.AlertDialogHelper;
 import org.mavadvise.commons.ProgressDialogHelper;
+import org.mavadvise.commons.URLResourceHelper;
 import org.mavadvise.data.User;
 
 import java.util.ArrayList;
 
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by SaiKumar on 4/7/2017.
@@ -157,10 +151,7 @@ public class SessionsDeleteTab extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    deleteDialog = ProgressDialogHelper.newInstance();
-                                    deleteDialog.setMsg("Deleting...");
-                                    deleteDialog.show(getFragmentManager(), "Delete");
-                                    new DeleteSessions().execute();
+                                    deleteSessions();
                                 }
                             },
                             new DialogInterface.OnClickListener() {
@@ -182,102 +173,62 @@ public class SessionsDeleteTab extends Fragment {
         return rootView;
     }
 
-    private class DeleteSessions extends AsyncTask<Void, Void, String> {
+    private void deleteSessions(){
+        deleteDialog = ProgressDialogHelper.newInstance();
+        deleteDialog.setMsg("Deleting...");
+        deleteDialog.show(getFragmentManager(), "Delete");
 
-        @Override
-        protected String doInBackground(Void... params){
+        StringBuilder sessionIDsBuilder = new StringBuilder();
+        JSONObject obj = null;
 
+        for(int i : selectedSessions){
             try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("DeleteSessions", "Thread exception");
+                obj = sessions.getJSONObject(i);
+                sessionIDsBuilder.append(obj.getString("sessionID") + ",");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            StringBuilder sessionIDsBuilder = new StringBuilder();
-            JSONObject obj = null;
-
-            for(int i : selectedSessions){
-                try {
-                    obj = sessions.getJSONObject(i);
-                    sessionIDsBuilder.append(obj.getString("sessionID") + ",");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            String sessionIDs = sessionIDsBuilder.toString();
-            sessionIDs = sessionIDs.replaceAll(",$", "");
-
-            Log.i("SessionsDeleteTab",sessionIDs);
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("deleteSessions")
-                        .build();
-
-                User user = appConfig.getUser();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("netID", user.getNetID())
-                        .add("sessionIDs",sessionIDs)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e){
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            deleteDialog.dismiss();
+        String sessionIDs = sessionIDsBuilder.toString();
+        sessionIDs = sessionIDs.replaceAll(",$", "");
 
-            try {
-                Thread.sleep(500);
-            } catch (Exception e){
-                Log.e("AddSessions", "Thread exception");
-            }
+        User user = appConfig.getUser();
 
-            if(result != null) {
-                try {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("type");
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", user.getNetID())
+                .add("sessionIDs",sessionIDs)
+                .build();
 
-                    if(resultStr.equalsIgnoreCase("success")){
-                        Toast.makeText(getContext(), "Session(s) deleted",
-                                Toast.LENGTH_LONG).show();
+        URLResourceHelper urlResourceHelper =
+            new URLResourceHelper("deleteSessions", formBody,
+                new URLResourceHelper.onFinishListener() {
+                    @Override
+                    public void onFinishSuccess(JSONObject obj) {
+                        deleteDialog.dismiss();
+                        try {
+                            Toast.makeText(getContext(), "Session(s) deleted",
+                                    Toast.LENGTH_LONG).show();
 
-                        sessions = obj.getJSONArray("result");
-                        ((ManageSessions) getActivity()).refreshSessionsData(sessions);
+                            sessions = obj.getJSONArray("result");
+                            ((ManageSessions) getActivity()).refreshSessionsData(sessions);
 
-                        resetForm();
-                    } else {
-                        String msg = obj.getString("message");
+                            resetForm();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFinishFailed(String msg) {
+                        deleteDialog.dismiss();
 
                         Toast.makeText(getContext(), msg,
                                 Toast.LENGTH_LONG).show();
                     }
-                } catch (Exception e) {
-                    Log.e("AddSessions.onPostExec", e.getMessage());
-                }
-            }
+                });
 
-        }
+        urlResourceHelper.execute();
     }
 
     private void resetForm(){

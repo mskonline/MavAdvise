@@ -249,6 +249,23 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<Object> getScheduledSessionsUpto(String netID, String date){
+		Session session = factory.openSession();
+
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getSCHDSessionsUpto")
+								.setString("netID", netID)
+								.setString("date", date);
+
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		List<Object> allSessions = q.list();
+
+		session.close();
+		return allSessions;
+	}
+
+
+	@SuppressWarnings("unchecked")
 	public List<Object> getAppointments(String netID){
 		Session session = factory.openSession();
 
@@ -326,7 +343,20 @@ public class DBManager {
 		return allAppointments;
 	}
 
-	
+	@SuppressWarnings("unchecked")
+	public List<Object> getSessionAppointments(Integer sessionID){
+		Session session = factory.openSession();
+
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getAllSessionAppointments")
+				.setInteger("sessionID", sessionID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		List<Object> allAppointments = q.list();
+
+		session.close();
+		return allAppointments;
+	}
+
 	public List<Object> deleteSessions(String netID, Integer[] sessionIDs){
 		Session session = factory.openSession();
 		Transaction tx = null;

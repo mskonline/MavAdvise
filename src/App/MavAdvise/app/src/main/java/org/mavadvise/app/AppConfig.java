@@ -4,8 +4,8 @@ import org.json.JSONArray;
 import org.mavadvise.data.User;
 
 public class AppConfig {
-    private String hostName = "10.0.2.2";
-    private int port = 8080;
+    public static final String hostName = "10.0.2.2";
+    public static final int port = 8080;
 
     private String sessionID;
     private String rememberMeToken;
@@ -30,6 +30,7 @@ public class AppConfig {
             SESSIONS_ETIME_VALIDATION_ERR = "End time cannot be before start time",
             SESSIONS_FREQ_VALIDATION_ERR = "Please select frequency",
             SESSIONS_SLOTS_VALIDATION_ERR = "Please enter No. of Slots",
+            SESSIONS_LOCATION_VALIDATION_ERR = "Please enter the location",
             SESSIONS_ADD_SUCCESS = "Sessions added",
             SESSIONS_DELETE_ONLY_SCHD_ERR = "Only scheduled sessions with no appointments can be deleted.\nCancel it instead";
 
@@ -37,16 +38,8 @@ public class AppConfig {
         return hostName;
     }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
-    }
-
     public int getPort() {
         return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public String getSessionID() {

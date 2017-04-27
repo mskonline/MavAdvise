@@ -61,16 +61,49 @@
 			ORDER BY sessions.date ASC]]>
 	</sql-query>
 
+	<sql-query name="getSCHDSessionsUpto">
+	<![CDATA[SELECT
+			sessions.session_id as sessionID,
+			sessions.net_id as netID,
+			sessions.status,
+			sessions.slot_counter as slotCounter,
+			sessions.no_of_slots as noOfSlots,
+			sessions.comment,
+			sessions.location,
+			DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
+			TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
+			TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime
+			FROM sessions
+			WHERE sessions.net_id = :netID
+            AND sessions.status = 'SCHEDULED'
+            AND sessions.date <= :date
+			ORDER BY sessions.date ASC]]>
+	</sql-query>
+
+	<sql-query name="getAllSessionAppointments">
+		<![CDATA[SELECT
+			users.firstname,
+			users.lastname,
+			appointments.slot_number,
+			appointments.appointment_id
+			FROM appointments
+			JOIN users ON users.net_id = appointments.net_id
+			WHERE appointments.session_id = :sessionID
+			ORDER BY appointments.slot_number ASC
+		]]>
+	</sql-query>
+
 	<sql-query name="getAllAppointments">
-		<![CDATA[Select users.firstname, users.lastname, sessions.session_id,
+		<![CDATA[SELECT users.firstname, users.lastname, sessions.session_id,
                  DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
 			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
                  sessions.status as sesStatus, sessions.location, appointments.net_id,
-                 appointments.slot_number, appointments.status as appStatus from appointments
-                 join sessions on appointments.session_id=sessions.session_id
-                 join users on users.net_id=sessions.net_id
-                 where appointments.net_id= :netID
+                 appointments.slot_number, appointments.status as appStatus
+                 FROM appointments
+                 JOIN sessions on appointments.session_id=sessions.session_id
+                 JOIN users on users.net_id=sessions.net_id
+                 WHERE appointments.net_id= :netID
                  ORDER BY appointments.session_id ASC]]>
 	</sql-query>
 	

@@ -50,7 +50,24 @@ public class SessionsController{
 		ObjectMapper mapper = new ObjectMapper();
 
 		List<Object> sessions = dbmanager.getSessions(netID);
+		r.setResult(sessions);
 
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
+	@RequestMapping(value = "/getScheduledSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String getScheduledSessions(@RequestParam("netID") String netID,
+			@RequestParam("date") String date){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		List<Object> sessions = dbmanager.getScheduledSessionsUpto(netID, date);
 		r.setResult(sessions);
 
 		try {
@@ -66,6 +83,9 @@ public class SessionsController{
 	public String getSessionAppointments(@RequestParam("sessionID") Integer sessionID){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
+
+		List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
+		r.setResult(allAppointments);
 
 		try {
 			return mapper.writeValueAsString(r);

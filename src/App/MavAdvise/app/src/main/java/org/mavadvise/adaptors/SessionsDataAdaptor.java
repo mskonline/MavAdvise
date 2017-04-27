@@ -101,12 +101,12 @@ public class SessionsDataAdaptor extends BaseAdapter {
                 endTime = toTimeFormat.format(fromTimeFormat.parse(endTime));
 
                 sTime.setText(startTime + " - " + endTime);
-                sLocation.setText(obj.getString("location"));
             } else {
                 sHeader.setText(obj.getString("date"));
                 sTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
             }
 
+            sLocation.setText(obj.getString("location"));
             sAppCounter.setText(obj.getInt("slotCounter") + "/" + obj.getInt("noOfSlots"));
 
             String status = obj.getString("status");
