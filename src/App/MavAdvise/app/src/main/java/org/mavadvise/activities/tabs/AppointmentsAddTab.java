@@ -129,10 +129,13 @@ public class AppointmentsAddTab extends Fragment {
 
                 datePicker.setOnClickListener(new DateListPickerHelper.DateListPickerListener() {
                     @Override
-                    public void onDatePickerFinish(JSONObject sess) {
+                    public void onDateListPickerFinish(JSONObject sess){
+                        try {
+                                 String d = sess.getString("date");
+                                 dateTV.setText(d);
+                            }catch(JSONException e){
 
-                        String d = sess.getString("startdate");
-                        dateTV.setText(d);
+                       }
                     }
                 });
 
@@ -288,7 +291,7 @@ public class AppointmentsAddTab extends Fragment {
                         .build();
 
                 RequestBody formBody = new FormBody.Builder()
-                        .add("branch", netid)
+                        .add("netID", netid)
                         .build();
 
                 Request request = new Request.Builder()
