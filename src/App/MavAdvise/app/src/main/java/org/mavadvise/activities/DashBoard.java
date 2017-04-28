@@ -104,6 +104,9 @@ public class DashBoard extends AppCompatActivity
                     case 0:
                         i = new Intent(view.getContext(), ManageSessions.class);
                         break;
+                    case 1:
+                        i = new Intent(view.getContext(), StartSession.class);
+                        break;
                 }
 
                 startActivity(i);

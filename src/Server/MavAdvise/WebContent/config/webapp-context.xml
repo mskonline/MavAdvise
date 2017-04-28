@@ -17,11 +17,6 @@
 	<mvc:interceptors>
 		<bean class="org.web.app.AppSessionInterceptor" />
 	</mvc:interceptors>
-	<!-- <bean id="multipartResolver"
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 
-         setting maximum upload size
-        <property name="maxUploadSize" value="5000000" />
-    </bean> -->
     <context:component-scan base-package="org.web"/>
 </beans>
