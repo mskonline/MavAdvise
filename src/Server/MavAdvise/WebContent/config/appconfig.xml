@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appconfig>
+	<firebase>
+		<end-point>https://fcm.googleapis.com/fcm/send</end-point>
+		<server-key>key=AAAADNuCkLA:APA91bHY0o1otsPPaPeAVJNbH4w2IO_J9EhlHgtAGx4ZMfFtun9CQM2jIfCdnQqQawqOWYhiMubSd1kgfFt-HVXg5hiTNeKMrr-mL2Qbczmv7K0Va8gjKNjjImC73nwllNswLqPT1gpJ</server-key>
+	</firebase>
+</appconfig>
+

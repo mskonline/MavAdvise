@@ -13,6 +13,8 @@ public class User {
 	private int securityQuestionID;
 	private String securityAnswer;
 
+	private String deviceID;
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -73,7 +75,12 @@ public class User {
 	public void setSecurityAnswer(String securityAnswer) {
 		this.securityAnswer = securityAnswer;
 	}
-
+	public String getDeviceID() {
+		return deviceID;
+	}
+	public void setDeviceID(String deviceID) {
+		this.deviceID = deviceID;
+	}
 	public boolean validate(){
 		//TODO
 		return true;

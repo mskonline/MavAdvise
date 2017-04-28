@@ -38,10 +38,11 @@
         <activity android:name=".activities.StartSession" />
         <activity
             android:name=".activities.ViewSession"
-            android:label="View Session"/>
+            android:label="View Session" />
         <activity
             android:name=".activities.CancelSession"
             android:label="Cancel Session" />
+        <activity android:name=".activities.ActiveSession"></activity>
     </application>
 
 </manifest>
