@@ -1,5 +1,6 @@
 package org.web.controllers;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
@@ -81,7 +82,26 @@ public class AppointmentsController {
 			return "{}";
 		}
 	}
+	
+	
+	@RequestMapping(value = "/createAppointment", method = {RequestMethod.GET, RequestMethod.POST})
+	@ResponseBody
+	public String createAppointment(@RequestParam("sessionID") int sessionID,
+			@RequestParam("netID") String netID,
+	        @RequestParam("date") Date date){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
 
+		r = dbmanager.createAppointment(sessionID, netID, date);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+	
 	
 	@RequestMapping(value = "/getSessionDates", method = {RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
