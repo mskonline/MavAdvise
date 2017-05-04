@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.mavadvise.activities.Announcements">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/announcement_linear_layout"
+        android:layout_marginTop="10dp">
+
+        <Spinner
+            android:id="@+id/spinner_branch_announcement"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="Filter"
+            android:background="@color/colorAccent"
+            android:textAllCaps="false"
+            android:textColor="#FFF"
+            android:textSize="20sp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/filterAnnoucementBTN"/>
+
+    </LinearLayout>
+    <ListView
+        android:id="@+id/announcement_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/announcement_linear_layout"
+        android:divider="@color/colorAccent"
+        android:dividerHeight="2px"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_add_circle_outline_white_48dp"
+        app:fabSize="normal"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin" />
+
+
+
+
+</RelativeLayout>

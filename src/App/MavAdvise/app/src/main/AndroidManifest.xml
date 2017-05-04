@@ -42,7 +42,18 @@
         <activity
             android:name=".activities.CancelSession"
             android:label="Cancel Session" />
-        <activity android:name=".activities.ActiveSession"></activity>
+        <activity android:name=".activities.ActiveSession" />
+        <activity
+            android:name=".activities.Announcements"
+            android:label="Announcements" />
+        <activity
+            android:name=".activities.FilterAnnouncements"
+            android:label="Filter Announcements" />
+        <activity
+            android:name=".activities.ReadAnnouncements"
+            android:label="View Announcements" />
+        <activity android:name=".activities.CreateAnnouncement"
+            android:label="Create New Announcement"  ></activity>
     </application>
 
 </manifest>
