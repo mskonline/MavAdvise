@@ -72,6 +72,9 @@ public class DashBoard extends AppCompatActivity
                     case 0:
                         i = new Intent(view.getContext(), ManageAppointments.class);
                         break;
+                    case 1:
+                        i=new Intent(view.getContext(), Announcements.class);
+                        break;
                 }
 
                 startActivity(i);
@@ -106,6 +109,9 @@ public class DashBoard extends AppCompatActivity
                         break;
                     case 1:
                         i = new Intent(view.getContext(), StartSession.class);
+                        break;
+                    case 2:
+                        i=new Intent(view.getContext(), Announcements.class);
                         break;
                 }
 

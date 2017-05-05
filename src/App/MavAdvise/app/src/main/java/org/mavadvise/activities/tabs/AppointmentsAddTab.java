@@ -5,6 +5,7 @@ package org.mavadvise.activities.tabs;
  */
 
         import java.io.IOException;
+        import java.text.ParseException;
         import java.text.SimpleDateFormat;
         import java.util.Calendar;
         import java.util.Date;
@@ -59,10 +60,11 @@ public class AppointmentsAddTab extends Fragment {
     private AppConfig appConfig;
     private DialogFragment mDialog;
     private ProgressDialogHelper saveDialog;
-    String netid, sessionid;
+    String netid, sessionid, aDate;
     Button dateBtn, createBtn;
 
     private JSONArray appointments, advisors, sessions;
+    private SimpleDateFormat fromDateFormat, toDateFormat;
     private RelativeLayout repeatRL;
     TextView dateTV;
 
@@ -135,8 +137,8 @@ public class AppointmentsAddTab extends Fragment {
                     @Override
                     public void onDateListPickerFinish(JSONObject sess){
                         try {
-                                 String d = sess.getString("date");
-                                 dateTV.setText(d);
+                                 aDate = sess.getString("date");
+                                 dateTV.setText(aDate);
                                  sessionid = sess.getString("session_id");
 
                             if(sessionid!=null){
@@ -219,10 +221,21 @@ public class AppointmentsAddTab extends Fragment {
 
     private void validateAndCreateAppointment() {
 
-        RequestBody formBody = new FormBody.Builder()
-                .add("sessionID", sessionid)
-                .add("netID", netid)
-                .build();
+        saveDialog = ProgressDialogHelper.newInstance();
+        saveDialog.show(getFragmentManager(), "Creating");
+
+        try {
+            fromDateFormat = new SimpleDateFormat("EEE, MMM d yyyy");
+            toDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            User user = appConfig.getUser();
+
+            String d = toDateFormat.format(fromDateFormat.parse(aDate));
+            RequestBody formBody = new FormBody.Builder()
+                    .add("sessionID", sessionid)
+                    .add("netID",user.getNetID() )
+                    .add("date", d)
+                    .build();
 
         URLResourceHelper urlResourceHelper =
                 new URLResourceHelper("createAppointment", formBody, new URLResourceHelper.onFinishListener() {
@@ -230,8 +243,11 @@ public class AppointmentsAddTab extends Fragment {
                     public void onFinishSuccess(JSONObject obj) {
                         saveDialog.dismiss();
                         try {
-                            JSONObject res = obj.getJSONObject("result");
-                            appointments = res.getJSONArray("allSessions");
+                            //JSONObject res = obj.getJSONObject("result");
+                            appointments = obj.getJSONArray("result");
+
+
+                            Log.i("app", appointments.toString());
 
                             //JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
 
@@ -245,6 +261,9 @@ public class AppointmentsAddTab extends Fragment {
                             }
 
                         } catch (Exception e){
+                            Toast.makeText(getContext(), "Exception on exiting create.",
+                                    Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
 
                     }
@@ -258,6 +277,10 @@ public class AppointmentsAddTab extends Fragment {
                 });
 
         urlResourceHelper.execute();
+
+        }catch(ParseException e)
+        {
+        }
     }
 
 
@@ -347,6 +370,8 @@ public class AppointmentsAddTab extends Fragment {
             try {
                 OkHttpClient client = new OkHttpClient();
 
+                Log.i("in","inside setdate");
+
                 HttpUrl url = new HttpUrl.Builder()
                         .scheme("http")
                         .host(appConfig.getHostName())
@@ -383,16 +408,19 @@ public class AppointmentsAddTab extends Fragment {
                     sessions = obj.getJSONArray("result");
                     if (sessions != null) {
                         Log.i("no", "not null");
+                    }else{
+                        Log.i("no", "session null");
                     }
                     Log.i("In", "In post execute");
                     Log.i("jso", obj.getString("result"));
 
                 } else {
                     Toast.makeText(getContext(),
-                            "Error retrieving the sessions.", Toast.LENGTH_LONG).show();
+                            "Error retrieving the dates.", Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e) {
                 Log.e("JSON Parse", e.getMessage());
+
             }
             //           mDialog.dismiss();
         }

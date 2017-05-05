@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.mavadvise.activities.FilterAnnouncements"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp">
+
+
+
+    <TextView
+        android:id="@+id/stDateLabelAnn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:textSize="14sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:text="Start Date : "/>
+
+    <Button
+        android:id="@+id/changeStartDateBTAnn"
+        android:layout_below="@id/stDateLabelAnn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentEnd="true"
+        android:background="@color/colorPrimary"
+        android:textColor="#FFF"
+        android:text="Change"/>
+
+    <TextView
+        android:id="@+id/startDateTVAnn"
+        android:layout_toLeftOf="@id/changeStartDateBTAnn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/changeStartDateBTAnn"
+        android:textSize="20sp"
+        android:text="20 june 2017"/>
+
+    <TextView
+        android:id="@+id/endDateLabelAnn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/changeStartDateBTAnn"
+        android:layout_marginTop="15dp"
+        android:textSize="14sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:text="End Date : "/>
+
+    <Button
+        android:id="@+id/changeEndDateBTAnn"
+        android:layout_below="@id/endDateLabelAnn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentEnd="true"
+        android:background="@color/colorPrimary"
+        android:textColor="#FFF"
+        android:text="Change"/>
+
+    <TextView
+        android:id="@+id/endDateTVAnn"
+        android:layout_toLeftOf="@id/changeEndDateBTAnn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/changeEndDateBTAnn"
+        android:textSize="20sp"
+        android:text="20 june 2017"/>
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/changeEndDateBTAnn"
+        android:text="Show My Announcements"
+        android:visibility="visible"
+        android:textSize="20dp"
+        android:layout_marginTop="30dp"
+        android:id="@+id/checkBox_myAnnouncements"/>
+
+    <Button
+        android:id="@+id/applyFilterBTN"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="@color/colorAccent"
+        android:textAllCaps="false"
+        android:textColor="#FFF"
+        android:textSize="20sp"
+        android:text="Apply"
+        android:layout_below="@id/checkBox_myAnnouncements"/>
+
+
+
+
+
+
+</RelativeLayout>

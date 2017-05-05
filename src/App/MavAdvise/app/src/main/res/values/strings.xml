@@ -11,11 +11,29 @@
         <item>CIVIL</item>
     </string-array>
 
+    <string-array name="branch_array_announcement">
+        <item>Choose Department</item>
+        <item>All</item>
+        <item>CSE</item>
+        <item>CSE</item>
+        <item>MIS</item>
+        <item>EE</item>
+        <item>MECH</item>
+        <item>CIVIL</item>
+    </string-array>
+
     <string-array name="role_array">
         <item>What are you?</item>
         <item>Student</item>
         <item>Advisor</item>
     </string-array>
+
+    <string-array name="priority">
+        <item>Set Priority Level for the announcement</item>
+        <item>High</item>
+        <item>Normal</item>
+    </string-array>
+
 
     <string-array name="securityQuestions_array">
         <item>Choose a security question</item>

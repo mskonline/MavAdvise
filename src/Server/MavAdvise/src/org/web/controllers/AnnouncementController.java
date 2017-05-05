@@ -30,11 +30,12 @@ public class AnnouncementController {
 	@ResponseBody
 	public String getAllAppointments(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate,
-			@RequestParam("branch") String branch){
+			@RequestParam("branch") String branch,
+			@RequestParam(value="netId",required=false) String netId){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<Object> announcements = dbmanager.getAllAnnouncements(startDate, endDate, branch);
+		List<Object> announcements = dbmanager.getAllAnnouncements(startDate, endDate, branch,netId);
 
 		r.setResult(announcements);
 
@@ -56,6 +57,27 @@ public class AnnouncementController {
 
 		if(msg == null)
 			r.setResult("Announcement Posted");
+		else
+			r.setMessage(msg);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+	
+	@RequestMapping(value = "/deleteAnnouncement", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String deleteAnnouncement(@RequestParam("announcementID") int a_id){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		String msg = dbmanager.deleteAnnouncement(a_id);
+
+		if(msg == null)
+			r.setResult("Announcement Deleted");
 		else
 			r.setMessage(msg);
 
