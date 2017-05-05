@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:text="Tony Stark"
+                android:text=" "
                 android:layout_alignBaseline="@+id/SelectAdvBT"
                 android:layout_alignEnd="@+id/createAppBT"
                 android:layout_marginEnd="20dp" />

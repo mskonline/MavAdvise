@@ -524,13 +524,18 @@ public class DBManager {
 
 	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
 		Session session = factory.openSession();
+		Session nsession = factory.openSession();
 		Transaction tx = null;
+		Transaction tx1 = null;
 		List<Object> allAppointments = null;
 
 		try {
 			tx = session.beginTransaction();
+			
+			String stat = "CANCELLED";
 
-			Query q =  session.createQuery("update Appointment set status = \"CANCELLED\" where netID = :netID and appointmentID in (:appointmentIDs)");
+			Query q =  session.createQuery("update Appointment set status = :stat where netID = :netID and appointmentID in (:appointmentIDs)");
+			q.setParameter("stat", stat);
 			q.setParameter("netID", netID);
 			q.setParameterList("appointmentIDs", appointmentIDs);
 
@@ -538,17 +543,43 @@ public class DBManager {
 			tx.commit();
 
 			session.close();
-
-			if(result > 0)
-				allAppointments = getSessions(netID);
+			           	
+            if(result > 0)
+				allAppointments = getAppointments(netID);
+            
 		} catch (Exception e) {
 			tx.rollback();
+					tx1.rollback();
 
 			if(session.isOpen())
 				session.close();
 
 			e.printStackTrace();
 		}
+		
+		
+		try{
+			 tx1 = nsession.beginTransaction();
+				
+				Query q1 =  nsession.createQuery("update Session set slotCounter = slotCounter-1 where sessionID = (select sessionID from Appointment where netID = :netID and appointmentID in (:appointmentIDs))");
+				q1.setParameter("netID", netID);
+				q1.setParameterList("appointmentIDs", appointmentIDs);
+
+				int result1 = q1.executeUpdate();
+				tx1.commit();
+
+				nsession.close();
+				
+		}catch (Exception e) {
+			
+			tx1.rollback();
+
+	if(nsession.isOpen())
+		nsession.close();
+
+	e.printStackTrace();
+}
+		
 		return allAppointments;
 	}
 
