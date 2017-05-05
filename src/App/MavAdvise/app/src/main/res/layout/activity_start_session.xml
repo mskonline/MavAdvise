@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context="org.mavadvise.activities.StartSession">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
+
     <ListView
         android:id="@+id/start_sessionsLV"
         android:layout_width="match_parent"

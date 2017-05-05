@@ -16,6 +16,7 @@
 		<property name="branch" column="branch"></property>
 		<property name="securityQuestionID" column="security_question_id"></property>
 		<property name="securityAnswer" column="security_answer"></property>
+		<property name="deviceID" column="device_id"></property>
 	</class>
 
 	<class name="org.web.beans.Session" table="sessions">

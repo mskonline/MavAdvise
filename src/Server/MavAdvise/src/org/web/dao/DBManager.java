@@ -20,6 +20,7 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import org.web.beans.Announcement;
+import org.web.beans.Appointment;
 import org.web.beans.User;
 
 @Component
@@ -136,6 +137,50 @@ public class DBManager {
 			return false;
 	}
 
+	@SuppressWarnings("unchecked")
+	public void updateUserDeviceID(String netID, String newDeviceID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID = :netID");
+
+		List<User> userList = q.setParameter("netID", netID).list();
+
+		if(userList.size() >= 1){
+			User user = userList.get(0);
+			user.setDeviceID(newDeviceID);
+
+			session.beginTransaction();
+			session.update(user);
+			session.getTransaction().commit();
+
+			session.flush();
+			session.close();
+		} else {
+			session.close();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void updateDeviceID(String newDeviceID, String oldDeviceID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where deviceID = :deviceID");
+
+		List<User> userList = q.setParameter("deviceID", oldDeviceID).list();
+
+		if(userList.size() >= 1){
+			User user = userList.get(0);
+			user.setDeviceID(newDeviceID);
+
+			session.beginTransaction();
+			session.update(user);
+			session.getTransaction().commit();
+
+			session.flush();
+			session.close();
+		} else {
+			session.close();
+		}
+	}
+
 	public Map<String, List<Object>> addSessions(org.web.beans.SessionInfo sessionInfo){
 		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
 		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
@@ -208,7 +253,7 @@ public class DBManager {
     		}
         }
 
-        List<Object> allSessions = getSessions(sessionInfo.getNetID());
+        List<Object> allSessions = getAllSessions(sessionInfo.getNetID());
 
         sessions.put("allSessions", allSessions);
         sessions.put("conflictingSessions", conflictingSessions);
@@ -236,7 +281,7 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Object> getSessions(String netID){
+	public List<Object> getAllSessions(String netID){
 		Session session = factory.openSession();
 
 		SQLQuery q = (SQLQuery) session.getNamedQuery("getAllSessions").setString("netID", netID);
@@ -262,6 +307,57 @@ public class DBManager {
 
 		session.close();
 		return allSessions;
+	}
+
+	public List<User> getUsersForSession(Integer sessionID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID in (select netID from Appointment where sessionID=:sessionID)");
+
+		List<User> users = q.setParameter("sessionID", sessionID).list();
+
+		session.close();
+		return users;
+	}
+
+	public User getUserForAppointment(Integer appointmentID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID in (select netID from Appointment where appointmentID=:appointmentID)");
+
+		List<User> users = q.setParameter("appointmentID", appointmentID).list();
+
+		session.close();
+
+		if(users != null && users.size() > 0)
+			return users.get(0);
+		else
+			return null;
+
+	}
+
+	public void markAppointmentAsDone(Integer appointmentID){
+		Session session = factory.openSession();
+		Appointment appointment = (Appointment) session.get(Appointment.class, appointmentID);
+
+		try{
+			appointment.setStatus("DONE");
+
+			session.beginTransaction();
+			session.update(appointment);
+			session.getTransaction().commit();
+
+			session.flush();
+			session.close();
+		} catch(Exception e){
+			logger.error("" + e.getMessage());
+
+			session.getTransaction().rollback();
+			session.close();
+		}
+	}
+
+	public boolean markAppointmentAsNoShow(Integer appointmentID){
+
+		return true;
 	}
 
 
@@ -296,8 +392,8 @@ public class DBManager {
 
 
 	}
-	
-	
+
+
 	public List<Object> getSessionDates(String netID){
 		Session session = factory.openSession();
 
@@ -311,7 +407,7 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
-	
+
 
 	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
 		Session session = factory.openSession();
@@ -331,7 +427,7 @@ public class DBManager {
 			session.close();
 
 			if(result > 0)
-				allAppointments = getSessions(netID);
+				allAppointments = getAllSessions(netID);
 		} catch (Exception e) {
 			tx.rollback();
 
@@ -375,7 +471,7 @@ public class DBManager {
 			session.close();
 
 			if(result > 0)
-				allSessions = getSessions(netID);
+				allSessions = getAllSessions(netID);
 		} catch (Exception e) {
 			tx.rollback();
 

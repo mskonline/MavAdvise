@@ -7,8 +7,8 @@ public class AppConfig {
     public static final String hostName = "10.0.2.2";
     public static final int port = 8080;
 
-    private String sessionID;
     private String rememberMeToken;
+    private String firebaseToken;
 
     private static AppConfig instance;
     private User user;
@@ -42,14 +42,6 @@ public class AppConfig {
         return port;
     }
 
-    public String getSessionID() {
-        return sessionID;
-    }
-
-    public void setSessionID(String sessionID) {
-        this.sessionID = sessionID;
-    }
-
     public String getRememberMeToken() {
         return rememberMeToken;
     }
@@ -68,5 +60,16 @@ public class AppConfig {
 
     public void setConflictingSessions(JSONArray conflictingSessions) {
         this.conflictingSessions = conflictingSessions;
+    }
+
+    public String getFirebaseToken() {
+        if(firebaseToken == null)
+            return "";
+
+        return firebaseToken;
+    }
+
+    public void setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
     }
 }

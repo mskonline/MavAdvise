@@ -21,11 +21,10 @@ import okhttp3.Response;
 public class NotificationService {
 
 	private static OkHttpClient httpClient;
-	private String FIREBASE_ENDPOINT;
-	private String SERVER_KEY;
+	private final String FIREBASE_ENDPOINT;
+	private final String SERVER_KEY;
 
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-
 
 	@Autowired
 	public NotificationService(AppConfig appConfig){
@@ -38,6 +37,9 @@ public class NotificationService {
 	}
 
 	public void sendNotification(String title, String message, User user){
+		if(user == null)
+			return;
+
 		List<User> users = new ArrayList<User>();
 		users.add(user);
 
@@ -48,6 +50,9 @@ public class NotificationService {
 	}
 
 	public void sendNotification(String title, String message, List<User> users){
+		if(users == null || users.size() == 0)
+			return;
+
 		FireBaseNotifier fireBaseNotifier = new FireBaseNotifier(title, message, users);
 		Thread t = new Thread(fireBaseNotifier);
 
@@ -89,6 +94,7 @@ public class NotificationService {
 			JSONObject notification = new JSONObject();
 			notification.put("title", title);
 			notification.put("body", message);
+			notification.put("sound", "default");
 
 			jmessage.put("notification", notification);
 
