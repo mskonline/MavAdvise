@@ -32,6 +32,17 @@
 		<property name="comment" column="comment"></property>
 		<property name="location" column="location"></property>
 	</class>
+	
+	<class name="org.web.beans.Appointment" table="sessions">
+		<id name="appointmentID" type="int" column="appointment_id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="netID" column="net_id"></property>
+		<property name="date" column="date" type="date"></property>
+		<property name="status" column="status"></property>
+		<property name="slotNo" column="slot_number"></property>
+		<property name="sessionID" column="session_id" type="int"></property>
+	</class>
 
 	<class name="org.web.beans.Announcement" table="announcements">
 		<id name="announcementID" type="int" column="announcement_id">
