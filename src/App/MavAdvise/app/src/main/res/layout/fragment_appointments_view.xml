@@ -3,8 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="50dp"
     tools:context="org.mavadvise.activities.tabs.AppointmentsViewTab">
 
+
+    <LinearLayout
+        android:id="@+id/AppsHistory"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/appHistoryBT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/colorAccent"
+            android:text="APPOINTMENT HISTORY"/>
+
+
+    </LinearLayout>
     <TextView
         android:id="@+id/appointmenttext"
         android:layout_width="match_parent"
@@ -26,5 +48,6 @@
         android:layout_centerHorizontal="true"
         android:divider="@color/colorAccent"
         android:dividerHeight="2px" />
+
 
 </RelativeLayout>

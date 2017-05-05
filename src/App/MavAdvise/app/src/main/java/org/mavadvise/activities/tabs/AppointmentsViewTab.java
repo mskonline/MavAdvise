@@ -4,17 +4,25 @@ package org.mavadvise.activities.tabs;
  * Created by Remesh on 4/12/2017.
  */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,11 +59,20 @@ public class AppointmentsViewTab extends Fragment {
 
         optionsAdapter = new OptionsAdapter();
         list.setAdapter(optionsAdapter);
-        if (rootView == null) {
-            Log.i("roo", "Root view is null");
-        } else {
-            Log.i("roo1", "Root view is not null");
-        }
+
+        Button hist = (Button) rootView.findViewById(R.id.appHistoryBT);
+
+        hist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //AppointmentHistory history = new AppointmentHistory(appointments);
+                Intent i = null;
+                i = new Intent(view.getContext(), AppointmentHistory.class);
+                i.putExtra("jsonArray", appointments.toString());
+                startActivity(i);
+            }
+            });
+
         return rootView;
     }
 
@@ -71,20 +88,32 @@ public class AppointmentsViewTab extends Fragment {
                 row = inflater.inflate(R.layout.list_appointments_item, parent, false);
             }
 
-            TextView aHeader, aDate, aTime;
+            TextView aHeader, aDate, aTime, aStat;
 
             aHeader = (TextView) row.findViewById(R.id.appmnt_header);
             aTime = (TextView) row.findViewById(R.id.appmnt_time);
             aDate = (TextView) row.findViewById(R.id.appmnt_date);
+            aStat =  (TextView) row.findViewById(R.id.appmnt_status);
 
             JSONObject obj = null;
 
+
+//            DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+//            SimpleDateFormat toDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//            SimpleDateFormat fromDateFormat = new SimpleDateFormat("EEE, MMM d yyyy");
+
+
             try {
                 obj = appointments.getJSONObject(position);
+//                Calendar date = Calendar.getInstance();
+//                String dateStr = obj.getString("date");
+//                Date date1 =  (Date)formatter.parse(toDateFormat.format(fromDateFormat.parse(dateStr)));
+
                 aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
                 Log.i("jso", obj.getString("firstname"));
                 aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
                 aDate.setText(obj.getString("date"));
+                aStat.setText(obj.getString("appStatus"));
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
             }

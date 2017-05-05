@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="Tony Stark"
+            android:text=" "
             android:layout_alignBaseline="@+id/SelectAdvBT"
             android:layout_alignBottom="@+id/SelectAdvBT"
             android:layout_alignEnd="@+id/createAppBT"
@@ -99,7 +99,7 @@
             android:textSize="20sp"
             android:text="20 June 2017"
             android:layout_alignBottom="@+id/ChangeDateBT"
-            android:layout_alignStart="@+id/AdvTV" />
+            android:layout_centerHorizontal="true" />
 
         <Button
             android:id="@+id/createAppBT"
