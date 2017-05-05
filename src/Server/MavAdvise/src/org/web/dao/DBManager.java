@@ -277,6 +277,214 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
+	
+	@SuppressWarnings("unused")
+	public Response createAppointment(int sessID, String netID, Date date){
+		
+		Session session = factory.openSession();
+		List<Integer> sessIds= new ArrayList<Integer>();
+		int i=0;
+		Response r = new Response();
+		int counter =0;
+		
+		org.web.beans.Appointment appointment = null;
+		List<org.web.beans.Session> SessionData = new ArrayList<org.web.beans.Session>();
+		List<Object> allAppointments = null;
+		
+		System.out.println("here2");
+		
+		//TODO Synchronise the block
+		
+		Criteria criteria = session.createCriteria(org.web.beans.Session.class);
+		criteria.add(Restrictions.eq("sessionID", sessID));
+		SessionData = criteria.list();
+	
+		//SessionData = (org.web.beans.Session)SessionData1;
+		
+		System.out.println("here3");
+
+
+		List<org.web.beans.Appointment>Appointments = null;
+		Criteria criteriaApp = session.createCriteria(org.web.beans.Appointment.class);
+		criteriaApp.add(Restrictions.eq("netID", netID));
+		Appointments = criteriaApp.list();
+		
+		if(Appointments==null){
+			System.out.println("Appointments is zero");
+		}
+		
+		org.web.beans.Session sess3 = new org.web.beans.Session();
+		int flag =0;
+		
+		for(Object sess2: SessionData){
+			sess3 = (org.web.beans.Session) sess2;
+			System.out.println(sess3.getStatus());
+		for(org.web.beans.Appointment app2 : Appointments){
+			System.out.println(app2.getNetID());
+			if(app2!=null){
+				System.out.println(app2.getSessionID());
+					sessIds.add(app2.getSessionID());
+					System.out.println(sessIds.get(0));
+					flag=1;
+					i++;
+				
+			}
+		}	
+		}
+		
+		
+		System.out.println("here4");
+		
+		if((flag==1)&&(sessIds!=null)){
+			List<org.web.beans.Session> SessionConflicts = null;
+		Criteria criteriaConf = session.createCriteria(org.web.beans.Session.class);
+		criteriaConf.add(Restrictions.in("sessionID", sessIds));
+		SessionConflicts = criteriaConf.list();
+		flag=0;
+		
+		System.out.println("here5");
+		
+			if(sess3!=null){
+				for(org.web.beans.Session sessioncon : SessionConflicts){
+					if(sessioncon!=null){
+						
+						if(sess3.getDate() == sessioncon.getDate()){
+							if((sess3.getStartTime().before(sessioncon.getEndTime())
+							   &&sessioncon.getStartTime().before(sess3.getStartTime()))
+							   || (sessioncon.getStartTime().before(sess3.getEndTime())
+							   && sess3.getEndTime().before(sessioncon.getEndTime()))
+							   || (sess3.getStartTime().equals(sessioncon.getStartTime()))){
+								
+								flag=1;
+								r.setMessage("Appointment conflicts with your other appointments.");
+								return r;
+								
+							}
+						}
+					}
+				}
+			
+			
+			if(sess3.getSlotCounter()< sess3.getNoOfSlots()){
+				
+				appointment = new org.web.beans.Appointment();
+				appointment.setNetID(netID);
+				appointment.setSessionID(sessID);
+				appointment.setDate(date);
+				appointment.setStatus("SCHEDULED");
+				appointment.setSlotNo(sess3.getSlotCounter()+1);
+				
+				Transaction tx = null;
+				Session hSession = factory.openSession();
+
+	        	try{
+	    			tx = hSession.beginTransaction();
+
+	    			hSession.save(appointment);
+
+	    			hSession.flush();
+	    			hSession.clear();
+	    			tx.commit();
+
+	    			hSession.close();
+	    			
+	    			
+	    		} catch(Exception e){
+	    			tx.rollback();
+	    			hSession.close();
+
+	    			logger.error("Error creating the Appointment. " + e.getMessage());
+	    			return null;
+	    		}
+	        	
+	        	
+	        	Session nsession = factory.openSession();
+	        	Transaction txn = nsession.beginTransaction();
+	        	
+	        	counter = sess3.getSlotCounter() + 1;
+	        	String hqlUpdate = "update Session  set slotCounter = :counter where sessionID = :sessionid";
+	        	// or String hqlUpdate = "update Customer set name = :newName where name = :oldName";
+	        	int updatedEntities = nsession.createQuery( hqlUpdate )
+	        	        .setParameter("counter", counter )
+	        	        .setParameter("sessionid", sess3.getSessionID() )
+	        	        .executeUpdate();
+	        	txn.commit();
+	        	nsession.close();
+	        	
+	        	allAppointments = getAppointments(netID);
+				
+	        	r.setMessage("Success");
+				r.setResult(allAppointments);
+				return r;
+							
+			}
+			
+			}else{
+				r.setMessage("Session not found");
+				return r;
+				
+				}
+		}
+		
+		
+		if((flag==0)&&(sess3.getSlotCounter()< sess3.getNoOfSlots())){
+			
+			appointment = new org.web.beans.Appointment();
+			appointment.setNetID(netID);
+			appointment.setSessionID(sessID);
+			appointment.setDate(date);
+			appointment.setStatus("SCHEDULED");
+			appointment.setSlotNo(sess3.getSlotCounter()+1);
+			
+			Transaction tx = null;
+			Session hSession = factory.openSession();
+
+			//TODO increment the slot counter in session table
+        	try{
+    			tx = hSession.beginTransaction();
+
+    			hSession.save(appointment);
+
+    			hSession.flush();
+    			hSession.clear();
+    			tx.commit();
+
+    			hSession.close();
+    		} catch(Exception e){
+    			tx.rollback();
+    			hSession.close();
+
+    			logger.error("Error creating the Appointment. " + e.getMessage());
+    			return null;
+    		}
+        	
+        	
+			Session usession = factory.openSession();
+        	Transaction txn = usession.beginTransaction();
+
+        	counter = sess3.getSlotCounter() + 1;
+        	String hqlUpdate = "update sessions  set slot_counter = :counter where session_id = :sessionid";
+        	// or String hqlUpdate = "update Customer set name = :newName where name = :oldName";
+        	int updatedEntities = usession.createQuery( hqlUpdate )
+        	        .setParameter("counter", counter )
+        	        .setParameter("sessionid", sess3.getSessionID() )
+        	        .executeUpdate();
+        	txn.commit();
+        	usession.close();
+        	allAppointments = getAppointments(netID);
+					
+			r.setMessage("Success");
+			r.setResult(allAppointments);
+			return r;
+			
+			}else{
+				r.setMessage("Slots for this appointment are over.");
+				return r;
+			}
+		
+			//return r;
+			
+	}
 
 
 	public List<org.web.beans.User> getAdvisors(String branch){
