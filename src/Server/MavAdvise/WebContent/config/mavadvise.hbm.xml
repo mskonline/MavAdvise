@@ -33,7 +33,7 @@
 		<property name="location" column="location"></property>
 	</class>
 	
-	<class name="org.web.beans.Appointment" table="sessions">
+	<class name="org.web.beans.Appointment" table="appointments">
 		<id name="appointmentID" type="int" column="appointment_id">
 			<generator class="increment"></generator>
 		</id>
