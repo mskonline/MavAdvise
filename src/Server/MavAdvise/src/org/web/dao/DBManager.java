@@ -444,13 +444,23 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Object> getAllAnnouncements(String startDate, String endDate, String branch){
+	public List<Object> getAllAnnouncements(String startDate, String endDate, String branch, String netID){
 		Session session = factory.openSession();
 
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("users.branch = \"");
 		stringBuilder.append(branch);
-		stringBuilder.append("\" and");
+		stringBuilder.append("\" and ");
+		
+		if(netID!=null)
+		{
+			stringBuilder.append("announcements.net_id = \"");
+			stringBuilder.append(netID);
+			stringBuilder.append("\" and");
+		}
+		
+		
+		
 
 		String sql = session.getNamedQuery("getAllAnnouncements").getQueryString();
 
@@ -468,4 +478,36 @@ public class DBManager {
 		session.close();
 		return allAnnouncements;
 	}
+	
+	public String deleteAnnouncement(int announcementID){
+		Session session = factory.openSession();
+		Transaction tx = null;
+		//List<Object> allAnnouncement = null;
+		String msg = null;
+
+		try {
+			tx = session.beginTransaction();
+
+			Query q =  session.createQuery("delete Announcement where announcementID = :a_id");
+			q.setParameter("a_id", announcementID);
+
+			int result = q.executeUpdate();
+			tx.commit();
+
+			session.close();
+			
+		} catch (Exception e) {
+			tx.rollback();
+
+			if(session.isOpen())
+				session.close();
+
+			e.printStackTrace();
+			msg = "Error in deleting announcement";
+		}
+		
+		return msg;
+	
+	}
+
 }

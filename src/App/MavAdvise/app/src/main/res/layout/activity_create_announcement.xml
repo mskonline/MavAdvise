@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.mavadvise.activities.CreateAnnouncement">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Title"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/titleET_createAnnouncement"/>
+
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="23dp"
+        android:inputType="textMultiLine"
+        android:hint="Type your message here"
+        android:id="@+id/messageET_createAnnouncement"
+        android:layout_below="@+id/titleET_createAnnouncement"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:id="@+id/spinner_priority_announcement"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@id/messageET_createAnnouncement"/>
+
+    <Button
+        android:id="@+id/postannouncemenntBTN"
+        android:layout_below="@id/spinner_priority_announcement"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/colorAccent"
+        android:text="Post"
+        android:textAllCaps="false"
+        android:textColor="#FFF"
+        android:textSize="18sp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

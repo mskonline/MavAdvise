@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,8 +13,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.web.beans.Response;
+import org.web.beans.Session;
 import org.web.beans.SessionInfo;
+import org.web.beans.User;
 import org.web.dao.DBManager;
+import org.web.services.NotificationService;
+import org.web.services.SessionsService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,13 +28,19 @@ public class SessionsController{
 	@Autowired
 	private DBManager dbmanager;
 
+	@Autowired
+	private NotificationService notificationService;
+
+	@Autowired
+	private SessionsService sessionsService;
+
 	@RequestMapping(value = "/addSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String createSession(HttpServletRequest request, @ModelAttribute SessionInfo sessionInfo){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		adjustSessionDates(sessionInfo);
+		sessionsService.adjustSessionDates(sessionInfo);
 		Map<String, List<Object>> sessions = dbmanager.addSessions(sessionInfo);
 
 		r.setResult(sessions);
@@ -113,6 +122,29 @@ public class SessionsController{
 		}
 	}
 
+	@RequestMapping(value = "/startSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String startSession(@RequestParam("sessionID") Integer sessionID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		Session session = null;
+		List<User> users = null;
+
+		String title = "MavAdvise";
+		String message = "";
+
+		notificationService.sendNotification(title, message, users);
+		r.setResult("{}");
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
 	@RequestMapping(value = "/cancelSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String cancelSession(@RequestParam("sessionID") Integer sessionID,
@@ -135,56 +167,34 @@ public class SessionsController{
 		}
 	}
 
-	private void adjustSessionDates(SessionInfo sessionInfo){
+	@RequestMapping(value = "/advanceSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String advanceSession(@RequestParam("sessionID") Integer sessionID,
+			@RequestParam("appointmentID") Integer appointmentID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
 
-		if(sessionInfo.getStartDate().equals(sessionInfo.getEndDate()))
-			return;
 
-		/**
-		 *   M T W T F S S
-		 * 0 0 0 0 0 0 0 0
-		 */
-		int[] dayOfWeek = new int[8];
-		java.sql.Date d;
-
-		/**
-		 * Frequency
-		 * M T W T F S S
-		 * 0 0 0 0 0 0 0
-		 */
-		for(int i = 0; i < sessionInfo.getFrequency().length(); ++i)
-			dayOfWeek[i + 1] = Character.getNumericValue(sessionInfo.getFrequency().charAt(i));
-
-		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
-		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
-		DateTime tmp = start;
-
-		// Adjust start date
-		while(!tmp.isAfter(end)) {
-			if(dayOfWeek[tmp.getDayOfWeek()] == 1){
-				start = tmp;
-				break;
-			}
-
-			tmp = tmp.plusDays(1);
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
 		}
+	}
 
-		tmp = end;
+	@RequestMapping(value = "/setAppointmentAsNoShow", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String setAppointmentAsNoShow(@RequestParam("appointmentID") Integer appointmentID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
 
-		// Adjust end date
-		while(!tmp.isBefore(start)) {
-			if(dayOfWeek[tmp.getDayOfWeek()] == 1){
-				end = tmp;
-				break;
-			}
 
-			tmp = tmp.minusDays(1);
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
 		}
-
-		d = new java.sql.Date(start.getMillis());
-		sessionInfo.setStartDate(d);
-
-		d = new java.sql.Date(end.getMillis());
-		sessionInfo.setEndDate(d);
 	}
 }
