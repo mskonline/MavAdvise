@@ -115,6 +115,7 @@
                  from sessions
                  where sessions.net_id= :netID
                  and sessions.status = "SCHEDULED"
+                 and sessions.date > CURRENT_TIMESTAMP  
                  and sessions.slot_counter < sessions.no_of_slots
                  ORDER BY sessions.date ASC]]>
 	</sql-query>

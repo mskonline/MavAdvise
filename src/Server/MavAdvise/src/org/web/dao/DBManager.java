@@ -20,6 +20,7 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import org.web.beans.Announcement;
+import org.web.beans.Response;
 import org.web.beans.User;
 
 @Component
