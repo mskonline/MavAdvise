@@ -47,10 +47,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:text="Tony Stark"
-                android:layout_alignBaseline="@+id/SelectAdvBT"
-                android:layout_alignEnd="@+id/createAppBT"
-                android:layout_marginEnd="20dp" />
+                android:text=" "
+                android:layout_alignBaseline="@+id/advLabel"
+                android:layout_alignBottom="@+id/advLabel"
+                android:layout_alignStart="@+id/DateTV" />
 
 
             <Button
@@ -96,8 +96,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:text="20 June 2017"
-                android:layout_alignBottom="@+id/ChangeDateBT"
-                android:layout_alignStart="@+id/AdvTV" />
+                android:layout_alignTop="@+id/appDateLabel"
+                android:layout_centerHorizontal="true" />
 
 
             <Button

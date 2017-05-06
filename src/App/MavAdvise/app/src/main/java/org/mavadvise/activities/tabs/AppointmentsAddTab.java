@@ -62,6 +62,7 @@ public class AppointmentsAddTab extends Fragment {
     private ProgressDialogHelper saveDialog;
     String netid, sessionid, aDate;
     Button dateBtn, createBtn;
+    Button advBtn;
 
     private JSONArray appointments, advisors, sessions;
     private SimpleDateFormat fromDateFormat, toDateFormat;
@@ -102,7 +103,7 @@ public class AppointmentsAddTab extends Fragment {
         dateTV.setText(DateFormat.format("MM/dd/yyyy", appDate.getTimeInMillis()).toString());
 
         dateBtn = (Button) view.findViewById(R.id.ChangeDateBT);
-        Button advBtn = (Button) view.findViewById(R.id.SelectAdvBT);
+        advBtn = (Button) view.findViewById(R.id.SelectAdvBT);
         createBtn = (Button) view.findViewById(R.id.createAppBT);
 
         netid=null;
@@ -111,6 +112,7 @@ public class AppointmentsAddTab extends Fragment {
         createBtn.setEnabled(false);
         createBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
 
+        //noShowCheck();
 
         repeatRL = (RelativeLayout) view.findViewById(R.id.appAddRL);
         setAdvisorlist();
@@ -219,6 +221,61 @@ public class AppointmentsAddTab extends Fragment {
 
     }
 
+//    private void noShowCheck(){
+//
+//      try{
+//          User user = appConfig.getUser();
+//
+//          RequestBody formBody = new FormBody.Builder()
+//                .add("netID",user.getNetID() )
+//                .build();
+//
+//        URLResourceHelper urlResourceHelper =
+//                new URLResourceHelper("checkNoShow", formBody, new URLResourceHelper.onFinishListener() {
+//                    @Override
+//                    public void onFinishSuccess(JSONObject obj) {
+//                        saveDialog.dismiss();
+//                        try {
+//                            //JSONObject res = obj.getJSONObject("result");
+//                            appointments = obj.getJSONArray("result");
+//                            Log.i("app", appointments.toString());
+//
+//                            //JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
+//
+//                            ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
+//                            ((ManageAppointments) getActivity()).showViewTab();
+//
+//                            try {
+//                                Thread.sleep(500);
+//                            } catch (Exception e){
+//                                Log.e("AddAppointments", "Thread exception");
+//                            }
+//
+//                        } catch (Exception e){
+//                            Toast.makeText(getContext(), "Exception on exiting create.",
+//                                    Toast.LENGTH_SHORT).show();
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onFinishFailed(String msg) {
+//                        saveDialog.dismiss();
+//                        Toast.makeText(getContext(), msg,
+//                                Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//
+//        urlResourceHelper.execute();
+//
+//    }catch(Exception e)
+//    {
+//    }
+//
+//
+//    }
+
     private void validateAndCreateAppointment() {
 
         saveDialog = ProgressDialogHelper.newInstance();
@@ -231,6 +288,7 @@ public class AppointmentsAddTab extends Fragment {
             User user = appConfig.getUser();
 
             String d = toDateFormat.format(fromDateFormat.parse(aDate));
+          //  String compD = toDateFormat.format(fromDateFormat.parse(appointments.getString("date")));
             RequestBody formBody = new FormBody.Builder()
                     .add("sessionID", sessionid)
                     .add("netID",user.getNetID() )

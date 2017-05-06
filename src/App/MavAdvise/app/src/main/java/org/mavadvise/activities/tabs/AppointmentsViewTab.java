@@ -105,15 +105,22 @@ public class AppointmentsViewTab extends Fragment {
 
             try {
                 obj = appointments.getJSONObject(position);
+                String status = obj.getString("appStatus");
+
 //                Calendar date = Calendar.getInstance();
 //                String dateStr = obj.getString("date");
 //                Date date1 =  (Date)formatter.parse(toDateFormat.format(fromDateFormat.parse(dateStr)));
+                row.setVisibility(View.VISIBLE);
+                if(status.startsWith("S")||status.startsWith("C")) {
+                    aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
+                    Log.i("jso", obj.getString("firstname"));
+                    aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
+                    aDate.setText(obj.getString("date"));
+                    aStat.setText(obj.getString("appStatus"));
+                }else{
+                    row.setVisibility(View.GONE);
+                }
 
-                aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
-                Log.i("jso", obj.getString("firstname"));
-                aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
-                aDate.setText(obj.getString("date"));
-                aStat.setText(obj.getString("appStatus"));
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
             }

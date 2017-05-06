@@ -117,9 +117,19 @@
                  JOIN sessions on appointments.session_id=sessions.session_id
                  JOIN users on users.net_id=sessions.net_id
                  WHERE appointments.net_id= :netID
-                 ORDER BY appointments.session_id ASC]]>
+                 ORDER BY appointments.session_id DESC]]>
 	</sql-query>
 
+	<sql-query name="getNoShowSessions">
+		<![CDATA[SELECT appointments.net_id
+		         from appointments
+                 where appointments.net_id= :netID
+                 and appointments.status = 'NO SHOW'
+                 and appointments.date between adddate(now(), -7) and now()]]>
+	</sql-query>
+	
+	
+	
 	<sql-query name="getDateSessions">
 		<![CDATA[Select sessions.session_id,
 		         DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
@@ -142,6 +152,7 @@
 		announcements.title,
 		users.firstname as firstName,
 		users.branch as branch,
+		announcements.message,
 		users.lastname as lastName
 		FROM users, announcements
 		WHERE #BRANCH_CONDITION#

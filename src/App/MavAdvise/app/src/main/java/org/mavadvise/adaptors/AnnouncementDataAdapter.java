@@ -2,6 +2,7 @@ package org.mavadvise.adaptors;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class AnnouncementDataAdapter extends BaseAdapter {
     private JSONArray announcement;
     private LayoutInflater layoutInflater;
     private Context context;
+    int dColor;
 
     public AnnouncementDataAdapter(JSONArray announcement, Activity activity){
         this.announcement = announcement;
@@ -41,6 +43,8 @@ public class AnnouncementDataAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
+        int priority;
+
 
         if(row == null)
             row = layoutInflater.inflate(R.layout.list_announcement_item, parent, false);
@@ -54,9 +58,17 @@ public class AnnouncementDataAdapter extends BaseAdapter {
         try {
             obj = announcement.getJSONObject(position);
             title.setText(obj.getString("title"));
-            advisor.setText(obj.getString("firstName")+" "+obj.getString("lastString"));
+            advisor.setText(obj.getString("firstName")+" "+obj.getString("lastName"));
             branch.setText(obj.getString("branch"));
             date.setText(obj.getString("date"));
+            priority = obj.getInt("priority");
+            if(priority==1){
+                title.setTextColor(dColor);
+            }
+            else{
+                title.setTextColor(Color.DKGRAY);
+            }
+
         } catch (Exception e){
             Toast.makeText(context, "Error in retrieving the list", Toast.LENGTH_SHORT);
         }
@@ -77,6 +89,7 @@ public class AnnouncementDataAdapter extends BaseAdapter {
     private void initResources(Activity activity){
         layoutInflater = activity.getLayoutInflater();
         context = activity.getApplicationContext();
+        dColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorAccent, null);
     }
 
 }

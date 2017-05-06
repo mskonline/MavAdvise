@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -254,6 +255,7 @@ public class DBManager {
     		}
         }
 
+
         List<Object> allSessions = getAllSessions(sessionInfo.getNetID());
 
         sessions.put("allSessions", allSessions);
@@ -282,6 +284,7 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
+
 	public List<Object> getAllSessions(String netID){
 		Session session = factory.openSession();
 
@@ -442,6 +445,7 @@ public class DBManager {
 		return allSessions;
 	}
 
+
 	@SuppressWarnings("unused")
 	public Response createAppointment(int sessID, String netID, Date date){
 
@@ -450,7 +454,7 @@ public class DBManager {
 		int i=0;
 		Response r = new Response();
 		int counter =0;
-
+	
 		org.web.beans.Appointment appointment = null;
 		List<org.web.beans.Session> SessionData = new ArrayList<org.web.beans.Session>();
 		List<Object> allAppointments = null;
@@ -466,16 +470,49 @@ public class DBManager {
 		//SessionData = (org.web.beans.Session)SessionData1;
 
 		System.out.println("here3");
+		
+//		List<org.web.beans.Appointment>AppointmentsNoShow = null;
+//		Criteria criteriaAppNo = session.createCriteria(org.web.beans.Appointment.class);
+//		criteriaAppNo.add(Restrictions.eq("netID", netID));
+//		criteriaAppNo.add(Restrictions.between("date", adddate(now(),-7), now()));
+//		AppointmentsNoShow = criteriaAppNo.list();
+		
+		List<Object> res = null;
+		
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getNoShowSessions").setString("netID", netID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+	    res = q.list();
 
+	    System.out.println(res.toString());
+	    
+		if(res==null|| res.size()==0){
+			System.out.println("No no shows");
+						
+		}else{
+			System.out.println("No show");
+			r.setMessage("You have a no-show ban.");
+			return r;
+		}
 
 		List<org.web.beans.Appointment>Appointments = null;
 		Criteria criteriaApp = session.createCriteria(org.web.beans.Appointment.class);
 		criteriaApp.add(Restrictions.eq("netID", netID));
 		Appointments = criteriaApp.list();
+		
 
 		if(Appointments==null){
 			System.out.println("Appointments is zero");
 		}
+		
+//		for(org.web.beans.Appointment appNoShow : Appointments){
+//			if(appNoShow.getStatus() == "NOSHOW"){
+//				if((appNoShow.getDate().compareTo(dateToday))>-7){
+//					System.out.println("There is no show " + appNoShow.getDate().toString());
+//					
+//				}
+//			}
+//			
+//		}
 
 		org.web.beans.Session sess3 = new org.web.beans.Session();
 		int flag =0;
@@ -650,7 +687,6 @@ public class DBManager {
 
 	}
 
-
 	public List<org.web.beans.User> getAdvisors(String branch){
 		Session session = factory.openSession();
 		List<org.web.beans.User> allAdvisors = null;
@@ -686,13 +722,28 @@ public class DBManager {
 
 	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
 		Session session = factory.openSession();
+		Session nsession = factory.openSession();
 		Transaction tx = null;
+		Transaction tx1 = null;
 		List<Object> allAppointments = null;
+		
+		if(appointmentIDs==null){
+			System.out.println("null appointemnts");
+		}else{
+			System.out.println("hasvalues in appointment");
+		}
+		
+		for (Integer object : appointmentIDs) {
+			System.out.println("" + object.intValue());
+		}
 
 		try {
 			tx = session.beginTransaction();
+			
+			//String stat = "CANCELLED";
 
-			Query q =  session.createQuery("update Appointment set status = \"CANCELLED\" where netID = :netID and appointmentID in (:appointmentIDs)");
+			Query q =  session.createQuery("update Appointment set status = :stat where netID = :netID and sessionID in (:appointmentIDs)");
+			q.setParameter("stat", "CANCELLED");
 			q.setParameter("netID", netID);
 			q.setParameterList("appointmentIDs", appointmentIDs);
 
@@ -700,9 +751,15 @@ public class DBManager {
 			tx.commit();
 
 			session.close();
+           	
+            if(result > 0){
+				allAppointments = getAppointments(netID);
+            }
+            else{
+            	System.out.println("couldn't delete");
+            }
+            
 
-			if(result > 0)
-				allAppointments = getAllSessions(netID);
 		} catch (Exception e) {
 			tx.rollback();
 
@@ -711,9 +768,38 @@ public class DBManager {
 
 			e.printStackTrace();
 		}
+		
+		
+		try{
+			 tx1 = nsession.beginTransaction();
+				
+				Query q1 =  nsession.createQuery("update Session set slotCounter = slotCounter-1 where sessionID in (:appointmentIDs)");
+				q1.setParameterList("appointmentIDs", appointmentIDs);
+
+				int result1 = q1.executeUpdate();
+				tx1.commit();
+
+				nsession.close();
+				
+				if(result1==0){
+	            	System.out.println("couldn't update counter");
+	            }
+	            
+				
+		}catch (Exception e) {
+			
+			tx1.rollback();
+
+	if(nsession.isOpen())
+		nsession.close();
+
+	e.printStackTrace();
+}
+		
 		return allAppointments;
 	}
-
+	
+	
 	@SuppressWarnings("unchecked")
 	public List<Object> getSessionAppointments(Integer sessionID){
 		Session session = factory.openSession();
@@ -850,30 +936,27 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	public List<Object> getAllAnnouncements(String startDate, String endDate, String branch, String netID){
 		Session session = factory.openSession();
-
+		
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("users.branch = \"");
-		stringBuilder.append(branch);
-		stringBuilder.append("\" and ");
-
-		if(netID!=null)
+		if(StringUtils.isNotBlank(netID))
 		{
 			stringBuilder.append("announcements.net_id = \"");
 			stringBuilder.append(netID);
-			stringBuilder.append("\" and");
+			
+			stringBuilder.append("\" and ");
+		}
+		
+		if(!branch.equalsIgnoreCase("ALL")){
+		
+		stringBuilder.append("users.branch = \"");
+		stringBuilder.append(branch);
+		stringBuilder.append("\" and ");
 		}
 
 
 
-
 		String sql = session.getNamedQuery("getAllAnnouncements").getQueryString();
-
-		if(branch.equalsIgnoreCase("ALL"))
-			//q.setString("BRANCH_CONDITION","");
-			sql=sql.replace("#BRANCH_CONDITION#", "");
-		else
-			sql=sql.replace("#BRANCH_CONDITION#",stringBuilder.toString());
-
+		sql=sql.replace("#BRANCH_CONDITION#",stringBuilder.toString());
 		SQLQuery q = (SQLQuery) session.createSQLQuery(sql).setString("startDate", startDate).setString("endDate",endDate);
 		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 
@@ -882,7 +965,7 @@ public class DBManager {
 		session.close();
 		return allAnnouncements;
 	}
-
+	
 	public String deleteAnnouncement(int announcementID){
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -899,7 +982,7 @@ public class DBManager {
 			tx.commit();
 
 			session.close();
-
+			
 		} catch (Exception e) {
 			tx.rollback();
 
@@ -909,9 +992,9 @@ public class DBManager {
 			e.printStackTrace();
 			msg = "Error in deleting announcement";
 		}
-
+		
 		return msg;
-
+	
 	}
 
 }

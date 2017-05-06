@@ -68,11 +68,11 @@ public class AppointmentsController {
 	@RequestMapping(value = "/deleteAppointments", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String deleteAppointments(@RequestParam("netID") String netID,
-			@RequestParam("appointmentID") Integer[] appointmentID){
+			@RequestParam("sessionID") Integer[] appointmentID){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<Object> appointments = dbmanager.deleteSessions(netID, appointmentID);
+		List<Object> appointments = dbmanager.deleteAppointments(netID, appointmentID);
 		r.setResult(appointments);
 
 		try {

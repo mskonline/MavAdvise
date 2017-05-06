@@ -30,6 +30,7 @@
             android:name=".activities.ManageAppointments"
             android:label="Your Appointments"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.tabs.AppointmentHistory" />
         <activity
             android:name=".activities.ManageSessions"
             android:label="@string/title_activity_manage_sessions"
