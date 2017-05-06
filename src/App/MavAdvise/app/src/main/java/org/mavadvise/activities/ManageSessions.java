@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -57,6 +58,11 @@ public class ManageSessions extends AppCompatActivity {
         if(!mDialog.isAdded())
             mDialog.show(getSupportFragmentManager(), "Loading");
 
+        try {
+            Thread.sleep(500);
+        } catch (Exception e){
+        }
+
         getSessionsData();
     }
 
@@ -80,6 +86,12 @@ public class ManageSessions extends AppCompatActivity {
                                 sessions = obj.getJSONArray("result");
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                            }
+
+                            if(sessionsViewTab == null || sessionsDeleteTab == null){
+                                try {
+                                    Thread.sleep(500);
+                                } catch (Exception e){}
                             }
 
                             sessionsViewTab.refreshContent(sessions);
@@ -147,6 +159,7 @@ public class ManageSessions extends AppCompatActivity {
                 case 1:
                     sessionsViewTab =  SessionsViewTab.newInstance();
                     instance = sessionsViewTab;
+                    getSessionsData();
                     break;
                 case 2:
                     sessionsDeleteTab = SessionsDeleteTab.newInstance();

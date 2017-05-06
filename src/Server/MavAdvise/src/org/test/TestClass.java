@@ -20,8 +20,14 @@ public class TestClass {
 
 		System.out.println(t1.isEqual(t2));*/
 
-		dateTest();
+		dateCheck();
 
+	}
+
+	public static void dateCheck(){
+		Date sqlDate = new Date(Calendar.getInstance().getTimeInMillis());
+
+		System.out.println(sqlDate.toString());
 	}
 
 

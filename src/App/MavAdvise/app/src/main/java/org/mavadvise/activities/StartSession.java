@@ -1,5 +1,6 @@
 package org.mavadvise.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import org.mavadvise.R;
 import org.mavadvise.adaptors.SessionsDataAdaptor;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.AlertDialogHelper;
 import org.mavadvise.commons.ProgressDialogHelper;
 import org.mavadvise.commons.URLResourceHelper;
 
@@ -33,6 +35,8 @@ public class StartSession extends AppCompatActivity {
     private AppConfig appConfig;
     ListView sessionsList;
 
+    private AlertDialogHelper alertDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,26 +49,75 @@ public class StartSession extends AppCompatActivity {
         sessionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    try {
-                        JSONObject obj = sessions.getJSONObject(position);
-                        Intent i = new Intent(StartSession.this, ActiveSession.class);
-                        i.putExtra("sessionID", obj.getInt("sessionID"));
-                        startActivity(i);
+                    String status = null;
 
-                    }catch (Exception e){
-                        e.printStackTrace();
+                    try {
+                        JSONObject sobj = sessions.getJSONObject(position);
+                        status = sobj.getString("status");
+                    } catch (Exception e){
+
                     }
+
+                    if(status.equalsIgnoreCase("STARTED")){
+                        try {
+                            JSONObject obj = sessions.getJSONObject(position);
+                            Intent intent = new Intent(StartSession.this, ActiveSession.class);
+                            intent.putExtra("sessionID", obj.getInt("sessionID"));
+                            intent.putExtra("status", status);
+
+                            startActivity(intent);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    } else {
+                        String msg = "Do you want to start this session?";
+                        final int pos = position;
+
+                        alertDialog = AlertDialogHelper.newInstance(msg,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        try {
+                                            JSONObject obj = sessions.getJSONObject(pos);
+                                            Intent intent = new Intent(StartSession.this, ActiveSession.class);
+                                            intent.putExtra("sessionID", obj.getInt("sessionID"));
+                                            intent.putExtra("status", obj.getString("status"));
+
+                                            startActivity(intent);
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //Do nothing
+                                    }
+                                });
+                        alertDialog.show(getSupportFragmentManager(), "Alert");
+                    }
+
                 }
             });
+
+        mDialog =  ProgressDialogHelper.newInstance();
+        mDialog.setMsg("Loading sessions...");
+
+        getSessionsData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(!mDialog.isAdded())
+            mDialog.show(getSupportFragmentManager(), "Loading");
 
         getSessionsData();
     }
 
     private void getSessionsData(){
-        mDialog =  ProgressDialogHelper.newInstance();
-        mDialog.setMsg("Loading sessions...");
-        mDialog.show(getSupportFragmentManager(), "Loading");
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         RequestBody formBody = new FormBody.Builder()

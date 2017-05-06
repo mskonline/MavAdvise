@@ -1,6 +1,7 @@
 package org.mavadvise.adaptors;
 
 import android.app.Activity;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +21,14 @@ public class SessionAppointmentsAdaptor extends BaseAdapter {
     Activity activity;
     JSONArray appointments;
 
+    private int cColor, dColor;
+
     public SessionAppointmentsAdaptor(Activity activity, JSONArray appointments){
         this.activity = activity;
         this.appointments = appointments;
+
+        cColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorCancelled, null);
+        dColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorDone, null);
     }
 
     @Override
@@ -37,15 +43,26 @@ public class SessionAppointmentsAdaptor extends BaseAdapter {
         try {
             JSONObject obj = appointments.getJSONObject(position);
 
-            TextView apptName, apptSlotNumber;
+            TextView apptName, apptSlotNumber, apptStatus;
 
             apptName = (TextView) row.findViewById(R.id.session_apptnameTV);
             apptSlotNumber = (TextView) row.findViewById(R.id.session_appntslotTV);
+            apptStatus = (TextView) row.findViewById(R.id.session_appntstatusTV);
 
             apptName.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
             apptSlotNumber.setText(obj.getString("slot_number"));
-        } catch (Exception e){
+            String status = obj.getString("status");
 
+            // Cancelled
+            if(status.startsWith("C"))
+                apptStatus.setTextColor(cColor);
+
+            // Done
+            if(status.startsWith("D"))
+                apptStatus.setTextColor(dColor);
+
+            apptStatus.setText(status);
+        } catch (Exception e){
         }
 
         return row;

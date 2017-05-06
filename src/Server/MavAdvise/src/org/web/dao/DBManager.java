@@ -310,16 +310,61 @@ public class DBManager {
 		return allSessions;
 	}
 
-	public List<User> getUsersForSession(Integer sessionID){
+	@SuppressWarnings("unchecked")
+	public List<User> startSession(Integer sessionID){
 		Session session = factory.openSession();
-		Query q =  session.createQuery("from User where netID in (select netID from Appointment where sessionID=:sessionID)");
+		Transaction tx = null;
 
-		List<User> users = q.setParameter("sessionID", sessionID).list();
+		// Set the session status as STARTED
+		try {
+			tx = session.beginTransaction();
+			org.web.beans.Session advSession = session.get(org.web.beans.Session.class, sessionID);
+			advSession.setStatus("STARTED");
+
+			session.update(advSession);
+			session.flush();
+
+			tx.commit();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+
+			tx.rollback();
+			session.close();
+
+			return new ArrayList<User>();
+		}
+
+		// Set the first appointment as ON GOING
+		Query appointmentQ = session.createQuery("from Appointment where sessionID=:sessionID and slotNo = 1");
+		Appointment appointment = (Appointment) appointmentQ.setParameter("sessionID", sessionID).uniqueResult();
+
+		try {
+			tx = session.beginTransaction();
+			appointment.setStatus("ON GOING");
+
+			session.update(appointment);
+			session.flush();
+
+			tx.commit();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+
+			tx.rollback();
+			session.close();
+
+			return new ArrayList<User>();
+		}
+
+		// Return all the Users of the session for notifying them
+		Query usersQ =  session.createQuery("from User where netID in (select netID from Appointment where sessionID=:sessionID)");
+		List<User> users = usersQ.setParameter("sessionID", sessionID).list();
 
 		session.close();
 		return users;
 	}
 
+
+	@SuppressWarnings("unchecked")
 	public User getUserForAppointment(Integer appointmentID){
 		Session session = factory.openSession();
 		Query q =  session.createQuery("from User where netID in (select netID from Appointment where appointmentID=:appointmentID)");
@@ -356,7 +401,29 @@ public class DBManager {
 		}
 	}
 
+
 	public boolean markAppointmentAsNoShow(Integer appointmentID){
+		Session session = factory.openSession();
+		Transaction tx = null;
+
+		// Set the appointment status as NO SHOW
+		try {
+			tx = session.beginTransaction();
+			Appointment appointment = session.get(Appointment.class, appointmentID);
+			appointment.setStatus("NO SHOW");
+
+			session.update(appointment);
+			session.flush();
+
+			tx.commit();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+
+			tx.rollback();
+			session.close();
+
+			return false;
+		}
 
 		return true;
 	}
@@ -720,8 +787,41 @@ public class DBManager {
 
 		}
 
+		//TODO: Cancel all appointments
+
 		return msg;
 	}
+
+	public String markSessionAsDone(Integer sessionID){
+		String msg = "Session marked as DONE";
+
+		Session session = factory.openSession();
+		Transaction tx = null;
+
+		try {
+			tx = session.beginTransaction();
+			org.web.beans.Session advSession = session.get(org.web.beans.Session.class, sessionID);
+			advSession.setStatus("DONE");
+
+			session.update(advSession);
+			session.flush();
+
+			tx.commit();
+			session.close();
+		} catch (Exception e) {
+			tx.rollback();
+
+			if(session.isOpen())
+				session.close();
+
+			e.printStackTrace();
+
+			msg = "Session : Failed to finish. Try again later.";
+		}
+
+		return msg;
+	}
+
 
 	public String saveAnnouncement(Announcement announ){
 		String msg = null;

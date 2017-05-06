@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SessionsController{
 	@Autowired
 	private DBManager dbmanager;
+
+	final static Logger logger = Logger.getLogger(SessionsController.class);
 
 	@Autowired
 	private NotificationService notificationService;
@@ -124,18 +127,23 @@ public class SessionsController{
 
 	@RequestMapping(value = "/startSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String startSession(@RequestParam("sessionID") Integer sessionID){
+	public String startSession(
+			@RequestParam("sessionID") Integer sessionID,
+			@RequestParam("status") String status){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<User> users = dbmanager.getUsersForSession(sessionID);
+		if(status.equalsIgnoreCase("SCHEDULED")){
+			List<User> users = dbmanager.startSession(sessionID);
 
-		String title = "MavAdvise";
-		String message = "Advising session has started.";
+			final String TITLE = "MavAdvise";
+			final String MESSAGE = "Advising session has started";
 
-		notificationService.sendNotification(title, message, users);
+			notificationService.sendNotification(TITLE, MESSAGE, users);
+		}
 
-		r.setResult("Session started. All appointments notified");
+		List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
+		r.setResult(allAppointments);
 
 		try {
 			return mapper.writeValueAsString(r);
@@ -171,41 +179,51 @@ public class SessionsController{
 	@ResponseBody
 	public String advanceSession(@RequestParam("sessionID") Integer sessionID,
 			@RequestParam("nextAppointmentID") Integer nextAppointmentID,
-			@RequestParam("prevAppointmentID") Integer prevAppointmentID){
+			@RequestParam("prevAppointmentID") Integer prevAppointmentID,
+			@RequestParam("noShow") String noShow){
+
+		logger.debug("prevAppointmentID : " + prevAppointmentID + " nextAppointmentID : " + nextAppointmentID );
+
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		// Get user of appointmentID
-		User user = dbmanager.getUserForAppointment(nextAppointmentID);
+		String msg = "Session: Next appointment notified";
 
-		// Notify the user
-		String title = "MavAdvise";
-		String message = "Your appointment is next";
+		if(nextAppointmentID != 0){
+			// Get user of appointmentID
+			User user = dbmanager.getUserForAppointment(nextAppointmentID);
 
-		notificationService.sendNotification(title, message, user);
+			// Notify the user
+			final String TITLE = "MavAdvise";
+			final String MESSAGE = "Your appointment is next";
 
-		// Mark prevAppointmentID as Done
-		dbmanager.markAppointmentAsDone(prevAppointmentID);
-
-		r.setMessage("Next appointment notified");
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
+			notificationService.sendNotification(TITLE, MESSAGE, user);
 		}
-	}
 
-	@RequestMapping(value = "/setAppointmentAsNoShow", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String setAppointmentAsNoShow(@RequestParam("appointmentID") Integer appointmentID){
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+		// Mark prevAppointmentID as Done or No Show
+		if(noShow.equalsIgnoreCase("N")){
+			dbmanager.markAppointmentAsDone(prevAppointmentID);
+			msg = "DONE";
+		}
+		else{
+			dbmanager.markAppointmentAsNoShow(prevAppointmentID);
 
-		boolean status = dbmanager.markAppointmentAsNoShow(appointmentID);
+			final String TITLE = "MavAdvise";
+			final String MESSAGE = "Your appointment was marked as NO SHOW";
 
-		if(status)
-			r.setMessage("Appointment marked as No Show");
+			User u = dbmanager.getUserForAppointment(prevAppointmentID);
+			notificationService.sendNotification(TITLE, MESSAGE, u);
+
+			msg = "NO SHOW";
+		}
+
+
+		if(nextAppointmentID == -1){
+			// Mark session as done
+			msg = dbmanager.markSessionAsDone(sessionID);
+		}
+
+		r.setResult(msg);
 
 		try {
 			return mapper.writeValueAsString(r);

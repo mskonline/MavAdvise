@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="60dp"
+    android:background="@drawable/list_selector">
 
     <TextView
         android:id="@+id/session_apptnameTV"
@@ -22,5 +23,16 @@
         android:text="20"
         android:textSize="18sp"
         android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/session_appntstatusTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/session_appntslotTV"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:textSize="12sp"
+        android:textColor="@color/colorAccent"
+        android:text="SCHEDULED"/>
 
 </RelativeLayout>

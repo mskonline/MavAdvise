@@ -35,14 +35,18 @@
             android:label="@string/title_activity_manage_sessions"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.SessionsAddError" />
-        <activity android:name=".activities.StartSession" />
+        <activity
+            android:name=".activities.StartSession"
+            android:label="Start Session"/>
         <activity
             android:name=".activities.ViewSession"
             android:label="View Session" />
         <activity
             android:name=".activities.CancelSession"
             android:label="Cancel Session" />
-        <activity android:name=".activities.ActiveSession" />
+        <activity
+            android:name=".activities.ActiveSession"
+            android:label="Active Session"/>
         <activity
             android:name=".activities.Announcements"
             android:label="Announcements" />

@@ -1,36 +1,25 @@
 package org.mavadvise.activities;
 
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.mavadvise.R;
-import org.mavadvise.app.AppConfig;
-import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.AlertDialogHelper;
 import org.mavadvise.commons.ProgressDialogHelper;
-import org.mavadvise.commons.Utils;
+import org.mavadvise.commons.URLResourceHelper;
 
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class CancelSession extends AppCompatActivity {
 
-    private AppConfig appConfig;
     private String cancelReason;
     private int sessionID;
     private ProgressDialogHelper cancelDialog;
@@ -66,8 +55,6 @@ public class CancelSession extends AppCompatActivity {
                 alertDialog.show(getSupportFragmentManager(), "Alert");
             }
         });
-
-        appConfig = ((MavAdvise) getApplication()).getAppConfig();
     }
 
     private void validateAndCancel(){
@@ -75,88 +62,40 @@ public class CancelSession extends AppCompatActivity {
         cancelReason = cancelReasonET.getText().toString().trim();
 
         if(cancelReason.length() == 0){
-
             return;
         }
 
+        doCancelSession();
+    }
+
+    private void doCancelSession(){
         cancelDialog =  ProgressDialogHelper.newInstance();
         cancelDialog.setMsg("Cancelling...");
         cancelDialog.show(getSupportFragmentManager(), "Cancel");
 
-        new CancelSessionTask().execute();
-    }
+        RequestBody formBody = new FormBody.Builder()
+                .add("sessionID", "" + sessionID)
+                .add("cancelReason", cancelReason)
+                .build();
 
-    private class CancelSessionTask extends AsyncTask<Void, Void , String> {
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("cancelSession", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                Intent i = getIntent();
+                                i.putExtra("status","C");
+                                setResult(RESULT_OK,i);
+                                finish();
+                            }
 
-        @Override
-        protected String doInBackground(Void... params){
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                Toast.makeText(getApplicationContext(), msg,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("CancelSessionTask", "Thread exception");
-            }
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("cancelSession")
-                        .build();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("sessionID", "" + sessionID)
-                        .add("cancelReason", cancelReason)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e){
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            cancelDialog.dismiss();
-
-            try {
-                Thread.sleep(500);
-            } catch (Exception e){
-                Log.e("CancelSessionTask", "Thread exception");
-            }
-
-            if(result != null) {
-                try {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("type");
-
-                    if(resultStr.equalsIgnoreCase("success")){
-                        Intent i = getIntent();
-                        i.putExtra("status","C");
-                        setResult(RESULT_OK,i);
-                        finish();
-                    } else {
-                        String msg = obj.getString("message");
-                        Toast.makeText(getApplicationContext(), msg,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    Log.e("JSON Parse", e.getMessage());
-                }
-            }
-        }
+        urlResourceHelper.execute();
     }
 }

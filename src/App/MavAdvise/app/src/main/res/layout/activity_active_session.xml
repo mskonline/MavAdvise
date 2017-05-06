@@ -6,8 +6,10 @@
     tools:context="org.mavadvise.activities.ActiveSession">
 
     <RelativeLayout
+        android:id="@+id/activeSessionRibbon"
         android:layout_width="match_parent"
         android:layout_height="5dp"
+        android:layout_alignParentTop="true"
         android:background="@color/colorAccent" />
 
     <LinearLayout
@@ -20,7 +22,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/sessionNoSessionBT"
+            android:id="@+id/sessionNoShowBT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -40,6 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_above="@id/activeSessionsActions"
+        android:layout_below="@id/activeSessionRibbon"
         android:divider="@color/colorAccent"
+        android:choiceMode="singleChoice"
         android:dividerHeight="2px"/>
 </RelativeLayout>

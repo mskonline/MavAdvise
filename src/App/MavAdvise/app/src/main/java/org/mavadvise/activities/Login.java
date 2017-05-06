@@ -165,7 +165,7 @@ public class Login extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final ProgressDialog dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Logging in User...");
+            dialog.setMessage("Logging in...");
             dialog.setIndeterminate(true);
 
             return dialog;

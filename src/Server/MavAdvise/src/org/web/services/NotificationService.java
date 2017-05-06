@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web.app.AppConfig;
 import org.web.beans.User;
+import org.web.dao.DBManager;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -23,11 +25,24 @@ public class NotificationService {
 	private static OkHttpClient httpClient;
 	private final String FIREBASE_ENDPOINT;
 	private final String SERVER_KEY;
+	private boolean isEnabled = true;
+
+	final static Logger logger = Logger.getLogger(NotificationService.class);
 
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 	@Autowired
 	public NotificationService(AppConfig appConfig){
+		String flag = appConfig.get("notifications.enabled");
+
+		if(flag.equalsIgnoreCase("false")){
+			isEnabled = false;
+
+			FIREBASE_ENDPOINT = null;
+			SERVER_KEY = null;
+			return;
+		}
+
 		if(httpClient == null){
 			httpClient = new OkHttpClient.Builder().build();
 		}
@@ -37,6 +52,11 @@ public class NotificationService {
 	}
 
 	public void sendNotification(String title, String message, User user){
+		if(!isEnabled){
+			logger.debug("Notifications disabled");
+			return;
+		}
+
 		if(user == null)
 			return;
 
@@ -50,6 +70,12 @@ public class NotificationService {
 	}
 
 	public void sendNotification(String title, String message, List<User> users){
+		if(!isEnabled){
+			logger.debug("Notifications disabled");
+			return;
+		}
+
+
 		if(users == null || users.size() == 0)
 			return;
 
@@ -61,7 +87,7 @@ public class NotificationService {
 
 	private class FireBaseNotifier implements Runnable{
 		private String title, message;
-		private List<User> users ;
+		private List<User> users;
 
 		public FireBaseNotifier(String title, String message, List<User> users){
 			this.title = title;
@@ -100,6 +126,8 @@ public class NotificationService {
 
 			RequestBody body = RequestBody.create(JSON, jmessage.toString());
 
+			logger.debug("Firebase Request : " + jmessage.toString());
+
 			Request request = new Request.Builder()
 	                .url(FIREBASE_ENDPOINT)
 	                .post(body)
@@ -109,9 +137,12 @@ public class NotificationService {
 
 			Response response = null;
 			String responseMsg = null;
+
 	        try {
 	            response = httpClient.newCall(request).execute();
 	            responseMsg = response.body().string();
+
+	            logger.debug("Firebase Response : " + responseMsg);
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }

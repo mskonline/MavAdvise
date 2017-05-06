@@ -76,7 +76,10 @@ public class ViewSession extends AppCompatActivity {
         if (status.startsWith("C")) {
             sStatus.setTextColor(cColor);
             cancelSessionBtn.setVisibility(View.GONE);
-        } else {
+        } else if(status.startsWith("D")){
+            sStatus.setTextColor(dColor);
+            cancelSessionBtn.setVisibility(View.GONE);
+        } else{
             cancelSessionBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

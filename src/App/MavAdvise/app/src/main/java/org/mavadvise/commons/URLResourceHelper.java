@@ -110,9 +110,10 @@ public class URLResourceHelper extends AsyncTask<Void, Void , String> {
 
             } catch (Exception e) {
                 Log.e("JSON Parse", e.getMessage());
-                listener.onFinishFailed("Bad Response from Server. Try again later");
+                e.printStackTrace();
+                listener.onFinishFailed("Bad response from Server. Try again later");
             }
         } else
-            listener.onFinishFailed("No Response from Server. Try again later");
+            listener.onFinishFailed("No response from Server. Try again later");
     }
 }
