@@ -15,7 +15,6 @@
         <item>Choose Department</item>
         <item>All</item>
         <item>CSE</item>
-        <item>CSE</item>
         <item>MIS</item>
         <item>EE</item>
         <item>MECH</item>
@@ -29,7 +28,7 @@
     </string-array>
 
     <string-array name="priority">
-        <item>Set Priority Level for the announcement</item>
+        <item>Set Priority</item>
         <item>High</item>
         <item>Normal</item>
     </string-array>

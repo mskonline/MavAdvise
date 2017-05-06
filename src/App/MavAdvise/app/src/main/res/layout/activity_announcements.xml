@@ -42,9 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/announcement_linear_layout"
         android:divider="@color/colorAccent"
-        android:dividerHeight="2px"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"/>
+        android:dividerHeight="2px" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

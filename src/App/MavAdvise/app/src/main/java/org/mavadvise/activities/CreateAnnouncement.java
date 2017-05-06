@@ -61,9 +61,9 @@ public class CreateAnnouncement extends AppCompatActivity {
     }
 
     private void navigateToAnnouncementPage(){
-        Intent intent = new Intent(CreateAnnouncement.this, Announcements.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        //Intent intent = new Intent(CreateAnnouncement.this, Announcements.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //startActivity(intent);
         finish();
     }
 

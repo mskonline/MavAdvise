@@ -45,9 +45,17 @@ public class ReadAnnouncements extends AppCompatActivity {
 
         Bundle b = getIntent().getExtras();
 
+//        i.putExtra("announcementId",obj.getInt("announcementId"));
+//        i.putExtra("date",obj.getString("date"));
+//        i.putExtra("authorFirstName",obj.getString("firstName"));
+//        i.putExtra("authorLastName",obj.getString("lastName"));
+//        i.putExtra("message",obj.getString("message"));
+//        i.putExtra("title",obj.getString("title"));
+//        i.putExtra("netID",obj.getString("netId"));
+
         firstName = b.getString("authorFirstName");
-        lastName = b.getString("authorlastName");
-        netId = b.getString("netId");
+        lastName = b.getString("authorLastName");
+        netId = b.getString("netID");
         date = b.getString("date");
         title = b.getString("title");
         message = b.getString("message");
@@ -69,6 +77,10 @@ public class ReadAnnouncements extends AppCompatActivity {
         if(appConfig.getUser().getNetID().equalsIgnoreCase(netId)){
             advisorView.setVisibility(View.GONE);
             delView.setVisibility(View.VISIBLE);
+        }
+
+        if(!appConfig.getUser().getNetID().equalsIgnoreCase(netId)){
+            delView.setVisibility(View.GONE);
         }
 
         titleView.setText(title);
@@ -97,9 +109,10 @@ public class ReadAnnouncements extends AppCompatActivity {
     private void deleteAnnouncement(int announcementId){
 
         saveDialog = ProgressDialogFragment.newInstance();
+        saveDialog.show(getFragmentManager(),"Deleting..");
 
         RequestBody formBody = new FormBody.Builder()
-                .add("announcementId", "" +announcementId).build();
+                .add("announcementID", "" +announcementId).build();
 
         URLResourceHelper urlResourceHelper =
                 new URLResourceHelper("deleteAnnouncement", formBody,
@@ -114,7 +127,7 @@ public class ReadAnnouncements extends AppCompatActivity {
                             @Override
                             public void onFinishFailed(String msg) {
                                 saveDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), msg,
+                                Toast.makeText(getApplicationContext(), "Couldn't Delete Announcement. Please try again later",
                                         Toast.LENGTH_LONG).show();
                             }
                         });
@@ -144,8 +157,6 @@ public class ReadAnnouncements extends AppCompatActivity {
     }
 
     private void navigateBack(){
-        Intent intent = getIntent();
-        setResult(RESULT_OK,intent);
         finish();
     }
 }

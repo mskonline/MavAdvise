@@ -34,7 +34,7 @@ public class AnnouncementController {
 			@RequestParam(value="netId",required=false) String netId){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
-
+		System.out.println(netId+"This is my netid");
 		List<Object> announcements = dbmanager.getAllAnnouncements(startDate, endDate, branch,netId);
 
 		r.setResult(announcements);

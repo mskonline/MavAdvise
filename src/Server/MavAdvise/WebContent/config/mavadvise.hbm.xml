@@ -151,6 +151,7 @@
 		announcements.title,
 		users.firstname as firstName,
 		users.branch as branch,
+		announcements.message,
 		users.lastname as lastName
 		FROM users, announcements
 		WHERE #BRANCH_CONDITION#

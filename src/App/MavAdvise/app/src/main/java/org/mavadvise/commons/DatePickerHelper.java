@@ -23,6 +23,7 @@ public class DatePickerHelper extends DialogFragment {
 
     private DatePickerListener datePickerListener;
     private Calendar minDate = Calendar.getInstance();
+    private Calendar maxDate = null;
 
     public DatePickerHelper(){}
 
@@ -34,6 +35,10 @@ public class DatePickerHelper extends DialogFragment {
 
         final DatePicker dp = (DatePicker) rootView.findViewById(R.id.datePicker);
         dp.setMinDate(minDate.getTimeInMillis());
+
+        if(maxDate != null){
+            dp.setMaxDate(maxDate.getTimeInMillis());
+        }
 
         Button saveButton = (Button) rootView.findViewById(R.id.dpSelectBT);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -66,4 +71,6 @@ public class DatePickerHelper extends DialogFragment {
     public void setMinDate(Calendar minDate) {
         this.minDate = minDate;
     }
+
+    public void setMaxDate(Calendar maxDate){this.maxDate=maxDate;}
 }
