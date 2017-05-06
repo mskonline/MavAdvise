@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -446,29 +447,25 @@ public class DBManager {
 	@SuppressWarnings("unchecked")
 	public List<Object> getAllAnnouncements(String startDate, String endDate, String branch, String netID){
 		Session session = factory.openSession();
-
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("users.branch = \"");
-		stringBuilder.append(branch);
-		stringBuilder.append("\" and ");
 		
-		if(netID!=null)
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		if(StringUtils.isNotBlank(netID))
 		{
 			stringBuilder.append("announcements.net_id = \"");
 			stringBuilder.append(netID);
-			stringBuilder.append("\" and");
+			stringBuilder.append("\" and ");
 		}
 		
+		if(!branch.equalsIgnoreCase("ALL")){
 		
-		
+		stringBuilder.append("users.branch = \"");
+		stringBuilder.append(branch);
+		stringBuilder.append("\" and ");
+		}
 
 		String sql = session.getNamedQuery("getAllAnnouncements").getQueryString();
-
-		if(branch.equalsIgnoreCase("ALL"))
-			//q.setString("BRANCH_CONDITION","");
-			sql=sql.replace("#BRANCH_CONDITION#", "");
-		else
-			sql=sql.replace("#BRANCH_CONDITION#",stringBuilder.toString());
+		sql=sql.replace("#BRANCH_CONDITION#",stringBuilder.toString());
 
 		SQLQuery q = (SQLQuery) session.createSQLQuery(sql).setString("startDate", startDate).setString("endDate",endDate);
 		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);

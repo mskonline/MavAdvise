@@ -26,6 +26,8 @@ import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.ProgressDialogHelper;
 import org.mavadvise.commons.URLResourceHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TimeZone;
 
 import okhttp3.FormBody;
@@ -37,12 +39,14 @@ public class Announcements extends AppCompatActivity {
 
     private AppConfig appConfig;
     String startDate,
-            endDate,branch;
+            endDate,
+            branch;
     boolean isChecked;
     Calendar c = Calendar.getInstance();
     private ProgressDialogHelper mDialog;
     private AnnouncementDataAdapter announcementsDataAdaptor;
     ListView announcementList;
+    Spinner spinner;
 
 
 
@@ -52,7 +56,7 @@ public class Announcements extends AppCompatActivity {
         setContentView(R.layout.activity_announcements);
         appConfig = ((MavAdvise)getApplication()).getAppConfig();
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_branch_announcement);
+        spinner = (Spinner) findViewById(R.id.spinner_branch_announcement);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.branch_array_announcement, android.R.layout.simple_spinner_item);
 
@@ -64,8 +68,24 @@ public class Announcements extends AppCompatActivity {
         else
             branch=spinner.getSelectedItem().toString();
 
-        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(position == 0)
+                    branch="all";
+                else
+                    branch= parentView.getItemAtPosition(position).toString();
 
+                populateList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // do nothing
+            }
+
+        });
+        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.fab);
         if((appConfig.getUser().getRoleType()).equalsIgnoreCase("Advisor")){
             myFab.setVisibility(View.VISIBLE);
         }
@@ -87,8 +107,8 @@ public class Announcements extends AppCompatActivity {
             }
         });
 
-        startDate = DateFormat.format("MM/dd/yyyy", c.getTimeInMillis()).toString();
-        endDate = DateFormat.format("MM/dd/yyyy", c.getTimeInMillis()).toString();
+        startDate = DateFormat.format("yyyy-MM-dd", c.getTimeInMillis()).toString();
+        endDate = DateFormat.format("yyyy-MM-dd", c.getTimeInMillis()).toString();
 
         Log.i("startDate",startDate);
         Log.i("endDate",endDate);
@@ -98,14 +118,44 @@ public class Announcements extends AppCompatActivity {
             Log.i("notBoolean","notBoolean");
 
         announcementList = (ListView) findViewById(R.id.announcement_list);
+        mDialog = ProgressDialogHelper.newInstance();
+        mDialog.setMsg("Loading Announcements");
         populateList();
         announcementsDataAdaptor = new AnnouncementDataAdapter(announcements,this);
         announcementList.setAdapter(announcementsDataAdaptor);
+        announcementList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                try{
+                    JSONObject obj = announcements.getJSONObject(position);
+                    Intent i = new Intent(Announcements.this, ReadAnnouncements.class);
+                    i.putExtra("announcementId",obj.getInt("announcementId"));
+                    i.putExtra("date",obj.getString("date"));
+                    i.putExtra("authorFirstName",obj.getString("firstName"));
+                    i.putExtra("authorLastName",obj.getString("lastName"));
+                    i.putExtra("message",obj.getString("message"));
+                    i.putExtra("title",obj.getString("title"));
+                    i.putExtra("netID",obj.getString("netId"));
+                    startActivity(i);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        if(isChecked){
+            spinner.setSelection(0);
+            spinner.setEnabled(false);
+        }
+        else{
+            spinner.setEnabled(true);
+        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent bundle) {
-        Log.i("here","inOnActivity");
+        super.onActivityResult(requestCode, resultCode, bundle);
+
         if(requestCode==3){
             Log.i("here","inOnActivity2");
             if(resultCode == Activity.RESULT_OK){
@@ -119,6 +169,7 @@ public class Announcements extends AppCompatActivity {
                         else
                             isChecked=false;
                 }
+
                 Log.i("startDate",startDate);
                 Log.i("endDate",endDate);
                 if(isChecked)
@@ -127,32 +178,55 @@ public class Announcements extends AppCompatActivity {
                     Log.i("notBoolean","notBoolean");
             }
             populateList();
+            if(isChecked){
+                spinner.setSelection(0);
+                spinner.setEnabled(false);
+            }
+            else{
+                spinner.setEnabled(true);
+            }
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        populateList();
+        if(isChecked){
+            spinner.setSelection(0);
+            spinner.setEnabled(false);
+        }
+        else{
+            spinner.setEnabled(true);
+        }
     }
 
     private void navigateToCreateNew(){
         Intent intent = new Intent(Announcements.this, CreateAnnouncement.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
+        //finish();
     }
 
     private void navigateToFilter(){
-
+        String show = "no";
         Intent intent = new Intent(Announcements.this, FilterAnnouncements.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if(isChecked){
+            show="yes";
+        }
+
+        intent.putExtra("startDate",startDate);
+        intent.putExtra("endDate",endDate);
+        intent.putExtra("show",show);
+
         startActivityForResult(intent,3);
     }
 
     private void populateList(){
 
-        mDialog = ProgressDialogHelper.newInstance();
-        mDialog.setMsg("Loading Announcements");
+        if(!mDialog.isAdded())
+            mDialog.show(getSupportFragmentManager(), "Alert");
 
         RequestBody formBody;
         if(isChecked){
@@ -160,7 +234,7 @@ public class Announcements extends AppCompatActivity {
                     .add("startDate",startDate)
                     .add("endDate",endDate)
                     .add("branch",branch)
-                    .add("netID", appConfig.getUser().getNetID())
+                    .add("netId", appConfig.getUser().getNetID())
                     .build();
         }
         else{
@@ -171,7 +245,7 @@ public class Announcements extends AppCompatActivity {
                     .build();
         }
         URLResourceHelper urlResourceHelper =
-                new URLResourceHelper("getAllAnnouncement", formBody,
+                new URLResourceHelper("getAllAnnouncements", formBody,
                         new URLResourceHelper.onFinishListener() {
                             @Override
                             public void onFinishSuccess(JSONObject obj) {
@@ -195,27 +269,5 @@ public class Announcements extends AppCompatActivity {
                         });
 
         urlResourceHelper.execute();
-
-
-
-        announcementList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-                try{
-                    JSONObject obj = announcements.getJSONObject(position);
-                    Intent i = new Intent(Announcements.this, ReadAnnouncements.class);
-                    i.putExtra("announcementId",obj.getInt("announcementId"));
-                    i.putExtra("date",obj.getString("date"));
-                    i.putExtra("authorFirstName",obj.getString("firstName"));
-                    i.putExtra("authorLastName",obj.getString("lastName"));
-                    i.putExtra("message",obj.getString("message"));
-                    i.putExtra("title",obj.getString("title"));
-                    i.putExtra("netID",obj.getString("netId"));
-                    startActivityForResult(i,2);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 }
