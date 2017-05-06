@@ -20,6 +20,7 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 import org.web.beans.Announcement;
+import org.web.beans.Appointment;
 import org.web.beans.Response;
 import org.web.beans.User;
 
@@ -137,6 +138,50 @@ public class DBManager {
 			return false;
 	}
 
+	@SuppressWarnings("unchecked")
+	public void updateUserDeviceID(String netID, String newDeviceID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID = :netID");
+
+		List<User> userList = q.setParameter("netID", netID).list();
+
+		if(userList.size() >= 1){
+			User user = userList.get(0);
+			user.setDeviceID(newDeviceID);
+
+			session.beginTransaction();
+			session.update(user);
+			session.getTransaction().commit();
+
+			session.flush();
+			session.close();
+		} else {
+			session.close();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void updateDeviceID(String newDeviceID, String oldDeviceID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where deviceID = :deviceID");
+
+		List<User> userList = q.setParameter("deviceID", oldDeviceID).list();
+
+		if(userList.size() >= 1){
+			User user = userList.get(0);
+			user.setDeviceID(newDeviceID);
+
+			session.beginTransaction();
+			session.update(user);
+			session.getTransaction().commit();
+
+			session.flush();
+			session.close();
+		} else {
+			session.close();
+		}
+	}
+
 	public Map<String, List<Object>> addSessions(org.web.beans.SessionInfo sessionInfo){
 		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
 		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
@@ -209,7 +254,8 @@ public class DBManager {
     		}
         }
 
-        List<Object> allSessions = getSessions(sessionInfo.getNetID());
+
+        List<Object> allSessions = getAllSessions(sessionInfo.getNetID());
 
         sessions.put("allSessions", allSessions);
         sessions.put("conflictingSessions", conflictingSessions);
@@ -237,7 +283,8 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Object> getSessions(String netID){
+
+	public List<Object> getAllSessions(String netID){
 		Session session = factory.openSession();
 
 		SQLQuery q = (SQLQuery) session.getNamedQuery("getAllSessions").setString("netID", netID);
@@ -265,6 +312,57 @@ public class DBManager {
 		return allSessions;
 	}
 
+	public List<User> getUsersForSession(Integer sessionID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID in (select netID from Appointment where sessionID=:sessionID)");
+
+		List<User> users = q.setParameter("sessionID", sessionID).list();
+
+		session.close();
+		return users;
+	}
+
+	public User getUserForAppointment(Integer appointmentID){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID in (select netID from Appointment where appointmentID=:appointmentID)");
+
+		List<User> users = q.setParameter("appointmentID", appointmentID).list();
+
+		session.close();
+
+		if(users != null && users.size() > 0)
+			return users.get(0);
+		else
+			return null;
+
+	}
+
+	public void markAppointmentAsDone(Integer appointmentID){
+		Session session = factory.openSession();
+		Appointment appointment = (Appointment) session.get(Appointment.class, appointmentID);
+
+		try{
+			appointment.setStatus("DONE");
+
+			session.beginTransaction();
+			session.update(appointment);
+			session.getTransaction().commit();
+
+			session.flush();
+			session.close();
+		} catch(Exception e){
+			logger.error("" + e.getMessage());
+
+			session.getTransaction().rollback();
+			session.close();
+		}
+	}
+
+	public boolean markAppointmentAsNoShow(Integer appointmentID){
+
+		return true;
+	}
+
 
 	@SuppressWarnings("unchecked")
 	public List<Object> getAppointments(String netID){
@@ -278,45 +376,79 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
-	
+
+
 	@SuppressWarnings("unused")
 	public Response createAppointment(int sessID, String netID, Date date){
-		
+
 		Session session = factory.openSession();
 		List<Integer> sessIds= new ArrayList<Integer>();
 		int i=0;
 		Response r = new Response();
 		int counter =0;
-		
+	
 		org.web.beans.Appointment appointment = null;
 		List<org.web.beans.Session> SessionData = new ArrayList<org.web.beans.Session>();
 		List<Object> allAppointments = null;
-		
+
 		System.out.println("here2");
-		
+
 		//TODO Synchronise the block
-		
+
 		Criteria criteria = session.createCriteria(org.web.beans.Session.class);
 		criteria.add(Restrictions.eq("sessionID", sessID));
 		SessionData = criteria.list();
-	
-		//SessionData = (org.web.beans.Session)SessionData1;
-		
-		System.out.println("here3");
 
+		//SessionData = (org.web.beans.Session)SessionData1;
+
+		System.out.println("here3");
+		
+//		List<org.web.beans.Appointment>AppointmentsNoShow = null;
+//		Criteria criteriaAppNo = session.createCriteria(org.web.beans.Appointment.class);
+//		criteriaAppNo.add(Restrictions.eq("netID", netID));
+//		criteriaAppNo.add(Restrictions.between("date", adddate(now(),-7), now()));
+//		AppointmentsNoShow = criteriaAppNo.list();
+		
+		List<Object> res = null;
+		
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getNoShowSessions").setString("netID", netID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+	    res = q.list();
+
+	    System.out.println(res.toString());
+	    
+		if(res==null|| res.size()==0){
+			System.out.println("No no shows");
+						
+		}else{
+			System.out.println("No show");
+			r.setMessage("You have a no-show ban.");
+			return r;
+		}
 
 		List<org.web.beans.Appointment>Appointments = null;
 		Criteria criteriaApp = session.createCriteria(org.web.beans.Appointment.class);
 		criteriaApp.add(Restrictions.eq("netID", netID));
 		Appointments = criteriaApp.list();
 		
+
 		if(Appointments==null){
 			System.out.println("Appointments is zero");
 		}
 		
+//		for(org.web.beans.Appointment appNoShow : Appointments){
+//			if(appNoShow.getStatus() == "NOSHOW"){
+//				if((appNoShow.getDate().compareTo(dateToday))>-7){
+//					System.out.println("There is no show " + appNoShow.getDate().toString());
+//					
+//				}
+//			}
+//			
+//		}
+
 		org.web.beans.Session sess3 = new org.web.beans.Session();
 		int flag =0;
-		
+
 		for(Object sess2: SessionData){
 			sess3 = (org.web.beans.Session) sess2;
 			System.out.println(sess3.getStatus());
@@ -328,53 +460,53 @@ public class DBManager {
 					System.out.println(sessIds.get(0));
 					flag=1;
 					i++;
-				
+
 			}
-		}	
 		}
-		
-		
+		}
+
+
 		System.out.println("here4");
-		
+
 		if((flag==1)&&(sessIds!=null)){
 			List<org.web.beans.Session> SessionConflicts = null;
 		Criteria criteriaConf = session.createCriteria(org.web.beans.Session.class);
 		criteriaConf.add(Restrictions.in("sessionID", sessIds));
 		SessionConflicts = criteriaConf.list();
 		flag=0;
-		
+
 		System.out.println("here5");
-		
+
 			if(sess3!=null){
 				for(org.web.beans.Session sessioncon : SessionConflicts){
 					if(sessioncon!=null){
-						
+
 						if(sess3.getDate() == sessioncon.getDate()){
 							if((sess3.getStartTime().before(sessioncon.getEndTime())
 							   &&sessioncon.getStartTime().before(sess3.getStartTime()))
 							   || (sessioncon.getStartTime().before(sess3.getEndTime())
 							   && sess3.getEndTime().before(sessioncon.getEndTime()))
 							   || (sess3.getStartTime().equals(sessioncon.getStartTime()))){
-								
+
 								flag=1;
 								r.setMessage("Appointment conflicts with your other appointments.");
 								return r;
-								
+
 							}
 						}
 					}
 				}
-			
-			
+
+
 			if(sess3.getSlotCounter()< sess3.getNoOfSlots()){
-				
+
 				appointment = new org.web.beans.Appointment();
 				appointment.setNetID(netID);
 				appointment.setSessionID(sessID);
 				appointment.setDate(date);
 				appointment.setStatus("SCHEDULED");
 				appointment.setSlotNo(sess3.getSlotCounter()+1);
-				
+
 				Transaction tx = null;
 				Session hSession = factory.openSession();
 
@@ -388,8 +520,8 @@ public class DBManager {
 	    			tx.commit();
 
 	    			hSession.close();
-	    			
-	    			
+
+
 	    		} catch(Exception e){
 	    			tx.rollback();
 	    			hSession.close();
@@ -397,11 +529,11 @@ public class DBManager {
 	    			logger.error("Error creating the Appointment. " + e.getMessage());
 	    			return null;
 	    		}
-	        	
-	        	
+
+
 	        	Session nsession = factory.openSession();
 	        	Transaction txn = nsession.beginTransaction();
-	        	
+
 	        	counter = sess3.getSlotCounter() + 1;
 	        	String hqlUpdate = "update Session  set slotCounter = :counter where sessionID = :sessionid";
 	        	// or String hqlUpdate = "update Customer set name = :newName where name = :oldName";
@@ -411,32 +543,32 @@ public class DBManager {
 	        	        .executeUpdate();
 	        	txn.commit();
 	        	nsession.close();
-	        	
+
 	        	allAppointments = getAppointments(netID);
-				
+
 	        	r.setMessage("Success");
 				r.setResult(allAppointments);
 				return r;
-							
+
 			}
-			
+
 			}else{
 				r.setMessage("Session not found");
 				return r;
-				
+
 				}
 		}
-		
-		
+
+
 		if((flag==0)&&(sess3.getSlotCounter()< sess3.getNoOfSlots())){
-			
+
 			appointment = new org.web.beans.Appointment();
 			appointment.setNetID(netID);
 			appointment.setSessionID(sessID);
 			appointment.setDate(date);
 			appointment.setStatus("SCHEDULED");
 			appointment.setSlotNo(sess3.getSlotCounter()+1);
-			
+
 			Transaction tx = null;
 			Session hSession = factory.openSession();
 
@@ -458,8 +590,8 @@ public class DBManager {
     			logger.error("Error creating the Appointment. " + e.getMessage());
     			return null;
     		}
-        	
-        	
+
+
 			Session usession = factory.openSession();
         	Transaction txn = usession.beginTransaction();
 
@@ -473,20 +605,19 @@ public class DBManager {
         	txn.commit();
         	usession.close();
         	allAppointments = getAppointments(netID);
-					
+
 			r.setMessage("Success");
 			r.setResult(allAppointments);
 			return r;
-			
+
 			}else{
 				r.setMessage("Slots for this appointment are over.");
 				return r;
 			}
-		
-			//return r;
-			
-	}
 
+			//return r;
+
+	}
 
 	public List<org.web.beans.User> getAdvisors(String branch){
 		Session session = factory.openSession();
@@ -505,8 +636,7 @@ public class DBManager {
 
 
 	}
-	
-	
+
 	public List<Object> getSessionDates(String netID){
 		Session session = factory.openSession();
 
@@ -520,7 +650,7 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
-	
+
 
 	public List<Object> deleteAppointments(String netID, Integer[] appointmentIDs){
 		Session session = factory.openSession();
@@ -528,14 +658,24 @@ public class DBManager {
 		Transaction tx = null;
 		Transaction tx1 = null;
 		List<Object> allAppointments = null;
+		
+		if(appointmentIDs==null){
+			System.out.println("null appointemnts");
+		}else{
+			System.out.println("hasvalues in appointment");
+		}
+		
+		for (Integer object : appointmentIDs) {
+			System.out.println("" + object.intValue());
+		}
 
 		try {
 			tx = session.beginTransaction();
 			
-			String stat = "CANCELLED";
+			//String stat = "CANCELLED";
 
-			Query q =  session.createQuery("update Appointment set status = :stat where netID = :netID and appointmentID in (:appointmentIDs)");
-			q.setParameter("stat", stat);
+			Query q =  session.createQuery("update Appointment set status = :stat where netID = :netID and sessionID in (:appointmentIDs)");
+			q.setParameter("stat", "CANCELLED");
 			q.setParameter("netID", netID);
 			q.setParameterList("appointmentIDs", appointmentIDs);
 
@@ -543,13 +683,18 @@ public class DBManager {
 			tx.commit();
 
 			session.close();
+
 			           	
-            if(result > 0)
+            if(result > 0){
 				allAppointments = getAppointments(netID);
+            }
+            else{
+            	System.out.println("couldn't delete");
+            }
             
+
 		} catch (Exception e) {
 			tx.rollback();
-					tx1.rollback();
 
 			if(session.isOpen())
 				session.close();
@@ -561,14 +706,18 @@ public class DBManager {
 		try{
 			 tx1 = nsession.beginTransaction();
 				
-				Query q1 =  nsession.createQuery("update Session set slotCounter = slotCounter-1 where sessionID = (select sessionID from Appointment where netID = :netID and appointmentID in (:appointmentIDs))");
-				q1.setParameter("netID", netID);
+				Query q1 =  nsession.createQuery("update Session set slotCounter = slotCounter-1 where sessionID in (:appointmentIDs)");
 				q1.setParameterList("appointmentIDs", appointmentIDs);
 
 				int result1 = q1.executeUpdate();
 				tx1.commit();
 
 				nsession.close();
+				
+				if(result1==0){
+	            	System.out.println("couldn't update counter");
+	            }
+	            
 				
 		}catch (Exception e) {
 			
@@ -582,7 +731,8 @@ public class DBManager {
 		
 		return allAppointments;
 	}
-
+	
+	
 	@SuppressWarnings("unchecked")
 	public List<Object> getSessionAppointments(Integer sessionID){
 		Session session = factory.openSession();
@@ -615,7 +765,7 @@ public class DBManager {
 			session.close();
 
 			if(result > 0)
-				allSessions = getSessions(netID);
+				allSessions = getAllSessions(netID);
 		} catch (Exception e) {
 			tx.rollback();
 
@@ -691,16 +841,16 @@ public class DBManager {
 		stringBuilder.append("users.branch = \"");
 		stringBuilder.append(branch);
 		stringBuilder.append("\" and ");
-		
+
 		if(netID!=null)
 		{
 			stringBuilder.append("announcements.net_id = \"");
 			stringBuilder.append(netID);
 			stringBuilder.append("\" and");
 		}
-		
-		
-		
+
+
+
 
 		String sql = session.getNamedQuery("getAllAnnouncements").getQueryString();
 
@@ -718,7 +868,7 @@ public class DBManager {
 		session.close();
 		return allAnnouncements;
 	}
-	
+
 	public String deleteAnnouncement(int announcementID){
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -735,7 +885,7 @@ public class DBManager {
 			tx.commit();
 
 			session.close();
-			
+
 		} catch (Exception e) {
 			tx.rollback();
 
@@ -745,9 +895,9 @@ public class DBManager {
 			e.printStackTrace();
 			msg = "Error in deleting announcement";
 		}
-		
+
 		return msg;
-	
+
 	}
 
 }

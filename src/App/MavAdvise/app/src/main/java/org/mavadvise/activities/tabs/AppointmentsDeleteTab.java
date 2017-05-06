@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.widget.Space;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,7 @@ public class AppointmentsDeleteTab extends Fragment {
     public void refreshContent(JSONArray appointments){
         this.appointments = appointments;
         optionsAdapter.notifyDataSetChanged();
+        deleteAppointmentsList.requestLayout();
     }
 
     @Override
@@ -317,8 +319,11 @@ public class AppointmentsDeleteTab extends Fragment {
                     aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
                     aDate.setText(obj.getString("date"));
                     aStat.setText(obj.getString("appStatus"));
-                }else{
+                }
+                else{
                     row.setVisibility(View.GONE);
+                    aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
+                    Log.i("invi", "Have set it invisible");
                 }
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);

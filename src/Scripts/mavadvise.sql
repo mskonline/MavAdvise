@@ -91,6 +91,7 @@ CREATE TABLE `users` (
   `password` varchar(100) DEFAULT NULL,
   `security_question_id` int(11) NOT NULL,
   `security_answer` varchar(1000) DEFAULT NULL,
+  `device_id` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`net_id`),
   UNIQUE KEY `net_id_UNIQUE` (`net_id`),
   UNIQUE KEY `uta_id_UNIQUE` (`uta_id`),
@@ -117,8 +118,8 @@ CREATE TABLE `announcements` (
 
 INSERT INTO `users` (`net_id`, `uta_id`, `firstname`, `lastname`, `roletype`, `branch`, `email`, `password`, `security_question_id`, `security_answer`) VALUES
 ('bxs1234', '1001231234', 'Bob', 'Smith', 'Advisor', 'CSE', 'bob.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas'),
-('wxs1234', '1001231235', 'Will', 'Smith', 'Student', 'CSE', 'will.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas');
-
+('wxs1234', '1001231235', 'Will', 'Smith', 'Student', 'CSE', 'will.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas'),
+('rxs1234', '1001231236', 'Ray', 'Smith', 'Student', 'CSE', 'ray.smith@mail.com', 'A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3', 1, 'Dallas');
 
 INSERT INTO `sessions` (`session_id`, `net_id`, `date`, `starttime`, `endtime`, `status`, `no_of_slots`, `slot_counter`, `location`, `comment`) VALUES
 (1, 'bxs1234', '2017-06-02', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
@@ -127,4 +128,13 @@ INSERT INTO `sessions` (`session_id`, `net_id`, `date`, `starttime`, `endtime`, 
 (4, 'bxs1234', '2017-06-09', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
 (5, 'bxs1234', '2017-06-12', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL),
 (6, 'bxs1234', '2017-06-14', '09:00:00', '11:00:00', 'SCHEDULED', 20, 0, 'ERB 501', NULL);
+
+INSERT INTO `appointments` (`appointment_id`, `net_id`, `session_id`, `date`, `slot_number`, `status`) VALUES
+(1, 'wxs1234', 1, '2017-06-02', 1, 'SCHEDULED'),
+(2, 'wxs1234', 2, '2017-06-05', 1, 'SCHEDULED'),
+(3, 'wxs1234', 3, '2017-06-07', 1, 'SCHEDULED'),
+(4, 'wxs1234', 4, '2017-06-09', 1, 'SCHEDULED'),
+(5, 'rxs1234', 1, '2017-06-02', 2, 'SCHEDULED'),
+(6, 'rxs1234', 2, '2017-06-05', 2, 'SCHEDULED');
+
 COMMIT;

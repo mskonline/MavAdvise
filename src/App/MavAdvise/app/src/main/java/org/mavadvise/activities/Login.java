@@ -44,7 +44,6 @@ public class Login extends AppCompatActivity {
 
 
         Button loginBtn = (Button) findViewById(R.id.loginBTN);
-
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +52,6 @@ public class Login extends AppCompatActivity {
         });
 
         Button forgotBtn = (Button) findViewById(R.id.forgotBTN);
-
         forgotBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,7 +60,6 @@ public class Login extends AppCompatActivity {
         });
 
         Button regBtn = (Button) findViewById(R.id.regBTN);
-
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,18 +80,18 @@ public class Login extends AppCompatActivity {
             return;
         }
 
-        saveDialog = Login.ProgressDialogFragment.newInstance();
-        saveDialog.show(getFragmentManager(), "Login");
-        //new LoginUser().execute();
         doLogin();
     }
 
     private void doLogin(){
+        saveDialog = Login.ProgressDialogFragment.newInstance();
+        saveDialog.show(getFragmentManager(), "Login");
         password = Utils.hashString(password);
 
         RequestBody formBody = new FormBody.Builder()
                 .add("netID", userName)
                 .add("password", password)
+                .add("deviceID", appConfig.getFirebaseToken())
                 .build();
 
         URLResourceHelper urlResourceHelper =
@@ -102,6 +99,7 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onFinishSuccess(JSONObject obj) {
                         saveDialog.dismiss();
+
                         try {
                             JSONObject resObj = obj.getJSONObject("result");
 
@@ -157,108 +155,6 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent(Login.this, Register.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-    }
-
-
-    private class LoginUser extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("Login", "Thread exception");
-            }
-            try
-
-            {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("login")
-                        .build();
-
-                password = Utils.hashString(password);
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("netID", userName)
-                        .add("password", password)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-
-            } catch (
-                    Exception e)
-
-            {
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            saveDialog.dismiss();
-
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("Login", "Thread exception");
-            }
-
-
-            if(result != null) {
-                try {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("type");
-
-                    if(resultStr.equalsIgnoreCase("success")){
-
-                        JSONObject resObj = obj.getJSONObject("result");
-
-                        String resFirst = resObj.getString("firstName");
-                        String resLast = resObj.getString("lastName");
-                        String resEmail = resObj.getString("email");
-                        String resRole = resObj.getString("roleType");
-                        String resNet = resObj.getString("netID");
-                        String resUta = resObj.getString("utaID");
-                        String resBranch = resObj.getString("branch");
-
-                        User user = appConfig.getUser();
-                        user.setFirstName(resFirst);
-                        user.setLastName(resLast);
-                        user.setEmail(resEmail);
-                        user.setDepartment(resBranch);
-                        user.setNetID(resNet);
-                        user.setUtaID(resUta);
-                        user.setRoleType(resRole);
-
-                        navigateToDashboard();
-
-                    } else {
-                        String msg = obj.getString("message");
-                        Toast.makeText(getApplicationContext(), msg,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    Log.e("JSON Parse", e.getMessage());
-                }
-            }
-        }
     }
 
     public static class ProgressDialogFragment extends DialogFragment {

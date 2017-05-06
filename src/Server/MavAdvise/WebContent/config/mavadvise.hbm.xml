@@ -16,6 +16,7 @@
 		<property name="branch" column="branch"></property>
 		<property name="securityQuestionID" column="security_question_id"></property>
 		<property name="securityAnswer" column="security_answer"></property>
+		<property name="deviceID" column="device_id"></property>
 	</class>
 
 	<class name="org.web.beans.Session" table="sessions">
@@ -115,8 +116,18 @@
                  JOIN sessions on appointments.session_id=sessions.session_id
                  JOIN users on users.net_id=sessions.net_id
                  WHERE appointments.net_id= :netID
-                 ORDER BY appointments.session_id ASC]]>
+                 ORDER BY appointments.session_id DESC]]>
 	</sql-query>
+	
+	<sql-query name="getNoShowSessions">
+		<![CDATA[SELECT appointments.net_id
+		         from appointments
+                 where appointments.net_id= :netID
+                 and appointments.status = 'NO SHOW'
+                 and appointments.date between adddate(now(), -7) and now()]]>
+	</sql-query>
+	
+	
 	
 	<sql-query name="getDateSessions">
 		<![CDATA[Select sessions.session_id,

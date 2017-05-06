@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.web.beans.Session;
 
 public class TestClass {
@@ -19,7 +20,21 @@ public class TestClass {
 
 		System.out.println(t1.isEqual(t2));*/
 
-		calendarTest();
+		dateTest();
+
+	}
+
+
+	public static void dateTest(){
+		Calendar c = Calendar.getInstance();
+
+		System.out.println(c.get(Calendar.DAY_OF_MONTH));
+	}
+
+	public static void StringTest(){
+		String deviceID = "  ";
+
+		System.out.println(StringUtils.isBlank(deviceID));
 	}
 
 	public static void calendarTest(){

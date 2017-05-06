@@ -5,19 +5,41 @@
     android:layout_height="match_parent"
     tools:context="org.mavadvise.activities.ActiveSession">
 
-    <Button
-        android:id="@+id/sessionActionBT"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
+
+    <LinearLayout
+        android:id="@+id/activeSessionsActions"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:text="Start"/>
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/sessionNoSessionBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="No Show"/>
+
+        <Button
+            android:id="@+id/sessionNextBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Next"/>
+    </LinearLayout>
 
     <ListView
         android:id="@+id/actSessionApptsLV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_above="@id/sessionActionBT"
+        android:layout_above="@id/activeSessionsActions"
         android:divider="@color/colorAccent"
         android:dividerHeight="2px"/>
 </RelativeLayout>
