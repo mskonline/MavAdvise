@@ -16,6 +16,7 @@
 		<property name="branch" column="branch"></property>
 		<property name="securityQuestionID" column="security_question_id"></property>
 		<property name="securityAnswer" column="security_answer"></property>
+		<property name="deviceID" column="device_id"></property>
 	</class>
 
 	<class name="org.web.beans.Session" table="sessions">
@@ -31,6 +32,17 @@
 		<property name="slotCounter" column="slot_counter" type="int"></property>
 		<property name="comment" column="comment"></property>
 		<property name="location" column="location"></property>
+	</class>
+	
+	<class name="org.web.beans.Appointment" table="sessions">
+		<id name="appointmentID" type="int" column="appointment_id">
+			<generator class="increment"></generator>
+		</id>
+		<property name="netID" column="net_id"></property>
+		<property name="date" column="date" type="date"></property>
+		<property name="status" column="status"></property>
+		<property name="slotNo" column="slot_number"></property>
+		<property name="sessionID" column="session_id" type="int"></property>
 	</class>
 
 	<class name="org.web.beans.Announcement" table="announcements">
@@ -115,6 +127,7 @@
                  from sessions
                  where sessions.net_id= :netID
                  and sessions.status = "SCHEDULED"
+                 and sessions.date > CURRENT_TIMESTAMP  
                  and sessions.slot_counter < sessions.no_of_slots
                  ORDER BY sessions.date ASC]]>
 	</sql-query>

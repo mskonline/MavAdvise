@@ -1,5 +1,6 @@
 package org.web.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.web.beans.Response;
-import org.web.beans.Session;
 import org.web.beans.SessionInfo;
 import org.web.beans.User;
 import org.web.dao.DBManager;
@@ -58,7 +58,7 @@ public class SessionsController{
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<Object> sessions = dbmanager.getSessions(netID);
+		List<Object> sessions = dbmanager.getAllSessions(netID);
 		r.setResult(sessions);
 
 		try {
@@ -128,14 +128,14 @@ public class SessionsController{
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		Session session = null;
-		List<User> users = null;
+		List<User> users = dbmanager.getUsersForSession(sessionID);
 
 		String title = "MavAdvise";
-		String message = "";
+		String message = "Advising session has started.";
 
 		notificationService.sendNotification(title, message, users);
-		r.setResult("{}");
+
+		r.setResult("Session started. All appointments notified");
 
 		try {
 			return mapper.writeValueAsString(r);
@@ -170,11 +170,24 @@ public class SessionsController{
 	@RequestMapping(value = "/advanceSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String advanceSession(@RequestParam("sessionID") Integer sessionID,
-			@RequestParam("appointmentID") Integer appointmentID){
+			@RequestParam("nextAppointmentID") Integer nextAppointmentID,
+			@RequestParam("prevAppointmentID") Integer prevAppointmentID){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
+		// Get user of appointmentID
+		User user = dbmanager.getUserForAppointment(nextAppointmentID);
 
+		// Notify the user
+		String title = "MavAdvise";
+		String message = "Your appointment is next";
+
+		notificationService.sendNotification(title, message, user);
+
+		// Mark prevAppointmentID as Done
+		dbmanager.markAppointmentAsDone(prevAppointmentID);
+
+		r.setMessage("Next appointment notified");
 		try {
 			return mapper.writeValueAsString(r);
 		} catch (JsonProcessingException e) {
@@ -189,6 +202,43 @@ public class SessionsController{
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
+		boolean status = dbmanager.markAppointmentAsNoShow(appointmentID);
+
+		if(status)
+			r.setMessage("Appointment marked as No Show");
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
+	@RequestMapping(value = "/sendNotification", method = {RequestMethod.GET}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String sendNotification(@RequestParam("netID") String netID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		User user = dbmanager.getUser(netID);
+
+		if(user != null){
+			System.out.println("Device ID : " + user.getDeviceID());
+
+			User user1 = new User();
+			user.setDeviceID("dJQ3iY_rsO8:APA91bEG2bJdFW9vfF0tMkzX-A22LpchEJVaQEIXBQRmLPTSb-R-4PXnFMQw_kEJ89Q2mXZgvgy6JlEzFfJTqXr20MksCo-PmkAOs5pu6HMX9MUPYeZWwtcpBMaYjKnxC42Lnh09-jkJ");
+
+			User user2 = new User();
+			user2.setDeviceID("cYHoRWH5n6k:APA91bH6kmHqoEmY-GAowLYGkwu_eC7RXfgxZwjg0RXR6Z9HZ7ADvLZBpd3R4VSl0BeXABJPUnmSlbsAjGWZ6s_R5c1MJjX8u_930e92ruyRFDC-tRzpjdb0Lf4WnmB0sN61TAZL7iA2");
+
+			List<User> users = new ArrayList<User>();
+			users.add(user1);
+			users.add(user2);
+
+			notificationService.sendNotification("Demo", "Demo Message", users);
+		}else
+			System.out.println("No such user " + netID);
 
 		try {
 			return mapper.writeValueAsString(r);

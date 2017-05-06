@@ -49,14 +49,6 @@ public class StartSession extends AppCompatActivity {
                         JSONObject obj = sessions.getJSONObject(position);
                         Intent i = new Intent(StartSession.this, ActiveSession.class);
                         i.putExtra("sessionID", obj.getInt("sessionID"));
-                        i.putExtra("date", obj.getString("date"));
-                        i.putExtra("starttime", obj.getString("starttime"));
-                        i.putExtra("endtime", obj.getString("endtime"));
-                        i.putExtra("slotCounter", obj.getInt("slotCounter"));
-                        i.putExtra("noOfSlots", obj.getInt("noOfSlots"));
-                        i.putExtra("location", obj.getString("location"));
-                        i.putExtra("comment", obj.getString("comment"));
-                        i.putExtra("status", obj.getString("status"));
                         startActivity(i);
 
                     }catch (Exception e){

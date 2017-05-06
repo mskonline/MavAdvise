@@ -3,6 +3,8 @@ package org.web.controllers;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,13 +22,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class UsersController {
 
+	final static Logger logger = Logger.getLogger(UsersController.class);
+
 	@Autowired
 	private DBManager dbmanager;
 
 	@RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String login(HttpServletRequest request, @RequestParam("netID") String netID,
-			@RequestParam("password") String password){
+	public String login(HttpServletRequest request,
+			@RequestParam("netID") String netID,
+			@RequestParam("password") String password,
+			@RequestParam("deviceID") String deviceID){
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -39,6 +45,12 @@ public class UsersController {
 				HttpSession session = request.getSession();
 				session.setAttribute("hasAccess", "true");
 
+				if(StringUtils.isNotBlank(deviceID)){
+					logger.debug("New DeviceID : " + deviceID);
+					dbmanager.updateUserDeviceID(user.getNetID(), deviceID);
+				}
+
+				user.setDeviceID(null);
 				user.setPassword(null);
 				user.setSecurityQuestionID(-1);
 				user.setSecurityAnswer(null);
@@ -70,6 +82,23 @@ public class UsersController {
 			r.setResult("User registered");
 		else
 			r.setMessage(msg);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
+	@RequestMapping(value = "/updateDeviceID", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String updateDeviceID(@RequestParam("newDeviceID") String newDeviceID,
+			@RequestParam("oldDeviceID") String oldDeviceID){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		dbmanager.updateDeviceID(newDeviceID, oldDeviceID);
 
 		try {
 			return mapper.writeValueAsString(r);

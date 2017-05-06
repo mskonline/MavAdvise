@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mavadvise.R;
+import org.mavadvise.adaptors.SessionAppointmentsAdaptor;
 import org.mavadvise.commons.ProgressDialogHelper;
 import org.mavadvise.commons.URLResourceHelper;
 
@@ -34,7 +35,7 @@ public class ViewSession extends AppCompatActivity {
     private ProgressDialogHelper apptsDialog;
 
     private JSONArray appointments;
-    private AppointmentsAdapter appointmentsAdapter;
+    private SessionAppointmentsAdaptor appointmentsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class ViewSession extends AppCompatActivity {
         sStatus.setText(status);
 
         ListView apptsView = (ListView) findViewById(R.id.sessionApptsLV);
-        appointmentsAdapter = new AppointmentsAdapter();
+        appointmentsAdapter = new SessionAppointmentsAdaptor(this, appointments);
         apptsView.setAdapter(appointmentsAdapter);
 
         getAppointments();
@@ -129,6 +130,7 @@ public class ViewSession extends AppCompatActivity {
                             apptsDialog.dismiss();
                             try {
                                 appointments = obj.getJSONArray("result");
+                                appointmentsAdapter.setAppointments(appointments);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -142,48 +144,5 @@ public class ViewSession extends AppCompatActivity {
                     });
 
         urlResourceHelper.execute();
-    }
-
-    public class AppointmentsAdapter extends BaseAdapter {
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-
-            if(row == null){
-                LayoutInflater inflater = getLayoutInflater();
-                row = inflater.inflate(R.layout.list_session_appointments_item, parent, false);
-            }
-
-            try {
-                JSONObject obj = appointments.getJSONObject(position);
-
-                TextView apptName, apptSlotNumber;
-
-                apptName = (TextView) row.findViewById(R.id.session_apptnameTV);
-                apptSlotNumber = (TextView) row.findViewById(R.id.session_appntslotTV);
-
-                apptName.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
-                apptSlotNumber.setText(obj.getString("slot_number"));
-            } catch (Exception e){
-
-            }
-
-            return row;
-        }
-
-        public AppointmentsAdapter(){}
-
-        public int getCount() {
-            return appointments != null ? appointments.length() : 0;
-        }
-
-        public Object getItem(int arg0) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
     }
 }

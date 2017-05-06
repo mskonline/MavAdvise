@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "783672874748",
+    "firebase_url": "https://mavadvise-eb05d.firebaseio.com",
+    "project_id": "mavadvise-eb05d",
+    "storage_bucket": "mavadvise-eb05d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:783672874748:android:563be3aa721a97b4",
+        "android_client_info": {
+          "package_name": "org.mavadvise"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "783672874748-b1vp8mgagni49dv71bo4ilman78ob6nc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWlEDW7RlFICa_s-oL7B5rjuI0gakdBfQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
