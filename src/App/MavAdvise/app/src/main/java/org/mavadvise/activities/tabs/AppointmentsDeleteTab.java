@@ -149,7 +149,7 @@ public class AppointmentsDeleteTab extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     selectedAppointments.clear();
-                                    deleteButton.setText("Cancel");
+                                    cancelButton.setText("Cancel");
 
                                     deleteAppointmentsList.clearChoices();
                                     deleteAppointmentsList.requestLayout();
