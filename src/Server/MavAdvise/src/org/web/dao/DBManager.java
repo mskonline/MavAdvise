@@ -182,6 +182,58 @@ public class DBManager {
 			session.close();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void updatePassword(String netId, String password){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID = :netID");
+
+		List<User> userList = q.setParameter("netID", netId).list();
+
+		if(userList.size() >= 1){
+			User user = userList.get(0);
+			//user.setDeviceID(newDeviceID);
+			user.setPassword(password);
+			session.beginTransaction();
+			session.update(user);
+			session.getTransaction().commit();
+
+			session.flush();
+			session.close();
+		} else {
+			session.close();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String changePassword(String netId, String oldpassword, String newPassword){
+		Session session = factory.openSession();
+		Query q =  session.createQuery("from User where netID = :netID");
+		String msg = null;
+		List<User> userList = q.setParameter("netID", netId).list();
+
+		if(userList.size() >= 1){
+			User user = userList.get(0);
+			//user.setDeviceID(newDeviceID);
+			if(oldpassword.equalsIgnoreCase(user.getPassword())){
+				user.setPassword(newPassword);
+				session.beginTransaction();
+				session.update(user);
+				session.getTransaction().commit();
+
+				session.flush();
+				session.close();
+				msg= "Changed password successfully!!";
+			}
+			else{
+				msg="Password doesnot match";
+			}
+			
+		} else {
+			session.close();
+		}
+		return msg;
+	}
 
 	public Map<String, List<Object>> addSessions(org.web.beans.SessionInfo sessionInfo){
 		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());

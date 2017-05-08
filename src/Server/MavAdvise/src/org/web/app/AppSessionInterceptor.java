@@ -21,6 +21,8 @@ public class AppSessionInterceptor extends HandlerInterceptorAdapter {
 		excludeURLs.add("login");
 		excludeURLs.add("register");
 		excludeURLs.add("ping");
+		excludeURLs.add("getUser");
+		excludeURLs.add("updatePassword");
 	}
 
 	@Override

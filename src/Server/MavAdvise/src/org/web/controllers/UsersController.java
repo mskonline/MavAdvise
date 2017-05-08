@@ -107,6 +107,47 @@ public class UsersController {
 			return "{}";
 		}
 	}
+	
+	@RequestMapping(value = "/updatePassword", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String updatePassword(@RequestParam("netID") String netId,
+			@RequestParam("password") String password){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		dbmanager.updatePassword(netId, password);
+		r.setResult("Successful");
+
+		try {
+			r.setMessage("Done!!");
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+	
+	@RequestMapping(value = "/changePassword", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String changePassword(@RequestParam("netID") String netId,
+			@RequestParam("oldPassword") String oldPwd,
+		@RequestParam("newPassword") String newPwd){
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		String msg = dbmanager.changePassword(netId, oldPwd,newPwd);
+		r.setResult("Successful");
+
+		try {
+			r.setMessage("Done!!");
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
+
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
@@ -126,4 +167,28 @@ public class UsersController {
 			return "{}";
 		}
 	}
+	
+	@RequestMapping(value = "/getUser", method = {RequestMethod.GET, RequestMethod.POST} , produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String returnUser(@RequestParam("netID") String netID){
+		
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+		User user = dbmanager.getUser(netID);
+		if(user != null){
+			user.setDeviceID(null);
+			r.setResult(user);
+		}
+		else{
+			r.setMessage("NetID doesnot exists");
+		}
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+		
+	}
+	
 }

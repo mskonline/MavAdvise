@@ -207,7 +207,10 @@ public class DashBoard extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_change_password) {
-
+            Intent intent = new Intent(DashBoard.this, ChangePassword.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            //finish();
         } else if (id == R.id.nav_about) {
 
         } else if (id == R.id.nav_help) {
