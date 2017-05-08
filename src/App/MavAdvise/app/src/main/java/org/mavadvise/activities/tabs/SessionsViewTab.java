@@ -3,15 +3,12 @@ package org.mavadvise.activities.tabs;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -46,6 +43,7 @@ public class SessionsViewTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i("SessionsViewTab", "init");
         View rootView = inflater.inflate(R.layout.fragment_sessions_view, container, false);
 
         ListView list = (ListView) rootView.findViewById(R.id.sessionslist);

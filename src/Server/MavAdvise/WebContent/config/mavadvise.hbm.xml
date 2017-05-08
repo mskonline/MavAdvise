@@ -119,7 +119,7 @@
                  WHERE appointments.net_id= :netID
                  ORDER BY appointments.session_id DESC]]>
 	</sql-query>
-	
+
 	<sql-query name="getSchedAppointments">
 		<![CDATA[SELECT users.firstname, users.lastname, sessions.session_id,
                  DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
@@ -142,9 +142,9 @@
                  and appointments.status = 'NO SHOW'
                  and appointments.date between adddate(now(), -7) and now()]]>
 	</sql-query>
-	
-	
-	
+
+
+
 	<sql-query name="getDateSessions">
 		<![CDATA[Select sessions.session_id,
 		         DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,

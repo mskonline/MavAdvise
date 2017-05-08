@@ -221,7 +221,7 @@ public class ManageAppointments extends AppCompatActivity {
                 case 1:
                     return "VIEW";
                 case 2:
-                    return "DELETE";
+                    return "CANCEL";
             }
             return null;
         }

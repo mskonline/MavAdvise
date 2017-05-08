@@ -14,7 +14,7 @@ import org.mavadvise.app.MavAdvise;
 
 public class FirebaseIDService extends FirebaseInstanceIdService {
 
-    AppConfig appConfig;
+    private AppConfig appConfig;
 
     @Override
     public void onTokenRefresh() {
@@ -24,7 +24,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
         saveRegistrationToken(refreshedToken);
     }
 
-    private void saveRegistrationToken(String refreshedToken){
+    private void saveRegistrationToken(String refreshedToken) {
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
         appConfig.setFirebaseToken(refreshedToken);
     }

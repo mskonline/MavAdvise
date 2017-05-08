@@ -24,9 +24,9 @@ public class AnnouncementDataAdapter extends BaseAdapter {
     private JSONArray announcement;
     private LayoutInflater layoutInflater;
     private Context context;
-    int dColor;
+    private int dColor;
 
-    public AnnouncementDataAdapter(JSONArray announcement, Activity activity){
+    public AnnouncementDataAdapter(JSONArray announcement, Activity activity) {
         this.announcement = announcement;
         initResources(activity);
     }
@@ -46,30 +46,29 @@ public class AnnouncementDataAdapter extends BaseAdapter {
         int priority;
 
 
-        if(row == null)
+        if (row == null)
             row = layoutInflater.inflate(R.layout.list_announcement_item, parent, false);
 
-        TextView title = (TextView)row.findViewById(R.id.announcement_title);
-        TextView advisor = (TextView)row.findViewById(R.id.announcement_advisor);
-        TextView branch = (TextView)row.findViewById(R.id.announcement_branch);
-        TextView date = (TextView)row.findViewById(R.id.announcement_date);
+        TextView title = (TextView) row.findViewById(R.id.announcement_title);
+        TextView advisor = (TextView) row.findViewById(R.id.announcement_advisor);
+        TextView branch = (TextView) row.findViewById(R.id.announcement_branch);
+        TextView date = (TextView) row.findViewById(R.id.announcement_date);
         JSONObject obj = null;
 
         try {
             obj = announcement.getJSONObject(position);
             title.setText(obj.getString("title"));
-            advisor.setText(obj.getString("firstName")+" "+obj.getString("lastName"));
+            advisor.setText(obj.getString("firstName") + " " + obj.getString("lastName"));
             branch.setText(obj.getString("branch"));
             date.setText(obj.getString("date"));
             priority = obj.getInt("priority");
-            if(priority==1){
+            if (priority == 1) {
                 title.setTextColor(dColor);
-            }
-            else{
+            } else {
                 title.setTextColor(Color.DKGRAY);
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Error in retrieving the list", Toast.LENGTH_SHORT);
         }
 
@@ -86,7 +85,7 @@ public class AnnouncementDataAdapter extends BaseAdapter {
         return i;
     }
 
-    private void initResources(Activity activity){
+    private void initResources(Activity activity) {
         layoutInflater = activity.getLayoutInflater();
         context = activity.getApplicationContext();
         dColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorAccent, null);

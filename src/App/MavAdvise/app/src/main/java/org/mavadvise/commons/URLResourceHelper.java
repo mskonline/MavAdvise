@@ -24,10 +24,11 @@ import okhttp3.Response;
  * Created by SaiKumar on 4/24/2017.
  */
 
-public class URLResourceHelper extends AsyncTask<Void, Void , String> {
+public class URLResourceHelper extends AsyncTask<Void, Void, String> {
 
-    public interface onFinishListener{
+    public interface onFinishListener {
         public void onFinishSuccess(JSONObject response);
+
         public void onFinishFailed(String msg);
     }
 
@@ -38,8 +39,8 @@ public class URLResourceHelper extends AsyncTask<Void, Void , String> {
 
     public URLResourceHelper(String action,
                              RequestBody requestBody,
-                             onFinishListener listener){
-        if(client == null){
+                             onFinishListener listener) {
+        if (client == null) {
             Log.i("OkHttpClient", "Initialized...");
             client = new OkHttpClient.Builder()
                     .cookieJar(new CookieJar() {
@@ -93,18 +94,18 @@ public class URLResourceHelper extends AsyncTask<Void, Void , String> {
     protected void onPostExecute(String result) {
         try {
             Thread.sleep(500);
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e("Thread", "Thread exception");
         }
 
-        if(result != null) {
+        if (result != null) {
             try {
                 JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
                 String status = obj.getString("type");
 
-                if(status.equalsIgnoreCase("success")){
+                if (status.equalsIgnoreCase("success")) {
                     listener.onFinishSuccess(obj);
-                } else{
+                } else {
                     listener.onFinishFailed(obj.getString("message"));
                 }
 

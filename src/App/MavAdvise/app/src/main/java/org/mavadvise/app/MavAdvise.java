@@ -13,7 +13,7 @@ public class MavAdvise extends Application {
         this.initApp();
     }
 
-    private void initApp(){
+    private void initApp() {
         appConfig = AppConfig.getInstance();
     }
 

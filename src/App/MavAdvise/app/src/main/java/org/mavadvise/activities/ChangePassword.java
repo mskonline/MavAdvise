@@ -39,13 +39,14 @@ public class ChangePassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
+
         initElement();
     }
 
-    private void initElement(){
+    private void initElement() {
         oldpwd = (EditText) findViewById(R.id.cpOldPassword);
         newpwd = (EditText) findViewById(R.id.cpNewPassword);
-        confpwd  = (EditText) findViewById(R.id.cpConfirmPassword);
+        confpwd = (EditText) findViewById(R.id.cpConfirmPassword);
 
         Button change = (Button) findViewById(R.id.cpresetPassword);
         change.setOnClickListener(new View.OnClickListener() {
@@ -56,47 +57,44 @@ public class ChangePassword extends AppCompatActivity {
         });
     }
 
-    private void changePassword(){
+    private void changePassword() {
         oldPassword = oldpwd.getText().toString();
         newPassword = newpwd.getText().toString();
         confirmPassword = confpwd.getText().toString();
         oldPassword = Utils.hashString(oldPassword);
 
-        if(newPassword.equals(confirmPassword)){
-            confirmPassword=Utils.hashString(confirmPassword);
-            saveDialog =  ProgressDialogFragment.newInstance();
+        if (newPassword.equals(confirmPassword)) {
+            confirmPassword = Utils.hashString(confirmPassword);
+            saveDialog = ProgressDialogFragment.newInstance();
             saveDialog.show(getFragmentManager(), "Saving changes...");
 
             RequestBody formBody = new FormBody.Builder()
-                    .add("netID",appConfig.getUser().getNetID())
-                    .add("oldPassword",oldPassword)
-                    .add("newPassword",confirmPassword)
+                    .add("netID", appConfig.getUser().getNetID())
+                    .add("oldPassword", oldPassword)
+                    .add("newPassword", confirmPassword)
                     .build();
 
             URLResourceHelper urlResourceHelper =
-                    new URLResourceHelper("changePassword", formBody,
-                            new URLResourceHelper.onFinishListener() {
-                                @Override
-                                public void onFinishSuccess(JSONObject obj) {
-                                    saveDialog.dismiss();
-                                    DialogFragment mDialog = AlertDialogFragment.newInstance();
-                                    mDialog.show(getFragmentManager(), "Got It");
+                new URLResourceHelper("changePassword", formBody,
+                    new URLResourceHelper.onFinishListener() {
+                        @Override
+                        public void onFinishSuccess(JSONObject obj) {
+                            saveDialog.dismiss();
+                            DialogFragment mDialog = AlertDialogFragment.newInstance();
+                            mDialog.show(getFragmentManager(), "Got It");
 
-                                }
+                        }
 
-                                @Override
-                                public void onFinishFailed(String msg) {
-                                    saveDialog.dismiss();
-                                    Toast.makeText(getApplicationContext(), "Problems in saving data",
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            });
+                        @Override
+                        public void onFinishFailed(String msg) {
+                            saveDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Problems in saving data",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
 
             urlResourceHelper.execute();
-
-
-        }
-        else{
+        } else {
             Toast.makeText(getApplicationContext(), "Password does not match",
                     Toast.LENGTH_LONG).show();
             return;
@@ -131,14 +129,14 @@ public class ChangePassword extends AppCompatActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final ProgressDialog dialog = new ProgressDialog(getActivity());
-            dialog.setMessage("Making changes....");
+            dialog.setMessage("Saving changes...");
             dialog.setIndeterminate(true);
 
             return dialog;
         }
     }
 
-    private void navigateToLogin(){
+    private void navigateToLogin() {
         Intent intent = new Intent(ChangePassword.this, Login.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

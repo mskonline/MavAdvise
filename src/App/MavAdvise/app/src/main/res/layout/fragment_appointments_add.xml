@@ -1,115 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="3dp"
-        android:textSize="16dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
         android:text="ADD AN APPOINTMENT"
         android:textColor="@color/colorAccent"
-        />
+        android:textSize="16dp" />
 
     <ScrollView
         android:id="@+id/appAddSV"
-        android:layout_alignParentStart="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
             android:id="@+id/appAddRL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="50dp"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:paddingBottom="50dp">
 
             <TextView
                 android:id="@+id/advLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:textSize="14sp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:text="Advisor : "
                 android:layout_alignBaseline="@+id/SelectAdvBT"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="20dp"
+                android:text="Advisor : "
+                android:textAllCaps="true"
+                android:textColor="#000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/AdvTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text=" "
                 android:layout_alignBaseline="@+id/advLabel"
                 android:layout_alignBottom="@+id/advLabel"
-                android:layout_alignStart="@+id/DateTV" />
+                android:layout_alignStart="@+id/DateTV"
+                android:text=" "
+                android:textSize="20sp" />
 
 
             <Button
                 android:id="@+id/SelectAdvBT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_alignParentEnd="true"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_alignParentEnd="true"
+                android:layout_marginTop="10dp"
                 android:background="@color/colorAccent"
-                android:textColor="#FFF"
-                android:text="Select"/>
+                android:text="Select"
+                android:textColor="#FFF" />
 
             <Button
                 android:id="@+id/ChangeDateBT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_below="@id/SelectAdvBT"
-                android:layout_marginTop="30dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_alignParentEnd="true"
+                android:layout_marginTop="30dp"
                 android:background="@color/colorAccent"
-                android:textColor="#FFF"
-                android:text="Change"/>
+                android:text="Change"
+                android:textColor="#FFF" />
+
             <TextView
                 android:id="@+id/appDateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textAllCaps="true"
-                android:textStyle="bold"
-                android:textColor="#000"
-                android:text="Date : "
                 android:layout_alignBaseline="@id/ChangeDateBT"
+                android:layout_alignLeft="@+id/advLabel"
                 android:layout_marginRight="10dp"
-                android:layout_alignLeft="@+id/advLabel"/>
+                android:text="Date : "
+                android:textAllCaps="true"
+                android:textColor="#000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/DateTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="20 June 2017"
                 android:layout_alignTop="@+id/appDateLabel"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:text="20 June 2017"
+                android:textSize="20sp" />
 
 
             <Button
                 android:id="@+id/createAppBT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/DateTV"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="72dp"
                 android:background="@color/colorAccent"
-                android:textColor="#FFF"
                 android:text="Create"
-                android:layout_below="@+id/DateTV"
-                android:layout_centerHorizontal="true" />
+                android:textColor="#FFF" />
 
         </RelativeLayout>
     </ScrollView>

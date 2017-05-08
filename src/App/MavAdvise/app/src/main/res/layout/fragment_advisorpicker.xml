@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/seladvisorTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seladvisorTV"
-        android:textSize="20dp"
-        android:textColor="@color/colorAccent"
-        android:text="Select Advisor"/>
+        android:padding="5dp"
+        android:gravity="center"
+        android:text="Select Advisor"
+        android:background="@color/colorPrimary"
+        android:textColor="#FFF"
+        android:textSize="20dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/seladvisorTV"
-        android:layout_marginTop="10dp">
+        android:layout_below="@id/seladvisorTV">
 
-    <ListView
-        android:id="@+id/advisorlist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:divider="@color/colorAccent"
-        android:dividerHeight="2px" />
-
-</LinearLayout>
-
-
-
-    </RelativeLayout>
+        <ListView
+            android:id="@+id/advisorlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:divider="@color/colorAccent"
+            android:dividerHeight="2px" />
+    </LinearLayout>
+</RelativeLayout>

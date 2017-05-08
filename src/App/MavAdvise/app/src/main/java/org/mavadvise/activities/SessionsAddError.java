@@ -13,7 +13,7 @@ import org.mavadvise.app.MavAdvise;
 
 public class SessionsAddError extends AppCompatActivity {
 
-    AppConfig appConfig;
+    private AppConfig appConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

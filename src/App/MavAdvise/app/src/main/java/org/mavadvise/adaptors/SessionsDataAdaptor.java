@@ -1,7 +1,6 @@
 package org.mavadvise.adaptors;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
@@ -34,17 +33,17 @@ public class SessionsDataAdaptor extends BaseAdapter {
     private Context context;
     private int cColor, dColor;
 
-    public SessionsDataAdaptor(JSONArray sessions, Fragment fragment){
+    public SessionsDataAdaptor(JSONArray sessions, Fragment fragment) {
         this.sessions = sessions;
         initResources(fragment);
     }
 
-    public SessionsDataAdaptor(JSONArray sessions, Activity activity){
+    public SessionsDataAdaptor(JSONArray sessions, Activity activity) {
         this.sessions = sessions;
         initResources(activity);
     }
 
-    public SessionsDataAdaptor(JSONArray sessions, Activity activity, boolean formattingRequired){
+    public SessionsDataAdaptor(JSONArray sessions, Activity activity, boolean formattingRequired) {
         this.sessions = sessions;
         this.formattingRequired = formattingRequired;
 
@@ -76,7 +75,7 @@ public class SessionsDataAdaptor extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
 
-        if(row == null)
+        if (row == null)
             row = layoutInflater.inflate(R.layout.list_session_item, parent, false);
 
         TextView sHeader, sTime, sAppCounter, sStatus, sLocation;
@@ -90,7 +89,7 @@ public class SessionsDataAdaptor extends BaseAdapter {
         try {
             JSONObject obj = sessions.getJSONObject(position);
 
-            if(formattingRequired){
+            if (formattingRequired) {
                 String date = obj.getString("date");
                 sHeader.setText(toDateFormat.format(fromDateFormat.parse(date)));
 
@@ -112,34 +111,35 @@ public class SessionsDataAdaptor extends BaseAdapter {
             String status = obj.getString("status");
 
             // Cancelled
-            if(status.startsWith("C"))
+            if (status.startsWith("C"))
                 sStatus.setTextColor(cColor);
 
             // Done
-            if(status.startsWith("D"))
+            if (status.startsWith("D"))
                 sStatus.setTextColor(dColor);
 
             sStatus.setText(status);
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(context, "Error in retrieving the list", Toast.LENGTH_SHORT);
         }
 
         return row;
     }
 
-    private void initResources(Fragment fragment){
+    private void initResources(Fragment fragment) {
         layoutInflater = fragment.getActivity().getLayoutInflater();
         cColor = ResourcesCompat.getColor(fragment.getResources(), R.color.colorCancelled, null);
         dColor = ResourcesCompat.getColor(fragment.getResources(), R.color.colorDone, null);
         context = fragment.getContext();
     }
 
-    private void initResources(Activity activity){
+    private void initResources(Activity activity) {
         layoutInflater = activity.getLayoutInflater();
         cColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorCancelled, null);
         dColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorDone, null);
         context = activity.getApplicationContext();
     }
+
     public void setSessions(JSONArray sessions) {
         this.sessions = sessions;
     }

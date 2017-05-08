@@ -6,9 +6,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,7 +18,6 @@ import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.URLResourceHelper;
-import org.w3c.dom.Text;
 
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
@@ -27,14 +25,14 @@ import okhttp3.RequestBody;
 public class ReadAnnouncements extends AppCompatActivity {
 
     private AppConfig appConfig;
-    String firstName,
+    private String firstName,
             lastName,
             date,
             netId,
             message,
             title;
-    int announcementId;
-    DialogFragment saveDialog;
+    private int announcementId;
+    private DialogFragment saveDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +42,6 @@ public class ReadAnnouncements extends AppCompatActivity {
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
 
         Bundle b = getIntent().getExtras();
-
-//        i.putExtra("announcementId",obj.getInt("announcementId"));
-//        i.putExtra("date",obj.getString("date"));
-//        i.putExtra("authorFirstName",obj.getString("firstName"));
-//        i.putExtra("authorLastName",obj.getString("lastName"));
-//        i.putExtra("message",obj.getString("message"));
-//        i.putExtra("title",obj.getString("title"));
-//        i.putExtra("netID",obj.getString("netId"));
 
         firstName = b.getString("authorFirstName");
         lastName = b.getString("authorLastName");
@@ -74,18 +64,18 @@ public class ReadAnnouncements extends AppCompatActivity {
             }
         });
 
-        if(appConfig.getUser().getNetID().equalsIgnoreCase(netId)){
+        if (appConfig.getUser().getNetID().equalsIgnoreCase(netId)) {
             advisorView.setVisibility(View.GONE);
             delView.setVisibility(View.VISIBLE);
         }
 
-        if(!appConfig.getUser().getNetID().equalsIgnoreCase(netId)){
+        if (!appConfig.getUser().getNetID().equalsIgnoreCase(netId)) {
             delView.setVisibility(View.GONE);
         }
 
         titleView.setText(title);
         msgView.setText(message);
-        advisorView.setText(firstName + " "+ lastName);
+        advisorView.setText(firstName + " " + lastName);
         dateView.setText(date);
 
     }
@@ -106,13 +96,12 @@ public class ReadAnnouncements extends AppCompatActivity {
         }
     }
 
-    private void deleteAnnouncement(int announcementId){
-
+    private void deleteAnnouncement(int announcementId) {
         saveDialog = ProgressDialogFragment.newInstance();
-        saveDialog.show(getFragmentManager(),"Deleting..");
+        saveDialog.show(getFragmentManager(), "Deleting..");
 
         RequestBody formBody = new FormBody.Builder()
-                .add("announcementID", "" +announcementId).build();
+                .add("announcementID", "" + announcementId).build();
 
         URLResourceHelper urlResourceHelper =
                 new URLResourceHelper("deleteAnnouncement", formBody,
@@ -150,13 +139,13 @@ public class ReadAnnouncements extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(
                                         final DialogInterface dialog, int id) {
-                                    ((ReadAnnouncements)getActivity()).navigateBack();
+                                    ((ReadAnnouncements) getActivity()).navigateBack();
                                 }
                             }).create();
         }
     }
 
-    private void navigateBack(){
+    private void navigateBack() {
         finish();
     }
 }

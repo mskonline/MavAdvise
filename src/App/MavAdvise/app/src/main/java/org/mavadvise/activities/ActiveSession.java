@@ -1,11 +1,9 @@
 package org.mavadvise.activities;
 
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -70,33 +68,33 @@ public class ActiveSession extends AppCompatActivity {
         noShowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!noShowAlert.isAdded())
+                if (!noShowAlert.isAdded())
                     noShowAlert.show(getSupportFragmentManager(), "NoShow");
             }
         });
 
-        noShowAlert= AlertDialogHelper.newInstance("Do you mark this appointment as No Show ?",
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    advanceSession("Y");
-                }
-            },
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                }
-            });
+        noShowAlert = AlertDialogHelper.newInstance("Do you mark this appointment as No Show ?",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        advanceSession("Y");
+                    }
+                },
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
 
         dColor = ResourcesCompat.getColor(getResources(), R.color.colorDone, null);
 
         startSession(sessionID);
     }
 
-    private void startSession(final int sessionID){
+    private void startSession(final int sessionID) {
         apptsDialog = ProgressDialogHelper.newInstance();
         apptsDialog.setMsg("Fetching appointments...");
-        apptsDialog.show(getSupportFragmentManager(),"appointments");
+        apptsDialog.show(getSupportFragmentManager(), "appointments");
 
         RequestBody formBody = new FormBody.Builder()
                 .add("sessionID", "" + sessionID)
@@ -104,57 +102,57 @@ public class ActiveSession extends AppCompatActivity {
                 .build();
 
         URLResourceHelper urlResourceHelper =
-            new URLResourceHelper("startSession", formBody,
-                new URLResourceHelper.onFinishListener() {
-                    @Override
-                    public void onFinishSuccess(JSONObject obj) {
-                        apptsDialog.dismiss();
-                        try {
-                            appointments = obj.getJSONArray("result");
-                            sessionAppointmentsAdaptor.setAppointments(appointments);
+                new URLResourceHelper("startSession", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                apptsDialog.dismiss();
+                                try {
+                                    appointments = obj.getJSONArray("result");
+                                    sessionAppointmentsAdaptor.setAppointments(appointments);
 
-                            totalAppts = appointments.length();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                                    totalAppts = appointments.length();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
 
-                        sessionAppointmentsAdaptor.notifyDataSetChanged();
+                                sessionAppointmentsAdaptor.notifyDataSetChanged();
 
-                        if(!status.equalsIgnoreCase("STARTED")) {
-                            Toast.makeText(getApplicationContext(),
-                                    "Session started. All appointments notified", Toast.LENGTH_LONG).show();
+                                if (!status.equalsIgnoreCase("STARTED")) {
+                                    Toast.makeText(getApplicationContext(),
+                                            "Session started. All appointments notified", Toast.LENGTH_LONG).show();
 
-                            listView.setItemChecked(0, true);
-                            onGoingAppt = 0;
-                        }else{
-                            highlightOnGoingAppointment();
-                        }
+                                    listView.setItemChecked(0, true);
+                                    onGoingAppt = 0;
+                                } else {
+                                    highlightOnGoingAppointment();
+                                }
 
-                        if(onGoingAppt == (totalAppts - 1) || totalAppts == 0){
-                            nextBtn.setText("DONE");
-                        }
+                                if (onGoingAppt == (totalAppts - 1) || totalAppts == 0) {
+                                    nextBtn.setText("DONE");
+                                }
 
-                        if(totalAppts == 0)
-                            noShowBtn.setEnabled(false);
-                    }
+                                if (totalAppts == 0)
+                                    noShowBtn.setEnabled(false);
+                            }
 
-                    @Override
-                    public void onFinishFailed(String msg) {
-                        apptsDialog.dismiss();
-                    }
-                });
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                apptsDialog.dismiss();
+                            }
+                        });
 
         urlResourceHelper.execute();
     }
 
-    private void highlightOnGoingAppointment(){
-        try{
+    private void highlightOnGoingAppointment() {
+        try {
             JSONObject obj = null;
 
-            for(int i = 0; i < appointments.length(); ++i){
+            for (int i = 0; i < appointments.length(); ++i) {
                 obj = appointments.getJSONObject(i);
 
-                if(obj.getString("status").startsWith("D"))
+                if (obj.getString("status").startsWith("D"))
                     continue;
                 else {
                     listView.setItemChecked(i, true);
@@ -162,15 +160,15 @@ public class ActiveSession extends AppCompatActivity {
                     break;
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void advanceSession(String noShow){
+    private void advanceSession(String noShow) {
         updateAppt = onGoingAppt;
 
-        if(onGoingAppt == (totalAppts - 1) || totalAppts == 0){
+        if (onGoingAppt == (totalAppts - 1) || totalAppts == 0) {
             markSessionAsDone(noShow);
             return;
         }
@@ -178,17 +176,17 @@ public class ActiveSession extends AppCompatActivity {
         listView.setItemChecked(onGoingAppt, false);
         int prevApptID = 0, nextApptID = 0;
 
-        try{
+        try {
             prevApptID = appointments.getJSONObject(onGoingAppt).getInt("appointment_id");
             ++onGoingAppt;
 
             int nextAppt = onGoingAppt + 1;
 
-            if(nextAppt == totalAppts)
+            if (nextAppt == totalAppts)
                 nextApptID = 0;
             else
                 nextApptID = appointments.getJSONObject(nextAppt).getInt("appointment_id");
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -202,49 +200,50 @@ public class ActiveSession extends AppCompatActivity {
                 .build();
 
         URLResourceHelper urlResourceHelper =
-            new URLResourceHelper("advanceSession", formBody,
-                new URLResourceHelper.onFinishListener() {
-                    @Override
-                    public void onFinishSuccess(JSONObject obj) {
-                        String uStatus = "";
+                new URLResourceHelper("advanceSession", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                String uStatus = "";
 
-                        try {
-                            uStatus = obj.getString("result");
-                        } catch (Exception e){}
+                                try {
+                                    uStatus = obj.getString("result");
+                                } catch (Exception e) {
+                                }
 
-                        View  v = listView.getChildAt(updateAppt);
+                                View v = listView.getChildAt(updateAppt);
 
-                        if(v == null)
-                            return;
+                                if (v == null)
+                                    return;
 
-                        TextView statusTV = (TextView) v.findViewById(R.id.session_appntstatusTV);
+                                TextView statusTV = (TextView) v.findViewById(R.id.session_appntstatusTV);
 
-                        if(uStatus.startsWith("D"))
-                            statusTV.setTextColor(dColor);
+                                if (uStatus.startsWith("D"))
+                                    statusTV.setTextColor(dColor);
 
-                        if(!uStatus.startsWith("S"))
-                            statusTV.setText(uStatus);
-                    }
+                                if (!uStatus.startsWith("S"))
+                                    statusTV.setText(uStatus);
+                            }
 
-                    @Override
-                    public void onFinishFailed(String msg) {
-                        //Do nothing
-                    }
-                });
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                //Do nothing
+                            }
+                        });
 
         urlResourceHelper.execute();
 
-        if(onGoingAppt == (totalAppts - 1)){
+        if (onGoingAppt == (totalAppts - 1)) {
             nextBtn.setText("DONE");
         }
     }
 
-    private void markSessionAsDone(String noShow){
+    private void markSessionAsDone(String noShow) {
         int apptID = 0;
 
-        try{
+        try {
             apptID = appointments.getJSONObject(onGoingAppt).getInt("appointment_id");
-        } catch (Exception e){
+        } catch (Exception e) {
         }
 
         RequestBody formBody = new FormBody.Builder()
@@ -255,28 +254,28 @@ public class ActiveSession extends AppCompatActivity {
                 .build();
 
         URLResourceHelper urlResourceHelper =
-            new URLResourceHelper("advanceSession", formBody,
-                new URLResourceHelper.onFinishListener() {
-                    @Override
-                    public void onFinishSuccess(JSONObject obj) {
-                        String msg = "Session completed";
+                new URLResourceHelper("advanceSession", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                String msg = "Session completed";
 
-                        alertDialog = AlertDialogHelper.newInstance(msg,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        alertDialog.dismiss();
-                                        finish();
-                                    }
-                                });
-                        alertDialog.show(getSupportFragmentManager(), "Alert");
-                    }
+                                alertDialog = AlertDialogHelper.newInstance(msg,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                alertDialog.dismiss();
+                                                finish();
+                                            }
+                                        });
+                                alertDialog.show(getSupportFragmentManager(), "Alert");
+                            }
 
-                    @Override
-                    public void onFinishFailed(String msg) {
-                        //Do nothing
-                    }
-                });
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                //Do nothing
+                            }
+                        });
 
         urlResourceHelper.execute();
     }

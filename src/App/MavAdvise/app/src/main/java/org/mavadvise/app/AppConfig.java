@@ -14,10 +14,11 @@ public class AppConfig {
     private User user;
     private JSONArray conflictingSessions;
 
-    private AppConfig(){}
+    private AppConfig() {
+    }
 
-    public static  AppConfig getInstance(){
-        if(instance == null) {
+    public static AppConfig getInstance() {
+        if (instance == null) {
             instance = new AppConfig();
             instance.user = User.getUserInstance();
         }
@@ -63,7 +64,7 @@ public class AppConfig {
     }
 
     public String getFirebaseToken() {
-        if(firebaseToken == null)
+        if (firebaseToken == null)
             return "";
 
         return firebaseToken;

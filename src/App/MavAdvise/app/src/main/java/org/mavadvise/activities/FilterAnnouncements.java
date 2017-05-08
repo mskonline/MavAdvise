@@ -1,9 +1,9 @@
 package org.mavadvise.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +14,6 @@ import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.DatePickerHelper;
-import org.mavadvise.commons.ProgressDialogHelper;
 
 import java.util.Calendar;
 
@@ -25,13 +24,12 @@ public class FilterAnnouncements extends AppCompatActivity {
 
     private TextView startDateTV, endDateTV;
     private AppConfig appConfig;
-    private ProgressDialogHelper saveDialog;
-    String userType,
+    private String userType,
             show = "no",
             startd,
             endd,
             checkd;
-    boolean isChecked=false ;
+    private boolean isChecked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +38,9 @@ public class FilterAnnouncements extends AppCompatActivity {
 
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
         Bundle b = getIntent().getExtras();
-        startd=b.getString("startDate");
-        endd=b.getString("endDate");
-        checkd=b.getString("show");
+        startd = b.getString("startDate");
+        endd = b.getString("endDate");
+        checkd = b.getString("show");
         initElements();
 
         Button okay = (Button) findViewById(R.id.applyFilterBTN);
@@ -58,13 +56,12 @@ public class FilterAnnouncements extends AppCompatActivity {
         Intent intent = getIntent();
         intent.putExtra("startDate", startd);
         intent.putExtra("endDate", endd);
-        intent.putExtra("myAnnouncement",show);
-        setResult(RESULT_OK,intent);
+        intent.putExtra("myAnnouncement", show);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
     private void initElements() {
-
         userType = appConfig.getUser().getRoleType();
         startDateTV = (TextView) findViewById(R.id.startDateTVAnn);
         startDateTV.setText(startd);
@@ -76,9 +73,9 @@ public class FilterAnnouncements extends AppCompatActivity {
 
         if (userType.equalsIgnoreCase("advisor")) {
             personal.setVisibility(View.VISIBLE);
-            if(checkd.equalsIgnoreCase("yes")){
+            if (checkd.equalsIgnoreCase("yes")) {
                 personal.setChecked(true);
-                show="yes";
+                show = "yes";
             }
         } else {
             personal.setVisibility(View.GONE);
@@ -86,14 +83,13 @@ public class FilterAnnouncements extends AppCompatActivity {
 
         endDate = Calendar.getInstance();
 
-
         s_Date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 FragmentManager fm = getSupportFragmentManager();
                 DatePickerHelper datePickerHelper = new DatePickerHelper();
                 Calendar c = Calendar.getInstance();
-                c.set(1970,0,1);
+                c.set(1970, 0, 1);
                 datePickerHelper.setMinDate(c);
                 datePickerHelper.setOnSumbitListener(new DatePickerHelper.DatePickerListener() {
                     @Override
@@ -101,8 +97,8 @@ public class FilterAnnouncements extends AppCompatActivity {
                         startDate = date;
                         endDate = date;
                         String d = DateFormat.format("yyyy-MM-dd", date.getTimeInMillis()).toString();
-                        startd=d;
-                        endd=d;
+                        startd = d;
+                        endd = d;
                         startDateTV.setText(d);
                         endDateTV.setText(d);
                     }
@@ -124,7 +120,7 @@ public class FilterAnnouncements extends AppCompatActivity {
                     public void onDatePickerFinish(Calendar date) {
                         endDate = date;
                         String d = DateFormat.format("yyyy-MM-dd", date.getTimeInMillis()).toString();
-                        endd=d;
+                        endd = d;
                         endDateTV.setText(d);
                     }
                 });
@@ -132,19 +128,16 @@ public class FilterAnnouncements extends AppCompatActivity {
                 datePickerHelper.show(fm, "DatePick");
             }
         });
+
         personal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 isChecked = ((CheckBox) view).isChecked();
-                if(isChecked){
-                    show="yes";
+                if (isChecked) {
+                    show = "yes";
+                } else {
+                    show = "no";
                 }
-                else{
-                    show="no";
-                }
-
-
             }
         });
     }

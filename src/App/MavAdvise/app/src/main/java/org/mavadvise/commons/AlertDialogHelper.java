@@ -27,7 +27,7 @@ public class AlertDialogHelper extends DialogFragment {
     }
 
     public static AlertDialogHelper newInstance(String msg,
-                                                DialogInterface.OnClickListener positiveListener){
+                                                DialogInterface.OnClickListener positiveListener) {
         AlertDialogHelper instance = new AlertDialogHelper();
         instance.msg = msg;
 
@@ -38,16 +38,16 @@ public class AlertDialogHelper extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        if(negativeListener == null)
+        if (negativeListener == null)
             return new AlertDialog.Builder(getActivity())
-                .setMessage(msg)
-                .setCancelable(false)
-                .setPositiveButton("Ok", positiveListener).create();
+                    .setMessage(msg)
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", positiveListener).create();
         else
             return new AlertDialog.Builder(getActivity())
-                .setMessage(msg)
-                .setCancelable(false)
-                .setPositiveButton("Ok", positiveListener)
-                .setNegativeButton("Cancel", negativeListener).create();
+                    .setMessage(msg)
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", positiveListener)
+                    .setNegativeButton("Cancel", negativeListener).create();
     }
 }

@@ -7,22 +7,15 @@ package org.mavadvise.activities.tabs;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +64,7 @@ public class AppointmentsViewTab extends Fragment {
                 i.putExtra("jsonArray", appointments.toString());
                 startActivity(i);
             }
-            });
+        });
 
         return rootView;
     }
@@ -93,7 +86,7 @@ public class AppointmentsViewTab extends Fragment {
             aHeader = (TextView) row.findViewById(R.id.appmnt_header);
             aTime = (TextView) row.findViewById(R.id.appmnt_time);
             aDate = (TextView) row.findViewById(R.id.appmnt_date);
-            aStat =  (TextView) row.findViewById(R.id.appmnt_status);
+            aStat = (TextView) row.findViewById(R.id.appmnt_status);
 
             JSONObject obj = null;
 
@@ -111,13 +104,13 @@ public class AppointmentsViewTab extends Fragment {
 //                String dateStr = obj.getString("date");
 //                Date date1 =  (Date)formatter.parse(toDateFormat.format(fromDateFormat.parse(dateStr)));
                 row.setVisibility(View.VISIBLE);
-                if(status.startsWith("S")||status.startsWith("C")) {
+                if (status.startsWith("S") || status.startsWith("C")) {
                     aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
                     Log.i("jso", obj.getString("firstname"));
                     aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
                     aDate.setText(obj.getString("date"));
                     aStat.setText(obj.getString("appStatus"));
-                }else{
+                } else {
                     row.setVisibility(View.GONE);
                 }
 

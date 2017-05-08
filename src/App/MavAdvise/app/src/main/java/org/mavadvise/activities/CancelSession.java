@@ -57,19 +57,19 @@ public class CancelSession extends AppCompatActivity {
         });
     }
 
-    private void validateAndCancel(){
+    private void validateAndCancel() {
         EditText cancelReasonET = (EditText) findViewById(R.id.cancelReasonET);
         cancelReason = cancelReasonET.getText().toString().trim();
 
-        if(cancelReason.length() == 0){
+        if (cancelReason.length() == 0) {
             return;
         }
 
         doCancelSession();
     }
 
-    private void doCancelSession(){
-        cancelDialog =  ProgressDialogHelper.newInstance();
+    private void doCancelSession() {
+        cancelDialog = ProgressDialogHelper.newInstance();
         cancelDialog.setMsg("Cancelling...");
         cancelDialog.show(getSupportFragmentManager(), "Cancel");
 
@@ -84,8 +84,8 @@ public class CancelSession extends AppCompatActivity {
                             @Override
                             public void onFinishSuccess(JSONObject obj) {
                                 Intent i = getIntent();
-                                i.putExtra("status","C");
-                                setResult(RESULT_OK,i);
+                                i.putExtra("status", "C");
+                                setResult(RESULT_OK, i);
                                 finish();
                             }
 

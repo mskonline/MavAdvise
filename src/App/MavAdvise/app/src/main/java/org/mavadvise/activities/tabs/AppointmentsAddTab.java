@@ -55,21 +55,21 @@ package org.mavadvise.activities.tabs;
 
 public class AppointmentsAddTab extends Fragment {
 
-    View thisView;
+    private View thisView;
 
     private AppConfig appConfig;
     private DialogFragment mDialog;
     private ProgressDialogHelper saveDialog;
-    String netid, sessionid, aDate;
-    Button dateBtn, createBtn;
-    Button advBtn;
+    private String netid, sessionid, aDate;
+    private Button dateBtn, createBtn;
+    private Button advBtn;
 
     private JSONArray appointments, advisors, sessions;
     private SimpleDateFormat fromDateFormat, toDateFormat;
     private RelativeLayout repeatRL;
-    TextView dateTV;
+    private TextView dateTV;
 
-    TextView advTV;
+    private TextView advTV;
 
     private Calendar appDate = Calendar.getInstance();
 
@@ -94,6 +94,7 @@ public class AppointmentsAddTab extends Fragment {
     }
 
     private void initControls(View view) {
+        Log.i("AppointmentsAddTab","initControls");
 
         dateTV = (TextView) view.findViewById(R.id.DateTV);
 

@@ -12,6 +12,7 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MavAdviseFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "FCM Service";
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);

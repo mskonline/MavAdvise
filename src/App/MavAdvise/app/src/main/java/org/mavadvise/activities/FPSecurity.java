@@ -11,32 +11,30 @@ import android.widget.Toast;
 
 import org.mavadvise.R;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class FPSecurity extends AppCompatActivity {
 
-    int secQuestion;
-    String answer,
+    private int secQuestion;
+    private String answer,
             quesText,
             ansFromUser,
             netId;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_fpsecurity);
         Bundle b = getIntent().getExtras();
-        secQuestion= b.getInt("securityQuestionValue");
-        answer = b.getString("securityAnswer");
-        netId=b.getString("netId");
 
-        if(secQuestion==1)
-            quesText="Where is your birth place?";
-        else{
-            if(secQuestion==2)
-                quesText="What is your Mother's Maiden name?";
-            else
-                quesText="";
-        }
+        secQuestion = b.getInt("securityQuestionValue");
+        answer = b.getString("securityAnswer");
+        netId = b.getString("netId");
+
+        List<String> secQuestions = Arrays.asList(getResources().getStringArray(R.array.securityQuestions_array));
+        quesText = secQuestions.get(secQuestion);
 
         TextView fpSecQue = (TextView) findViewById(R.id.fpSecQuesTV);
         fpSecQue.setText(quesText);
@@ -50,21 +48,21 @@ public class FPSecurity extends AppCompatActivity {
         });
     }
 
-    private void navigateToReset(){
-        Intent i = new Intent(FPSecurity.this,FPNewPassword.class);
-        i.putExtra("netId",netId);
+    private void navigateToReset() {
+        Intent i = new Intent(FPSecurity.this, FPNewPassword.class);
+        i.putExtra("netId", netId);
         startActivity(i);
         finish();
     }
 
-    private void checkAns(){
+    private void checkAns() {
         EditText fpSecAns = (EditText) findViewById(R.id.fpSecAnsET);
-        ansFromUser=fpSecAns.getText().toString();
-        if(answer.equalsIgnoreCase(ansFromUser)){
+        ansFromUser = fpSecAns.getText().toString();
+
+        if (answer.equalsIgnoreCase(ansFromUser)) {
             navigateToReset();
-        }
-        else{
-            Toast.makeText(getApplicationContext(), "Sorry, Your answer doesnot match with our records. Please try again",
+        } else {
+            Toast.makeText(getApplicationContext(), "Sorry, Your answer does not match with our records. Please try again",
                     Toast.LENGTH_LONG).show();
             return;
         }

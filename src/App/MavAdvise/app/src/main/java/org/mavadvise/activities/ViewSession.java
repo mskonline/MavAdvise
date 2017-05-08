@@ -2,13 +2,10 @@ package org.mavadvise.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -76,10 +73,10 @@ public class ViewSession extends AppCompatActivity {
         if (status.startsWith("C")) {
             sStatus.setTextColor(cColor);
             cancelSessionBtn.setVisibility(View.GONE);
-        } else if(status.startsWith("D")){
+        } else if (status.startsWith("D")) {
             sStatus.setTextColor(dColor);
             cancelSessionBtn.setVisibility(View.GONE);
-        } else{
+        } else {
             cancelSessionBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -106,11 +103,11 @@ public class ViewSession extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 1){
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
                 String status = data.getStringExtra("status");
 
-                if(status.equalsIgnoreCase("C")){
+                if (status.equalsIgnoreCase("C")) {
                     sStatus.setText("CANCELLED");
                     sStatus.setTextColor(cColor);
                     cancelSessionBtn.setVisibility(View.GONE);
@@ -123,9 +120,9 @@ public class ViewSession extends AppCompatActivity {
         }
     }
 
-    private void getAppointments(){
-        if(!apptsDialog.isAdded())
-            apptsDialog.show(getSupportFragmentManager(),"appointments");
+    private void getAppointments() {
+        if (!apptsDialog.isAdded())
+            apptsDialog.show(getSupportFragmentManager(), "appointments");
 
         RequestBody formBody = new FormBody.Builder()
                 .add("sessionID", "" + sessionID)
@@ -133,24 +130,24 @@ public class ViewSession extends AppCompatActivity {
 
         URLResourceHelper urlResourceHelper =
                 new URLResourceHelper("getSessionAppointments", formBody,
-                    new URLResourceHelper.onFinishListener() {
-                        @Override
-                        public void onFinishSuccess(JSONObject obj) {
-                            apptsDialog.dismiss();
-                            try {
-                                appointments = obj.getJSONArray("result");
-                                appointmentsAdapter.setAppointments(appointments);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                apptsDialog.dismiss();
+                                try {
+                                    appointments = obj.getJSONArray("result");
+                                    appointmentsAdapter.setAppointments(appointments);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                appointmentsAdapter.notifyDataSetChanged();
                             }
-                            appointmentsAdapter.notifyDataSetChanged();
-                        }
 
-                        @Override
-                        public void onFinishFailed(String msg) {
-                            apptsDialog.dismiss();
-                        }
-                    });
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                apptsDialog.dismiss();
+                            }
+                        });
 
         urlResourceHelper.execute();
     }

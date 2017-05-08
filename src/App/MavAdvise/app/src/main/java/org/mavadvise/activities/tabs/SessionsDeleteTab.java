@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,8 +50,8 @@ public class SessionsDeleteTab extends Fragment {
     private TextView deleteButton, cancelButton;
     private ProgressDialogHelper deleteDialog;
 
-    int sColor;
-    JSONObject tempobj;
+    private int sColor;
+    private JSONObject tempobj;
 
     public SessionsDeleteTab() {
     }
@@ -69,6 +70,7 @@ public class SessionsDeleteTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i("SessionsDeleteTab", "init");
         View rootView = inflater.inflate(R.layout.fragment_sessions_delete, container, false);
 
         sColor = ResourcesCompat.getColor(getResources(), R.color.colorAccent, null);

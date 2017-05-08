@@ -12,8 +12,6 @@ import android.widget.TimePicker;
 
 import org.mavadvise.R;
 
-import java.util.Calendar;
-
 /**
  * Created by SaiKumar on 4/10/2017.
  */
@@ -26,7 +24,8 @@ public class TimePickerHelper extends DialogFragment {
 
     private TimePickerListener timePickerListener;
 
-    public TimePickerHelper(){}
+    public TimePickerHelper() {
+    }
 
 
     @Override
@@ -43,7 +42,7 @@ public class TimePickerHelper extends DialogFragment {
             @Override
             public void onClick(View arg0) {
                 int hours, mins;
-                if(Build.VERSION.SDK_INT >= 23){
+                if (Build.VERSION.SDK_INT >= 23) {
                     hours = tp.getHour();
                     mins = tp.getMinute();
                 } else {
@@ -64,12 +63,12 @@ public class TimePickerHelper extends DialogFragment {
         return rootView;
     }
 
-    private void onDatePickerFinish(int hrs, int mins){
+    private void onDatePickerFinish(int hrs, int mins) {
         timePickerListener.onTimePickerFinish(hrs, mins);
         getDialog().dismiss();
     }
 
-    public void setOnSumbitListener(TimePickerListener timePickerListener){
+    public void setOnSumbitListener(TimePickerListener timePickerListener) {
         this.timePickerListener = timePickerListener;
     }
 }

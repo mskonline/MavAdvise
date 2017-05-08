@@ -56,12 +56,12 @@ public class SessionsAddTab extends Fragment {
     private TextView startTimeTV, endTimeTV;
     private RelativeLayout repeatRL;
 
-    View thisView;
+    private View thisView;
     private AppConfig appConfig;
     private ProgressDialogHelper saveDialog;
 
     private JSONArray sessions;
-    int sHrs, eHrs;
+    private int sHrs, eHrs;
 
     public SessionsAddTab() {
     }
@@ -74,6 +74,7 @@ public class SessionsAddTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i("SessionsAddTab", "init");
         View rootView = inflater.inflate(R.layout.fragment_sessions_add, container, false);
 
         initControls(rootView);

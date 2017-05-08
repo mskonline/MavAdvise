@@ -1,6 +1,7 @@
 package org.mavadvise.commons;
 
 import java.util.Calendar;
+
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -25,7 +26,8 @@ public class DatePickerHelper extends DialogFragment {
     private Calendar minDate = Calendar.getInstance();
     private Calendar maxDate = null;
 
-    public DatePickerHelper(){}
+    public DatePickerHelper() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +38,7 @@ public class DatePickerHelper extends DialogFragment {
         final DatePicker dp = (DatePicker) rootView.findViewById(R.id.datePicker);
         dp.setMinDate(minDate.getTimeInMillis());
 
-        if(maxDate != null){
+        if (maxDate != null) {
             dp.setMaxDate(maxDate.getTimeInMillis());
         }
 
@@ -59,12 +61,12 @@ public class DatePickerHelper extends DialogFragment {
         return rootView;
     }
 
-    private void onDatePickerFinish(Calendar date){
+    private void onDatePickerFinish(Calendar date) {
         datePickerListener.onDatePickerFinish(date);
         getDialog().dismiss();
     }
 
-    public void setOnSumbitListener(DatePickerListener datePickerListener){
+    public void setOnSumbitListener(DatePickerListener datePickerListener) {
         this.datePickerListener = datePickerListener;
     }
 
@@ -72,5 +74,7 @@ public class DatePickerHelper extends DialogFragment {
         this.minDate = minDate;
     }
 
-    public void setMaxDate(Calendar maxDate){this.maxDate=maxDate;}
+    public void setMaxDate(Calendar maxDate) {
+        this.maxDate = maxDate;
+    }
 }

@@ -5,7 +5,9 @@ package org.mavadvise.data;
  */
 
 public class User {
-    private User(){};
+    private User() {
+    }
+
     private static User instance;
 
     private String firstName;
@@ -16,8 +18,8 @@ public class User {
     private String utaID;
     private String email;
 
-    public static  User getUserInstance(){
-        if(instance == null)
+    public static User getUserInstance() {
+        if (instance == null)
             instance = new User();
 
         return instance;

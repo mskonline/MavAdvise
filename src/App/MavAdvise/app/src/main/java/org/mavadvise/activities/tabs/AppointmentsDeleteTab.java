@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.widget.Space;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,8 +51,8 @@ public class AppointmentsDeleteTab extends Fragment {
     private TextView deleteButton, cancelButton;
     private ProgressDialogHelper deleteDialog;
 
-    int sColor;
-    JSONObject tempobj;
+    private int sColor;
+    private JSONObject tempobj;
 
     public AppointmentsDeleteTab() {
     }
@@ -78,7 +75,7 @@ public class AppointmentsDeleteTab extends Fragment {
 
         optionsAdapter = new OptionsAdaptor();
         setDeletelist();
-        Log.i("come","coming to oncreateview of delete");
+        Log.i("come", "coming to oncreateview of delete");
         sColor = ResourcesCompat.getColor(getResources(), R.color.colorAccent, null);
         deleteAppointmentsList = (ListView) rootView.findViewById(R.id.appsDeletelist);
         //deleteButton = (Button) rootView.findViewById(R.id.sessionDeleteBT);
@@ -100,18 +97,18 @@ public class AppointmentsDeleteTab extends Fragment {
                     String status = tempobj.getString("appStatus");
                     boolean vError = false;
                     Log.i("Del", "Delete2");
-                }catch(JSONException e){
+                } catch (JSONException e) {
                     Log.i("Del", "Delete3");
                 }
 
-                if(!selectedAppointments.contains(position)){
+                if (!selectedAppointments.contains(position)) {
                     selectedAppointments.add(position);
                 } else
                     selectedAppointments.remove(new Integer(position));
 
-                if(selectedAppointments.size() == 0)
+                if (selectedAppointments.size() == 0)
                     cancelButton.setText("Cancel");
-                else{
+                else {
                     String str = "Cancel (" + selectedAppointments.size() + ")";
                     cancelButton.setText(str);
                 }
@@ -136,7 +133,7 @@ public class AppointmentsDeleteTab extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(selectedAppointments.size() != 0){
+                if (selectedAppointments.size() != 0) {
                     int count = selectedAppointments.size();
                     String msg = "Do you want to cancel " + count + " Appointment(s)?";
 
@@ -182,9 +179,9 @@ public class AppointmentsDeleteTab extends Fragment {
 
             StringBuilder appIDsBuilder = new StringBuilder();
             JSONObject obj = null;
-           // Integer[] appIdsInt = null;
+            // Integer[] appIdsInt = null;
 
-            for(int i : selectedAppointments){
+            for (int i : selectedAppointments) {
                 try {
                     obj = appointments.getJSONObject(i);
                     appIDsBuilder.append(obj.getString("session_id") + ",");
@@ -197,7 +194,7 @@ public class AppointmentsDeleteTab extends Fragment {
             String appIDs = appIDsBuilder.toString();
             appIDs = appIDs.replaceAll(",$", "");
 
-            Log.i("AppointmentsDeleteTab",appIDs);
+            Log.i("AppointmentsDeleteTab", appIDs);
 
             try {
                 OkHttpClient client = new OkHttpClient();
@@ -214,7 +211,7 @@ public class AppointmentsDeleteTab extends Fragment {
 
                 RequestBody formBody = new FormBody.Builder()
                         .add("netID", user.getNetID())
-                        .add("sessionID",appIDs)
+                        .add("sessionID", appIDs)
                         .build();
 
                 Request request = new Request.Builder()
@@ -225,7 +222,7 @@ public class AppointmentsDeleteTab extends Fragment {
                 Response response = client.newCall(request).execute();
 
                 return response.body().string();
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e("HTTP Error", e.getMessage());
             }
 
@@ -238,16 +235,16 @@ public class AppointmentsDeleteTab extends Fragment {
 
             try {
                 Thread.sleep(500);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e("AddApps", "Thread exception");
             }
 
-            if(result != null) {
+            if (result != null) {
                 try {
                     JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
                     String resultStr = obj.getString("type");
 
-                    if(resultStr.equalsIgnoreCase("success")){
+                    if (resultStr.equalsIgnoreCase("success")) {
                         Toast.makeText(getContext(), "Appointment(s) cancelled",
                                 Toast.LENGTH_LONG).show();
 
@@ -269,7 +266,7 @@ public class AppointmentsDeleteTab extends Fragment {
         }
     }
 
-    private void resetForm(){
+    private void resetForm() {
         selectedAppointments.clear();
         cancelButton.setText("Cancel");
 
@@ -318,12 +315,12 @@ public class AppointmentsDeleteTab extends Fragment {
 //                String status = obj.getString("appStatus");
 //                Log.i("stat", status);
 
-                    aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
-                    Log.i("jso", obj.getString("firstname"));
-                    aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
-                    aDate.setText(obj.getString("date"));
-                    aStat.setText(obj.getString("appStatus"));
-               // }
+                aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
+                Log.i("jso", obj.getString("firstname"));
+                aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
+                aDate.setText(obj.getString("date"));
+                aStat.setText(obj.getString("appStatus"));
+                // }
 //                else{
 //                    //row.setVisibility(View.GONE);
 //                    //row.setEnabled(false);

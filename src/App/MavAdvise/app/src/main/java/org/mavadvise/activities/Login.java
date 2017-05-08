@@ -3,19 +3,16 @@ package org.mavadvise.activities;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.content.Intent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
@@ -24,18 +21,14 @@ import org.mavadvise.commons.Utils;
 import org.mavadvise.data.User;
 
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class Login extends AppCompatActivity {
 
     private DialogFragment saveDialog;
     private AppConfig appConfig;
 
-    String userName, password;
+    private String userName, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +48,7 @@ public class Login extends AppCompatActivity {
         forgotBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                forgotUser();
+                forgotPassword();
             }
         });
 
@@ -63,7 +56,7 @@ public class Login extends AppCompatActivity {
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                regUser();
+                registerUser();
             }
         });
 
@@ -144,16 +137,13 @@ public class Login extends AppCompatActivity {
         finish();
     }
 
-    private void forgotUser(){
+    private void forgotPassword(){
         Intent intent = new Intent(Login.this, ForgotPasswordCredentials.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
     }
 
-    private void regUser(){
+    private void registerUser(){
         Intent intent = new Intent(Login.this, Register.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 

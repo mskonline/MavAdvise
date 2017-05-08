@@ -107,7 +107,7 @@ public class UsersController {
 			return "{}";
 		}
 	}
-	
+
 	@RequestMapping(value = "/updatePassword", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String updatePassword(@RequestParam("netID") String netId,
@@ -126,7 +126,7 @@ public class UsersController {
 			return "{}";
 		}
 	}
-	
+
 	@RequestMapping(value = "/changePassword", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String changePassword(@RequestParam("netID") String netId,
@@ -136,7 +136,7 @@ public class UsersController {
 		ObjectMapper mapper = new ObjectMapper();
 
 		String msg = dbmanager.changePassword(netId, oldPwd,newPwd);
-		r.setResult("Successful");
+		r.setResult("Successfull");
 
 		try {
 			r.setMessage("Done!!");
@@ -146,8 +146,6 @@ public class UsersController {
 			return "{}";
 		}
 	}
-
-
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
@@ -167,28 +165,26 @@ public class UsersController {
 			return "{}";
 		}
 	}
-	
-	@RequestMapping(value = "/getUser", method = {RequestMethod.GET, RequestMethod.POST} , produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value = "/getUser", method = {RequestMethod.POST} , produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String returnUser(@RequestParam("netID") String netID){
-		
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 		User user = dbmanager.getUser(netID);
+
 		if(user != null){
 			user.setDeviceID(null);
 			r.setResult(user);
+		}else{
+			r.setMessage("NetID does not exists");
 		}
-		else{
-			r.setMessage("NetID doesnot exists");
-		}
+
 		try {
 			return mapper.writeValueAsString(r);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return "{}";
 		}
-		
 	}
-	
 }

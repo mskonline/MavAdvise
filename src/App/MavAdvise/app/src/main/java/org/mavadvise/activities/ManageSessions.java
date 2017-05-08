@@ -1,15 +1,13 @@
 package org.mavadvise.activities;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -47,7 +45,7 @@ public class ManageSessions extends AppCompatActivity {
         setUpTabLayout();
 
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
-        mDialog =  ProgressDialogHelper.newInstance();
+        mDialog = ProgressDialogHelper.newInstance();
         mDialog.setMsg("Loading sessions...");
     }
 
@@ -55,67 +53,68 @@ public class ManageSessions extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(!mDialog.isAdded())
+        if (!mDialog.isAdded())
             mDialog.show(getSupportFragmentManager(), "Loading");
 
         try {
             Thread.sleep(500);
-        } catch (Exception e){
+        } catch (Exception e) {
         }
 
         getSessionsData();
     }
 
-    public void refreshSessionsData(JSONArray sessions){
+    public void refreshSessionsData(JSONArray sessions) {
         this.sessions = sessions;
         sessionsViewTab.refreshContent(this.sessions);
         sessionsDeleteTab.refreshContent(this.sessions);
     }
 
-    private void getSessionsData(){
+    private void getSessionsData() {
         RequestBody formBody = new FormBody.Builder()
                 .add("netID", appConfig.getUser().getNetID())
                 .build();
 
         URLResourceHelper urlResourceHelper =
                 new URLResourceHelper("getSessions", formBody,
-                    new URLResourceHelper.onFinishListener() {
-                        @Override
-                        public void onFinishSuccess(JSONObject obj) {
-                            try {
-                                sessions = obj.getJSONArray("result");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            if(sessionsViewTab == null || sessionsDeleteTab == null){
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
                                 try {
-                                    Thread.sleep(500);
-                                } catch (Exception e){}
+                                    sessions = obj.getJSONArray("result");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (sessionsViewTab == null || sessionsDeleteTab == null) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (Exception e) {
+                                    }
+                                }
+
+                                sessionsViewTab.refreshContent(sessions);
+                                sessionsDeleteTab.refreshContent(sessions);
+
+                                mDialog.dismiss();
                             }
 
-                            sessionsViewTab.refreshContent(sessions);
-                            sessionsDeleteTab.refreshContent(sessions);
-
-                            mDialog.dismiss();
-                        }
-
-                        @Override
-                        public void onFinishFailed(String msg) {
-                            mDialog.dismiss();
-                            Toast.makeText(getApplicationContext(),
-                                    msg, Toast.LENGTH_LONG).show();
-                        }
-                    });
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                mDialog.dismiss();
+                                Toast.makeText(getApplicationContext(),
+                                        msg, Toast.LENGTH_LONG).show();
+                            }
+                        });
 
         urlResourceHelper.execute();
     }
 
-    public void showViewTab(){
+    public void showViewTab() {
         mViewPager.setCurrentItem(1);
     }
 
-    private void setUpTabLayout(){
+    private void setUpTabLayout() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -154,10 +153,10 @@ public class ManageSessions extends AppCompatActivity {
 
             switch (position) {
                 case 0:
-                    instance =  SessionsAddTab.newInstance();
+                    instance = SessionsAddTab.newInstance();
                     break;
                 case 1:
-                    sessionsViewTab =  SessionsViewTab.newInstance();
+                    sessionsViewTab = SessionsViewTab.newInstance();
                     instance = sessionsViewTab;
                     getSessionsData();
                     break;

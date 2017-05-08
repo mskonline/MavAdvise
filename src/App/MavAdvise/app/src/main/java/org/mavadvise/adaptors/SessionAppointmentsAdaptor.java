@@ -18,12 +18,12 @@ import org.mavadvise.R;
 
 public class SessionAppointmentsAdaptor extends BaseAdapter {
 
-    Activity activity;
-    JSONArray appointments;
+    private Activity activity;
+    private JSONArray appointments;
 
     private int cColor, dColor;
 
-    public SessionAppointmentsAdaptor(Activity activity, JSONArray appointments){
+    public SessionAppointmentsAdaptor(Activity activity, JSONArray appointments) {
         this.activity = activity;
         this.appointments = appointments;
 
@@ -35,7 +35,7 @@ public class SessionAppointmentsAdaptor extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
 
-        if(row == null){
+        if (row == null) {
             LayoutInflater inflater = activity.getLayoutInflater();
             row = inflater.inflate(R.layout.list_session_appointments_item, parent, false);
         }
@@ -54,15 +54,15 @@ public class SessionAppointmentsAdaptor extends BaseAdapter {
             String status = obj.getString("status");
 
             // Cancelled
-            if(status.startsWith("C"))
+            if (status.startsWith("C"))
                 apptStatus.setTextColor(cColor);
 
             // Done
-            if(status.startsWith("D"))
+            if (status.startsWith("D"))
                 apptStatus.setTextColor(dColor);
 
             apptStatus.setText(status);
-        } catch (Exception e){
+        } catch (Exception e) {
         }
 
         return row;

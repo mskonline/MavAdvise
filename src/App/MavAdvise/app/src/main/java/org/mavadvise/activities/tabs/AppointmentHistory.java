@@ -22,11 +22,12 @@ public class AppointmentHistory extends AppCompatActivity {
     private JSONArray appointments;
     private OptionsAdapter optionsAdapter;
 
-   // public AppointmentHistory(JSONArray appointments){
-   //     this.appointments = appointments;
-   // }
+    // public AppointmentHistory(JSONArray appointments){
+    //     this.appointments = appointments;
+    // }
 
-    public AppointmentHistory(){}
+    public AppointmentHistory() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class AppointmentHistory extends AppCompatActivity {
             aHeader = (TextView) row.findViewById(R.id.appmnt_header);
             aTime = (TextView) row.findViewById(R.id.appmnt_time);
             aDate = (TextView) row.findViewById(R.id.appmnt_date);
-            aStat =  (TextView) row.findViewById(R.id.appmnt_status);
+            aStat = (TextView) row.findViewById(R.id.appmnt_status);
 
             JSONObject obj = null;
 
