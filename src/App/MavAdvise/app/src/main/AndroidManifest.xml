@@ -38,7 +38,7 @@
         <activity android:name=".activities.SessionsAddError" />
         <activity
             android:name=".activities.StartSession"
-            android:label="Start Session"/>
+            android:label="Start Session" />
         <activity
             android:name=".activities.ViewSession"
             android:label="View Session" />
@@ -47,7 +47,7 @@
             android:label="Cancel Session" />
         <activity
             android:name=".activities.ActiveSession"
-            android:label="Active Session"/>
+            android:label="Active Session" />
         <activity
             android:name=".activities.Announcements"
             android:label="Announcements" />
@@ -57,21 +57,35 @@
         <activity
             android:name=".activities.ReadAnnouncements"
             android:label="View Announcements" />
-        <activity android:name=".activities.CreateAnnouncement"
-            android:label="Create New Announcement"  ></activity>
+        <activity
+            android:name=".activities.CreateAnnouncement"
+            android:label="Create Announcement" />
 
         <service
-            android:name="org.mavadvise.services.MavAdviseFirebaseMessagingService"
+            android:name=".services.MavAdviseFirebaseMessagingService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="org.mavadvise.services.FirebaseIDService">
+        <service android:name=".services.FirebaseIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".activities.ForgotPasswordCredentials"
+            android:label="Forgot Password" />
+        <activity
+            android:name=".activities.FPSecurity"
+            android:label="Forgot Password" />
+        <activity
+            android:name=".activities.FPNewPassword"
+            android:label="Create New Password" />
+        <activity android:name=".activities.ChangePassword"
+            android:label="Change Password"></activity>
     </application>
+
 </manifest>

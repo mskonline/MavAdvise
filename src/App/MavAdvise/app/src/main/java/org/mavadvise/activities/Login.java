@@ -145,9 +145,9 @@ public class Login extends AppCompatActivity {
     }
 
     private void forgotUser(){
-        //Intent intent = new Intent(Login.this, Forgot.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        //startActivity(intent);
+        Intent intent = new Intent(Login.this, ForgotPasswordCredentials.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         finish();
     }
 

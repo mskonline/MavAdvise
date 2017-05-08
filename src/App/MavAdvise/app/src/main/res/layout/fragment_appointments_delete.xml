@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:divider="@color/colorAccent"
         android:dividerHeight="2px"
+        android:layout_above="@id/AppsDeleteActions"
         android:layout_alignParentTop="true"
         android:choiceMode="multipleChoice"
         android:fastScrollEnabled="false"/>
