@@ -76,7 +76,7 @@ public class ManageAppointments extends AppCompatActivity {
 
         this.appointments = appointments;
         appointmentsViewTab.refreshContent(this.appointments);
-        appointmentsDeleteTab.refreshContent(this.appointments);
+        //appointmentsDeleteTab.refreshContent(this.appointments);
     }
 
     private class AppointmentsData extends AsyncTask<String, Void , String> {
@@ -134,7 +134,7 @@ public class ManageAppointments extends AppCompatActivity {
                     Log.i("jso", obj.getString("result"));
 
                     appointmentsViewTab.refreshContent(appointments);
-                    appointmentsDeleteTab.refreshContent(appointments);
+                    //appointmentsDeleteTab.refreshContent(appointments);
                 } else {
                     Toast.makeText(getApplicationContext(),
                             "Error retrieving the sessions.", Toast.LENGTH_LONG).show();

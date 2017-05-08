@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:id="@+id/relativeLay"
     android:background="@drawable/list_selector">
 
     <TextView
@@ -43,4 +44,5 @@
         android:textSize="15sp"
         android:layout_alignBottom="@+id/appmnt_date"
         android:layout_alignStart="@+id/appmnt_status" />
+
 </RelativeLayout>

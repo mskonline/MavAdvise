@@ -444,6 +444,20 @@ public class DBManager {
 		session.close();
 		return allSessions;
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object> getScheduledApps(String netID){
+		Session session = factory.openSession();
+
+		SQLQuery q = (SQLQuery) session.getNamedQuery("getSchedAppointments").setString("netID", netID);
+		q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+		List<Object> schedApp = q.list();
+
+		session.close();
+		return schedApp;
+	}
 
 
 	@SuppressWarnings("unused")
