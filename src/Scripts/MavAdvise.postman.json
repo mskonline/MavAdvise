@@ -10,7 +10,7 @@
 		{
 			"name": "Login",
 			"request": {
-				"url": "http://localhost:8080/MavAdvise/login?netID=bxs1234&password=A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3",
+				"url": "http://localhost:8080/MavAdvise/login?netID=bxs1234&password=A665A45920422F9D417E4867EFDC4FB8A04A1F3FFF1FA07E998E86F7F7A27AE3&deviceID=12345",
 				"method": "POST",
 				"header": [],
 				"body": {},
@@ -43,7 +43,7 @@
 		{
 			"name": "addSessions",
 			"request": {
-				"url": "http://localhost:8080/MavAdvise/addSessions?netID=bxs1234&startDate=2017-06-01&endDate=2017-06-30&startTime=9:00:00&endTime=11:00:00&noOfSlots=20&frequency=1010100&location=ERB 501",
+				"url": "http://localhost:8080/MavAdvise/addSessions?netID=bxs1234&startDate=2017-05-01&endDate=2017-05-30&startTime=9:00:00&endTime=11:00:00&noOfSlots=20&frequency=1010100&location=ERB 501",
 				"method": "POST",
 				"header": [],
 				"body": {},
@@ -55,6 +55,50 @@
 			"name": "deleteSessions",
 			"request": {
 				"url": "http://localhost:8080/MavAdvise/deleteSessions?netID=bxs1234&sessionIDs=3",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "cancelSession",
+			"request": {
+				"url": "http://localhost:8080/MavAdvise/cancelSession?sessionID=1&cancelReason=Not well",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "startSession",
+			"request": {
+				"url": "http://localhost:8080/MavAdvise/startSession?sessionID=1",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "getSessionAppointments",
+			"request": {
+				"url": "http://localhost:8080/MavAdvise/getSessionAppointments?sessionID=1",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "getScheduledSessions",
+			"request": {
+				"url": "http://localhost:8080/MavAdvise/getScheduledSessions?netID=bxs1234&date=2017-06-20",
 				"method": "POST",
 				"header": [],
 				"body": {},

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>MavAdvise</groupId>
 	<artifactId>MavAdvise</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>v1</version>
 	<description>Server code for MavAdvise</description>
 	<packaging>war</packaging>
 	<build>
@@ -21,6 +21,15 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
+					<webResources>
+						<resource>
+							<directory>WebContent/config</directory>
+							<includes>
+								<include>**/*.*</include>
+							</includes>
+							<targetPath>WEB-INF/classes</targetPath>
+						</resource>
+					</webResources>
 					<warSourceDirectory>WebContent</warSourceDirectory>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>

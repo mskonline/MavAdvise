@@ -1,5 +1,6 @@
 package org.web.controllers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.web.beans.Response;
+import org.web.beans.Session;
 import org.web.beans.SessionInfo;
 import org.web.beans.User;
 import org.web.dao.DBManager;
@@ -133,6 +135,8 @@ public class SessionsController{
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
+		List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
+
 		if(status.equalsIgnoreCase("SCHEDULED")){
 			List<User> users = dbmanager.startSession(sessionID);
 
@@ -140,9 +144,20 @@ public class SessionsController{
 			final String MESSAGE = "Advising session has started";
 
 			notificationService.sendNotification(TITLE, MESSAGE, users);
+
+			// Notify the second appointment
+			for (User user : users) {
+				logger.debug("firstname  : " + user.getFirstName());
+			}
+
+			if(users.size() >= 2){
+				User secondApptUser = users.get(1);
+
+				String MESSAGE_NEXT = "Your appointment is next";
+				notificationService.sendNotification(TITLE, MESSAGE, secondApptUser);
+			}
 		}
 
-		List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
 		r.setResult(allAppointments);
 
 		try {
@@ -160,12 +175,20 @@ public class SessionsController{
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		String msg = dbmanager.cancelSession(sessionID, cancelReason);
+		List<User> users = dbmanager.cancelSession(sessionID, cancelReason);
 
-		if(msg == null)
-			r.setResult("Session Cancelled");
-		else
-			r.setMessage(msg);
+		// Notify all the appointments
+		Session session = dbmanager.getSession(sessionID);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d yyyy");
+		String sDate = sdf.format(session.getDate());
+
+		final String TITLE = "MavAdvise";
+		final String MESSAGE = "Advising session on " + sDate + " was cancelled";
+
+		notificationService.sendNotification(TITLE, MESSAGE, users);
+
+		r.setResult("Session Cancelled");
 
 		try {
 			return mapper.writeValueAsString(r);

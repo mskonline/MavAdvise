@@ -26,8 +26,8 @@ import okhttp3.RequestBody;
 
 public class ActiveSession extends AppCompatActivity {
 
-    SessionAppointmentsAdaptor sessionAppointmentsAdaptor;
-    JSONArray appointments;
+    private SessionAppointmentsAdaptor sessionAppointmentsAdaptor;
+    private JSONArray appointments;
 
     private ProgressDialogHelper apptsDialog;
     private ListView listView;
@@ -40,7 +40,7 @@ public class ActiveSession extends AppCompatActivity {
     private int updateAppt = 0;
     private int dColor;
 
-    Button nextBtn;
+    private Button nextBtn, noShowBtn;
     private AlertDialogHelper alertDialog, noShowAlert;
 
     @Override
@@ -57,7 +57,7 @@ public class ActiveSession extends AppCompatActivity {
         sessionID = extras.getInt("sessionID");
         status = extras.getString("status");
 
-        Button noShowBtn = (Button) findViewById(R.id.sessionNoShowBT);
+        noShowBtn = (Button) findViewById(R.id.sessionNoShowBT);
         nextBtn = (Button) findViewById(R.id.sessionNextBT);
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +89,7 @@ public class ActiveSession extends AppCompatActivity {
             });
 
         dColor = ResourcesCompat.getColor(getResources(), R.color.colorDone, null);
+
         startSession(sessionID);
     }
 
@@ -125,13 +126,16 @@ public class ActiveSession extends AppCompatActivity {
 
                             listView.setItemChecked(0, true);
                             onGoingAppt = 0;
-
-                            if(onGoingAppt == (totalAppts - 1)){
-                                nextBtn.setText("DONE");
-                            }
                         }else{
                             highlightOnGoingAppointment();
                         }
+
+                        if(onGoingAppt == (totalAppts - 1) || totalAppts == 0){
+                            nextBtn.setText("DONE");
+                        }
+
+                        if(totalAppts == 0)
+                            noShowBtn.setEnabled(false);
                     }
 
                     @Override
@@ -166,8 +170,9 @@ public class ActiveSession extends AppCompatActivity {
     private void advanceSession(String noShow){
         updateAppt = onGoingAppt;
 
-        if(onGoingAppt == (totalAppts - 1)){
+        if(onGoingAppt == (totalAppts - 1) || totalAppts == 0){
             markSessionAsDone(noShow);
+            return;
         }
 
         listView.setItemChecked(onGoingAppt, false);

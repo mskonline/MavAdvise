@@ -96,11 +96,16 @@ public class ViewSession extends AppCompatActivity {
         appointmentsAdapter = new SessionAppointmentsAdaptor(this, appointments);
         apptsView.setAdapter(appointmentsAdapter);
 
+        apptsDialog = ProgressDialogHelper.newInstance();
+        apptsDialog.setMsg("Fetching appointments...");
+
         getAppointments();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if(requestCode == 1){
             if(resultCode == Activity.RESULT_OK){
                 String status = data.getStringExtra("status");
@@ -109,6 +114,8 @@ public class ViewSession extends AppCompatActivity {
                     sStatus.setText("CANCELLED");
                     sStatus.setTextColor(cColor);
                     cancelSessionBtn.setVisibility(View.GONE);
+
+                    getAppointments();
                 }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -117,9 +124,8 @@ public class ViewSession extends AppCompatActivity {
     }
 
     private void getAppointments(){
-        apptsDialog = ProgressDialogHelper.newInstance();
-        apptsDialog.setMsg("Fetching appointments...");
-        apptsDialog.show(getSupportFragmentManager(),"appointments");
+        if(!apptsDialog.isAdded())
+            apptsDialog.show(getSupportFragmentManager(),"appointments");
 
         RequestBody formBody = new FormBody.Builder()
                 .add("sessionID", "" + sessionID)
