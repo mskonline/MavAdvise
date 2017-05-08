@@ -119,6 +119,21 @@
                  WHERE appointments.net_id= :netID
                  ORDER BY appointments.session_id DESC]]>
 	</sql-query>
+	
+	<sql-query name="getSchedAppointments">
+		<![CDATA[SELECT users.firstname, users.lastname, sessions.session_id,
+                 DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
+			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
+			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
+                 sessions.status as sesStatus, sessions.location, appointments.net_id,
+                 appointments.slot_number, appointments.status as appStatus
+                 FROM appointments
+                 JOIN sessions on appointments.session_id=sessions.session_id
+                 JOIN users on users.net_id=sessions.net_id
+                 WHERE appointments.net_id= :netID
+                 and appointments.status = 'SCHEDULED'
+                 ORDER BY appointments.session_id DESC]]>
+	</sql-query>
 
 	<sql-query name="getNoShowSessions">
 		<![CDATA[SELECT appointments.net_id
