@@ -90,9 +90,14 @@
         <activity android:name=".activities.Notification">
             <intent-filter>
                 <action android:name=".MavAdvise.MavAdviseNotification" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.ViewAppointment"
+            android:label="View Appointment" />
+        <activity android:name=".activities.CancelAppointment"
+            android:label="Cancel Appointment" />
     </application>
-
 </manifest>

@@ -103,13 +103,23 @@
                 android:text="Tue, May 05 2017"
                 android:textSize="20sp" />
 
+            <Spinner
+                android:id="@+id/apptReasonSP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ChangeDateBT"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:ems="10" />
+
             <Button
                 android:id="@+id/createAppBT"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/DateTV"
+                android:layout_below="@id/apptReasonSP"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="72dp"
+                android:layout_marginTop="60dp"
                 android:background="@color/colorAccent"
                 android:text="Add"
                 android:textColor="#FFF" />

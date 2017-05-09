@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLay"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="80dp"
     android:background="@drawable/list_selector"
     android:orientation="vertical">
 
@@ -24,6 +24,15 @@
         android:layout_marginLeft="10dp"
         android:text="20th April 2017"
         android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/apptreasonTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/appmnt_date"
+        android:text="Academic Hold"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/appmnt_status"

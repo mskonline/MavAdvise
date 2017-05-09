@@ -25,7 +25,7 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
 
-    private int dColor, cColor;
+    private int dColor, cColor, sColor;
 
     public AppointmentsDataAdaptor(JSONArray appointments, Fragment fragment) {
         this.appointments = appointments;
@@ -59,12 +59,13 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
             row = layoutInflater.inflate(R.layout.list_appointments_item, parent, false);
         }
 
-        TextView aHeader, aDate, aTime, aStat;
+        TextView aHeader, aDate, aTime, aStat, aReason;
 
         aHeader = (TextView) row.findViewById(R.id.appmnt_header);
         aTime = (TextView) row.findViewById(R.id.appmnt_time);
         aDate = (TextView) row.findViewById(R.id.appmnt_date);
         aStat = (TextView) row.findViewById(R.id.appmnt_status);
+        aReason = (TextView) row.findViewById(R.id.apptreasonTV);
 
         JSONObject obj = null;
 
@@ -77,6 +78,9 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
 
             String status = obj.getString("appStatus");
 
+            if (status.startsWith("S"))
+                aStat.setTextColor(sColor);
+
             // Cancelled
             if (status.startsWith("C"))
                 aStat.setTextColor(cColor);
@@ -86,6 +90,7 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
                 aStat.setTextColor(dColor);
 
             aStat.setText(status);
+            aReason.setText(obj.getString("reason"));
         } catch (Exception e) {
             Toast.makeText(context, "Error in retrieving the list", Toast.LENGTH_SHORT);
         }
@@ -97,6 +102,7 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
         layoutInflater = fragment.getActivity().getLayoutInflater();
         cColor = ResourcesCompat.getColor(fragment.getResources(), R.color.colorCancelled, null);
         dColor = ResourcesCompat.getColor(fragment.getResources(), R.color.colorDone, null);
+        sColor = ResourcesCompat.getColor(fragment.getResources(), R.color.colorAccent, null);
         context = fragment.getContext();
     }
 
@@ -104,6 +110,7 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
         layoutInflater = activity.getLayoutInflater();
         cColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorCancelled, null);
         dColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorDone, null);
+        sColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorAccent, null);
         context = activity.getApplicationContext();
     }
 

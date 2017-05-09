@@ -82,4 +82,23 @@ public class SessionsService {
 		message.append(" for your appointment.");
 		return message.toString();
 	}
+
+	public String getCancelAppointmentMessage(Session session, String cancelReason){
+		StringBuilder message = new StringBuilder();
+
+		message.append("Your Advising session on ");
+
+		SimpleDateFormat dateformatter = new SimpleDateFormat("EEE, MMM d yyyy");
+		message.append(dateformatter.format(session.getDate()));
+		message.append(" ");
+
+		SimpleDateFormat timeformatter = new SimpleDateFormat("h:mm a");
+		message.append(timeformatter.format(session.getStartTime()));
+		message.append(" - ");
+		message.append(timeformatter.format(session.getEndTime()));
+
+		message.append(" was Cancelled with following reason.\n\n");
+		message.append(cancelReason);
+		return message.toString();
+	}
 }

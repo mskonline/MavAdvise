@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ public class AppointmentsAddTab extends Fragment {
     private String netid, sessionid, aDate;
     private Button dateBtn, createBtn;
     private Button advBtn;
+    private Spinner appsReasonSpinner;
 
     private JSONArray appointments, advisors, sessions;
     private SimpleDateFormat fromDateFormat, toDateFormat;
@@ -131,7 +134,6 @@ public class AppointmentsAddTab extends Fragment {
             }
         });
 
-
         advBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -177,9 +179,22 @@ public class AppointmentsAddTab extends Fragment {
                 validateAndCreateAppointment();
             }
         });
+
+        appsReasonSpinner = (Spinner) view.findViewById(R.id.apptReasonSP);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(view.getContext(),
+                R.array.appointmentReason_array, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        appsReasonSpinner.setAdapter(adapter);
     }
 
     private void validateAndCreateAppointment() {
+        if(appsReasonSpinner.getSelectedItemPosition() == 0){
+            Toast.makeText(getContext(), "Select your appointments reason",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         saveDialog = ProgressDialogHelper.newInstance();
         saveDialog.show(getFragmentManager(), "Creating");
 
@@ -195,10 +210,13 @@ public class AppointmentsAddTab extends Fragment {
             e.printStackTrace();
         }
 
+        String appointmentReason = appsReasonSpinner.getSelectedItem().toString();
+
         RequestBody formBody = new FormBody.Builder()
                 .add("sessionID", sessionid)
                 .add("netID", user.getNetID())
                 .add("date", d)
+                .add("appointmentReason",appointmentReason)
                 .build();
 
         URLResourceHelper urlResourceHelper =

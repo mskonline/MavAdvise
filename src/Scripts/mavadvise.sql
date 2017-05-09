@@ -46,6 +46,7 @@ CREATE TABLE `appointments` (
   `date` date DEFAULT NULL,
   `slot_number` int(11) DEFAULT NULL,
   `status` varchar(50) DEFAULT NULL,
+  `reason` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`appointment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

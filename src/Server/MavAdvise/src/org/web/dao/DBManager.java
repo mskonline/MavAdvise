@@ -515,7 +515,7 @@ public class DBManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Response createAppointment(int sessID, String netID, Date date) {
+	public Response createAppointment(int sessID, String netID, Date date, String appointmentReason) {
 		List<Integer> sessIds = new ArrayList<Integer>();
 		Response r = new Response();
 
@@ -598,6 +598,7 @@ public class DBManager {
 					appointment.setDate(date);
 					appointment.setStatus("SCHEDULED");
 					appointment.setSlotNo(sess3.getSlotCounter() + 1);
+					appointment.setAppointmentReason(appointmentReason);
 
 					Transaction tx = null;
 
@@ -636,6 +637,7 @@ public class DBManager {
 					return r;
 				}
 			} else {
+				hSession.close();
 				r.setMessage("Session not found");
 				return r;
 			}
@@ -648,6 +650,7 @@ public class DBManager {
 			appointment.setDate(date);
 			appointment.setStatus("SCHEDULED");
 			appointment.setSlotNo(sess3.getSlotCounter() + 1);
+			appointment.setAppointmentReason(appointmentReason);
 
 			Transaction tx = null;
 
@@ -685,6 +688,7 @@ public class DBManager {
 			return r;
 
 		} else {
+			hSession.close();
 			r.setMessage("Slots for this session are over.");
 			return r;
 		}

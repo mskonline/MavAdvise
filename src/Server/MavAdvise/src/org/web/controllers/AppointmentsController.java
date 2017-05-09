@@ -101,11 +101,12 @@ public class AppointmentsController {
 			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String createAppointment(@RequestParam("sessionID") int sessionID, @RequestParam("netID") String netID,
-			@RequestParam("date") Date date) {
+			@RequestParam("date") Date date,
+			@RequestParam("appointmentReason") String appointmentReason) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		r = dbmanager.createAppointment(sessionID, netID, date);
+		r = dbmanager.createAppointment(sessionID, netID, date, appointmentReason);
 
 		try {
 			return mapper.writeValueAsString(r);

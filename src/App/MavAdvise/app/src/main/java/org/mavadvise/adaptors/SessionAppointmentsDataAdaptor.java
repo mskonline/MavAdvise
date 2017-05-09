@@ -21,7 +21,7 @@ public class SessionAppointmentsDataAdaptor extends BaseAdapter {
     private Activity activity;
     private JSONArray appointments;
 
-    private int cColor, dColor;
+    private int cColor, dColor, sColor;
 
     public SessionAppointmentsDataAdaptor(Activity activity, JSONArray appointments) {
         this.activity = activity;
@@ -29,6 +29,7 @@ public class SessionAppointmentsDataAdaptor extends BaseAdapter {
 
         cColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorCancelled, null);
         dColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorDone, null);
+        sColor = ResourcesCompat.getColor(activity.getResources(), R.color.colorAccent, null);
     }
 
     @Override
@@ -43,15 +44,19 @@ public class SessionAppointmentsDataAdaptor extends BaseAdapter {
         try {
             JSONObject obj = appointments.getJSONObject(position);
 
-            TextView apptName, apptSlotNumber, apptStatus;
+            TextView apptName, apptSlotNumber, apptStatus, apptReason;
 
             apptName = (TextView) row.findViewById(R.id.session_apptnameTV);
+            apptReason = (TextView)  row.findViewById(R.id.session_apptreasonTV);
             apptSlotNumber = (TextView) row.findViewById(R.id.session_appntslotTV);
             apptStatus = (TextView) row.findViewById(R.id.session_appntstatusTV);
 
             apptName.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
             apptSlotNumber.setText(obj.getString("slot_number"));
             String status = obj.getString("status");
+
+            if(status.startsWith("S"))
+                apptStatus.setTextColor(sColor);
 
             // Cancelled
             if (status.startsWith("C"))
@@ -62,6 +67,7 @@ public class SessionAppointmentsDataAdaptor extends BaseAdapter {
                 apptStatus.setTextColor(dColor);
 
             apptStatus.setText(status);
+            apptReason.setText(obj.getString("reason"));
         } catch (Exception e) {
         }
 

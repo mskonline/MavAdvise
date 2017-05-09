@@ -42,6 +42,7 @@
 		<property name="status" column="status"></property>
 		<property name="slotNo" column="slot_number"></property>
 		<property name="sessionID" column="session_id" type="int"></property>
+		<property name="appointmentReason" column="reason"></property>
 	</class>
 
 	<class name="org.web.beans.Announcement" table="announcements">
@@ -95,9 +96,11 @@
 		<![CDATA[SELECT
 				users.firstname,
 				users.lastname,
+				users.net_id,
 				appointments.slot_number,
 				appointments.appointment_id,
-				appointments.status
+				appointments.status,
+				appointments.reason
 				FROM appointments
 				JOIN users ON users.net_id = appointments.net_id
 				WHERE appointments.session_id = :sessionID
@@ -110,7 +113,8 @@
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
 			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
                  sessions.status as sesStatus, sessions.location, appointments.net_id,
-                 appointments.slot_number, appointments.status as appStatus
+                 appointments.slot_number, appointments.status as appStatus,
+                 appointments.reason as reason
                  FROM appointments
                  JOIN sessions on appointments.session_id=sessions.session_id
                  JOIN users on users.net_id=sessions.net_id
@@ -124,7 +128,8 @@
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
 			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
                  sessions.status as sesStatus, sessions.location, appointments.net_id,
-                 appointments.slot_number, appointments.status as appStatus
+                 appointments.slot_number, appointments.status as appStatus,
+                 appointments.reason as reason
                  FROM appointments
                  JOIN sessions on appointments.session_id=sessions.session_id
                  JOIN users on users.net_id=sessions.net_id

@@ -4,14 +4,15 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class Appointment {
-	
+
 	private int appointmentID;
 	private String netID;
 	private int sessionID;
 	private Date date;
 	private int slotNo;
 	private String status;
-	
+	private String appointmentReason;
+
 	public int getAppointmentID() {
 		return appointmentID;
 	}
@@ -48,7 +49,10 @@ public class Appointment {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
-
-
+	public String getAppointmentReason() {
+		return appointmentReason;
+	}
+	public void setAppointmentReason(String appointmentReason) {
+		this.appointmentReason = appointmentReason;
+	}
 }

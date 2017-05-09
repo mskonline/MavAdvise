@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -254,6 +255,38 @@ public class SessionsController {
 		}
 
 		r.setResult(msg);
+
+		try {
+			return mapper.writeValueAsString(r);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return "{}";
+		}
+	}
+
+	@RequestMapping(value = "/cancelSessionAppointment", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String cancelSessionAppointment(@RequestParam("netID") String netID,
+			@RequestParam("appointmentID") Integer[] appointmentID,
+			@RequestParam("sessionID") Integer sessionID,
+			@RequestParam("cancelReason") String cancelReason) {
+		Response r = new Response();
+		ObjectMapper mapper = new ObjectMapper();
+
+		List<Object> appointments = dbmanager.cancelAppointments(netID, appointmentID);
+		r.setResult(appointments);
+
+		if(StringUtils.isNotBlank(cancelReason)){
+			final String TITLE = "MavAdvise";
+			final String MESSAGE = "Your appointment was Cancelled";
+
+			User u = dbmanager.getUserForAppointment(appointmentID[0]);
+			Session session = dbmanager.getSession(sessionID);
+
+			String messageBody = sessionsService.getCancelAppointmentMessage(session, cancelReason);
+			notificationService.sendNotification(TITLE, MESSAGE, messageBody, u);
+		}
 
 		try {
 			return mapper.writeValueAsString(r);

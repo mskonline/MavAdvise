@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,6 +95,28 @@ public class ViewSession extends AppCompatActivity {
         appointmentsAdapter = new SessionAppointmentsDataAdaptor(this, appointments);
         apptsView.setAdapter(appointmentsAdapter);
 
+        apptsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    JSONObject obj = appointments.getJSONObject(position);
+                    Intent i = new Intent(ViewSession.this, ViewAppointment.class);
+                    i.putExtra("firstname", obj.getString("firstname"));
+                    i.putExtra("lastname", obj.getString("lastname"));
+                    i.putExtra("slot_number", obj.getString("slot_number"));
+                    i.putExtra("status", obj.getString("status"));
+                    i.putExtra("reason", obj.getString("reason"));
+                    i.putExtra("sessionID", sessionID);
+                    i.putExtra("appointmentID", obj.getInt("appointment_id"));
+                    i.putExtra("netID", obj.getString("net_id"));
+
+                    startActivityForResult(i, 2);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
         apptsDialog = ProgressDialogHelper.newInstance();
         apptsDialog.setMsg("Fetching appointments...");
 
@@ -112,6 +136,18 @@ public class ViewSession extends AppCompatActivity {
                     sStatus.setTextColor(cColor);
                     cancelSessionBtn.setVisibility(View.GONE);
 
+                    getAppointments();
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+            }
+        }
+
+        if(requestCode == 2){
+            if (resultCode == Activity.RESULT_OK) {
+                String status = data.getStringExtra("status");
+
+                if (status.equalsIgnoreCase("C")) {
                     getAppointments();
                 }
             }
@@ -146,6 +182,8 @@ public class ViewSession extends AppCompatActivity {
                             @Override
                             public void onFinishFailed(String msg) {
                                 apptsDialog.dismiss();
+                                Toast.makeText(getApplicationContext(),
+                                        msg, Toast.LENGTH_LONG).show();
                             }
                         });
 
