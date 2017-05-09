@@ -189,6 +189,8 @@ public class DashBoard extends AppCompatActivity
             Intent intent = new Intent(DashBoard.this, ChangePassword.class);
             startActivity(intent);
         } else if (id == R.id.nav_about) {
+            Intent intent = new Intent(DashBoard.this, AboutUs.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
             Intent intent = new Intent(DashBoard.this, Login.class);
