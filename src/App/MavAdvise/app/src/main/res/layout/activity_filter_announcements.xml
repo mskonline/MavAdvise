@@ -5,9 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.mavadvise.activities.FilterAnnouncements"
-    android:layout_marginTop="10dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp">
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
 
 
 
@@ -20,7 +23,10 @@
         android:textAllCaps="true"
         android:textStyle="bold"
         android:textColor="#000"
-        android:text="Start Date : "/>
+        android:text="Start Date : "
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        />
 
     <Button
         android:id="@+id/changeStartDateBTAnn"
@@ -32,7 +38,8 @@
         android:layout_alignParentEnd="true"
         android:background="@color/colorPrimary"
         android:textColor="#FFF"
-        android:text="Change"/>
+        android:text="Change"
+        android:layout_marginRight="10dp"/>
 
     <TextView
         android:id="@+id/startDateTVAnn"
@@ -41,7 +48,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/changeStartDateBTAnn"
         android:textSize="20sp"
-        android:text="20 june 2017"/>
+        android:text="20 june 2017"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <TextView
         android:id="@+id/endDateLabelAnn"
@@ -53,7 +62,9 @@
         android:textAllCaps="true"
         android:textStyle="bold"
         android:textColor="#000"
-        android:text="End Date : "/>
+        android:text="End Date : "
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <Button
         android:id="@+id/changeEndDateBTAnn"
@@ -65,7 +76,8 @@
         android:layout_alignParentEnd="true"
         android:background="@color/colorPrimary"
         android:textColor="#FFF"
-        android:text="Change"/>
+        android:text="Change"
+        android:layout_marginRight="10dp"/>
 
     <TextView
         android:id="@+id/endDateTVAnn"
@@ -74,7 +86,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/changeEndDateBTAnn"
         android:textSize="20sp"
-        android:text="20 june 2017"/>
+        android:text="20 june 2017"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <CheckBox
         android:layout_width="match_parent"
@@ -84,7 +98,9 @@
         android:visibility="visible"
         android:textSize="20dp"
         android:layout_marginTop="30dp"
-        android:id="@+id/checkBox_myAnnouncements"/>
+        android:id="@+id/checkBox_myAnnouncements"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <Button
         android:id="@+id/applyFilterBTN"
