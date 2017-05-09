@@ -1,5 +1,7 @@
 package org.mavadvise.app;
 
+import android.content.SharedPreferences;
+
 import org.json.JSONArray;
 import org.mavadvise.data.User;
 
@@ -13,6 +15,10 @@ public class AppConfig {
     private static AppConfig instance;
     private User user;
     private JSONArray conflictingSessions;
+
+    public static final String DEVICE_ID = "DEVICE_ID";
+
+    private SharedPreferences sharedPreferences;
 
     private AppConfig() {
     }
@@ -35,20 +41,14 @@ public class AppConfig {
             SESSIONS_ADD_SUCCESS = "Sessions added",
             SESSIONS_DELETE_ONLY_SCHD_ERR = "Only scheduled sessions with no appointments can be deleted.\nCancel it instead";
 
-    public String getHostName() {
-        return hostName;
+    public void savePreferences(String key, String value){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public String getRememberMeToken() {
-        return rememberMeToken;
-    }
-
-    public void setRememberMeToken(String rememberMeToken) {
-        this.rememberMeToken = rememberMeToken;
+    public String getPreferences(String key){
+        return sharedPreferences.getString(key, "");
     }
 
     public User getUser() {
@@ -72,5 +72,9 @@ public class AppConfig {
 
     public void setFirebaseToken(String firebaseToken) {
         this.firebaseToken = firebaseToken;
+    }
+
+    public void setSharedPreferences(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 }

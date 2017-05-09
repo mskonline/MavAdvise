@@ -2,7 +2,6 @@
 <!DOCTYPE hibernate-mapping PUBLIC
  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
  "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-
 <hibernate-mapping>
 	<class name="org.web.beans.User" table="users">
 		<id name="netID" type="string" column="net_id">
@@ -74,36 +73,35 @@
 	</sql-query>
 
 	<sql-query name="getSCHDSessionsUpto">
-	<![CDATA[SELECT
-			sessions.session_id as sessionID,
-			sessions.net_id as netID,
-			sessions.status,
-			sessions.slot_counter as slotCounter,
-			sessions.no_of_slots as noOfSlots,
-			sessions.comment,
-			sessions.location,
-			DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
-			TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
-			TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime
-			FROM sessions
-			WHERE sessions.net_id = :netID
-            AND (sessions.status = 'SCHEDULED' OR sessions.status = 'STARTED')
-            AND sessions.date <= :date
-			ORDER BY sessions.date ASC]]>
+		<![CDATA[SELECT
+				sessions.session_id as sessionID,
+				sessions.net_id as netID,
+				sessions.status,
+				sessions.slot_counter as slotCounter,
+				sessions.no_of_slots as noOfSlots,
+				sessions.comment,
+				sessions.location,
+				DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
+				TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
+				TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime
+				FROM sessions
+				WHERE sessions.net_id = :netID
+	            AND (sessions.status = 'SCHEDULED' OR sessions.status = 'STARTED')
+	            AND sessions.date <= :date
+				ORDER BY sessions.date ASC]]>
 	</sql-query>
 
 	<sql-query name="getAllSessionAppointments">
 		<![CDATA[SELECT
-			users.firstname,
-			users.lastname,
-			appointments.slot_number,
-			appointments.appointment_id,
-			appointments.status
-			FROM appointments
-			JOIN users ON users.net_id = appointments.net_id
-			WHERE appointments.session_id = :sessionID
-			ORDER BY appointments.slot_number ASC
-		]]>
+				users.firstname,
+				users.lastname,
+				appointments.slot_number,
+				appointments.appointment_id,
+				appointments.status
+				FROM appointments
+				JOIN users ON users.net_id = appointments.net_id
+				WHERE appointments.session_id = :sessionID
+				ORDER BY appointments.slot_number ASC]]>
 	</sql-query>
 
 	<sql-query name="getAllAppointments">
@@ -117,7 +115,7 @@
                  JOIN sessions on appointments.session_id=sessions.session_id
                  JOIN users on users.net_id=sessions.net_id
                  WHERE appointments.net_id= :netID
-                 ORDER BY appointments.session_id DESC]]>
+                 ORDER BY appointments.date DESC]]>
 	</sql-query>
 
 	<sql-query name="getSchedAppointments">
@@ -132,47 +130,45 @@
                  JOIN users on users.net_id=sessions.net_id
                  WHERE appointments.net_id= :netID
                  and appointments.status = 'SCHEDULED'
-                 ORDER BY appointments.session_id DESC]]>
+                 ORDER BY appointments.date ASC]]>
 	</sql-query>
 
 	<sql-query name="getNoShowSessions">
 		<![CDATA[SELECT appointments.net_id
-		         from appointments
-                 where appointments.net_id= :netID
-                 and appointments.status = 'NO SHOW'
-                 and appointments.date between adddate(now(), -7) and now()]]>
+		         FROM appointments
+                 WHERE appointments.net_id= :netID
+                 AND appointments.status = 'NO SHOW'
+                 AND appointments.date BETWEEN adddate(now(), -7) AND now()]]>
 	</sql-query>
-
-
 
 	<sql-query name="getDateSessions">
 		<![CDATA[Select sessions.session_id,
 		         DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
 			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime
-                 from sessions
-                 where sessions.net_id= :netID
-                 and sessions.status = "SCHEDULED"
-                 and sessions.date > CURRENT_TIMESTAMP
-                 and sessions.slot_counter < sessions.no_of_slots
+                 FROM sessions
+                 WHERE sessions.net_id= :netID
+                 AND sessions.status = "SCHEDULED"
+                 AND sessions.date >= CURDATE()
+                 AND sessions.slot_counter < sessions.no_of_slots
                  ORDER BY sessions.date ASC]]>
 	</sql-query>
 
 	<sql-query name="getAllAnnouncements">
 		<![CDATA[SELECT
-		announcements.announcement_id as announcementId,
-		announcements.net_id as netId,
-		DATE_FORMAT(announcements.date, '%b %d %Y') as date,
-		announcements.priority,
-		announcements.title,
-		users.firstname as firstName,
-		users.branch as branch,
-		announcements.message,
-		users.lastname as lastName
-		FROM users, announcements
-		WHERE #BRANCH_CONDITION#
-		announcements.net_id=users.net_id
-		AND announcements.date BETWEEN :startDate AND :endDate
-		ORDER BY announcements.priority DESC,announcements.date DESC, users.lastname ASC ;]]>
+				announcements.announcement_id as announcementId,
+				announcements.net_id as netId,
+				DATE_FORMAT(announcements.date, '%b %d %Y') as date,
+				announcements.priority,
+				announcements.title,
+				users.firstname as firstName,
+				users.branch as branch,
+				announcements.message,
+				users.lastname as lastName
+				FROM users, announcements
+				WHERE #BRANCH_CONDITION#
+				announcements.net_id=users.net_id
+				AND announcements.date BETWEEN :startDate AND :endDate
+				ORDER BY announcements.priority DESC,announcements.date DESC, users.lastname ASC]]>
 	</sql-query>
 </hibernate-mapping>

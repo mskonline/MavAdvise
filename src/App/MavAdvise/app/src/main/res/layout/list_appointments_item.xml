@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="60dp"
     android:id="@+id/relativeLay"
-    android:background="@drawable/list_selector">
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@drawable/list_selector"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/appmnt_header"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:text="Khalili"
         android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/appmnt_date"
-        android:layout_marginLeft="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/appmnt_header"
+        android:layout_marginLeft="10dp"
         android:text="20th April 2017"
-        android:textSize="15sp"
-        android:layout_below="@id/appmnt_header"/>
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/appmnt_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/appmnt_header"
+        android:layout_alignParentEnd="true"
         android:layout_marginRight="10dp"
         android:text="SCHEDULED"
-        android:textSize="20sp"
-        android:layout_marginEnd="71dp"
-        android:layout_above="@+id/appmnt_time"
-        android:layout_alignParentEnd="true" />
+        android:textColor="@color/colorAccent"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/appmnt_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:text="2:00pm-4:00pm"
-        android:textSize="15sp"
         android:layout_alignBottom="@+id/appmnt_date"
-        android:layout_alignStart="@+id/appmnt_status" />
-
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:text="2:00 pm-4:00 pm"
+        android:textSize="12sp" />
 </RelativeLayout>

@@ -16,14 +16,14 @@ import org.mavadvise.R;
  * Created by SaiKumar on 5/3/2017.
  */
 
-public class SessionAppointmentsAdaptor extends BaseAdapter {
+public class SessionAppointmentsDataAdaptor extends BaseAdapter {
 
     private Activity activity;
     private JSONArray appointments;
 
     private int cColor, dColor;
 
-    public SessionAppointmentsAdaptor(Activity activity, JSONArray appointments) {
+    public SessionAppointmentsDataAdaptor(Activity activity, JSONArray appointments) {
         this.activity = activity;
         this.appointments = appointments;
 

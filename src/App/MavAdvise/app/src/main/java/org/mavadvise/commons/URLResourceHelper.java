@@ -66,6 +66,12 @@ public class URLResourceHelper extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... voids) {
+        try {
+            Thread.sleep(500);
+        } catch (Exception e) {
+            Log.e("Thread", "Thread exception");
+        }
+
         HttpUrl url = new HttpUrl.Builder()
                 .scheme("http")
                 .host(AppConfig.hostName)
@@ -80,6 +86,7 @@ public class URLResourceHelper extends AsyncTask<Void, Void, String> {
                 .build();
 
         Response response = null;
+
         try {
             response = client.newCall(request).execute();
             return response.body().string();
@@ -107,6 +114,8 @@ public class URLResourceHelper extends AsyncTask<Void, Void, String> {
                     listener.onFinishSuccess(obj);
                 } else {
                     listener.onFinishFailed(obj.getString("message"));
+
+
                 }
 
             } catch (Exception e) {

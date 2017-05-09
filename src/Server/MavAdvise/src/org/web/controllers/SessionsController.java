@@ -27,7 +27,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
-public class SessionsController{
+public class SessionsController {
 	@Autowired
 	private DBManager dbmanager;
 
@@ -39,9 +39,10 @@ public class SessionsController{
 	@Autowired
 	private SessionsService sessionsService;
 
-	@RequestMapping(value = "/addSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/addSessions", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String createSession(HttpServletRequest request, @ModelAttribute SessionInfo sessionInfo){
+	public String createSession(HttpServletRequest request, @ModelAttribute SessionInfo sessionInfo) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -57,9 +58,10 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/getSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/getSessions", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getSession(@RequestParam("netID") String netID){
+	public String getSession(@RequestParam("netID") String netID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -74,10 +76,11 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/getScheduledSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/getScheduledSessions", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String getScheduledSessions(@RequestParam("netID") String netID,
-			@RequestParam("date") String date){
+									   @RequestParam("date") String date) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -92,9 +95,10 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/getSessionAppointments", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/getSessionAppointments", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getSessionAppointments(@RequestParam("sessionID") Integer sessionID){
+	public String getSessionAppointments(@RequestParam("sessionID") Integer sessionID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -109,10 +113,11 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/deleteSessions", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/deleteSessions", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String deleteSession(@RequestParam("netID") String netID,
-			@RequestParam("sessionIDs") Integer[] sessionIDs){
+								@RequestParam("sessionIDs") Integer[] sessionIDs) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -127,34 +132,36 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/startSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/startSession", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String startSession(
-			@RequestParam("sessionID") Integer sessionID,
-			@RequestParam("status") String status){
+	public String startSession(@RequestParam("sessionID") Integer sessionID,
+							   @RequestParam("status") String status) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
 		List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
 
-		if(status.equalsIgnoreCase("SCHEDULED")){
+		if (status.equalsIgnoreCase("SCHEDULED")) {
 			List<User> users = dbmanager.startSession(sessionID);
+			Session session = dbmanager.getSession(sessionID);
 
 			final String TITLE = "MavAdvise";
 			final String MESSAGE = "Advising session has started";
+			final String MESSAGEEX = sessionsService.getStartSessionMessage(session);
 
-			notificationService.sendNotification(TITLE, MESSAGE, users);
+			notificationService.sendNotification(TITLE, MESSAGE, MESSAGEEX, users);
 
 			// Notify the second appointment
 			for (User user : users) {
 				logger.debug("firstname  : " + user.getFirstName());
 			}
 
-			if(users.size() >= 2){
+			if (users.size() >= 2) {
 				User secondApptUser = users.get(1);
 
 				String MESSAGE_NEXT = "Your appointment is next";
-				notificationService.sendNotification(TITLE, MESSAGE, secondApptUser);
+				notificationService.sendNotification(TITLE, MESSAGE_NEXT, null, secondApptUser);
 			}
 		}
 
@@ -168,10 +175,11 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/cancelSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/cancelSession", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String cancelSession(@RequestParam("sessionID") Integer sessionID,
-			@RequestParam("cancelReason") String cancelReason){
+								@RequestParam("cancelReason") String cancelReason) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -186,7 +194,7 @@ public class SessionsController{
 		final String TITLE = "MavAdvise";
 		final String MESSAGE = "Advising session on " + sDate + " was cancelled";
 
-		notificationService.sendNotification(TITLE, MESSAGE, users);
+		notificationService.sendNotification(TITLE, MESSAGE, cancelReason, users);
 
 		r.setResult("Session Cancelled");
 
@@ -198,21 +206,22 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/advanceSession", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/advanceSession", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String advanceSession(@RequestParam("sessionID") Integer sessionID,
 			@RequestParam("nextAppointmentID") Integer nextAppointmentID,
 			@RequestParam("prevAppointmentID") Integer prevAppointmentID,
-			@RequestParam("noShow") String noShow){
+			@RequestParam("noShow") String noShow) {
 
-		logger.debug("prevAppointmentID : " + prevAppointmentID + " nextAppointmentID : " + nextAppointmentID );
+		logger.debug("prevAppointmentID : " + prevAppointmentID + " nextAppointmentID : " + nextAppointmentID);
 
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
 		String msg = "Session: Next appointment notified";
 
-		if(nextAppointmentID != 0){
+		if (nextAppointmentID != 0) {
 			// Get user of appointmentID
 			User user = dbmanager.getUserForAppointment(nextAppointmentID);
 
@@ -220,28 +229,26 @@ public class SessionsController{
 			final String TITLE = "MavAdvise";
 			final String MESSAGE = "Your appointment is next";
 
-			notificationService.sendNotification(TITLE, MESSAGE, user);
+			notificationService.sendNotification(TITLE, MESSAGE, null, user);
 		}
 
 		// Mark prevAppointmentID as Done or No Show
-		if(noShow.equalsIgnoreCase("N")){
+		if (noShow.equalsIgnoreCase("N")) {
 			dbmanager.markAppointmentAsDone(prevAppointmentID);
 			msg = "DONE";
-		}
-		else{
+		} else {
 			dbmanager.markAppointmentAsNoShow(prevAppointmentID);
 
 			final String TITLE = "MavAdvise";
 			final String MESSAGE = "Your appointment was marked as NO SHOW";
 
 			User u = dbmanager.getUserForAppointment(prevAppointmentID);
-			notificationService.sendNotification(TITLE, MESSAGE, u);
+			notificationService.sendNotification(TITLE, MESSAGE, null, u);
 
 			msg = "NO SHOW";
 		}
 
-
-		if(nextAppointmentID == -1){
+		if (nextAppointmentID == -1) {
 			// Mark session as done
 			msg = dbmanager.markSessionAsDone(sessionID);
 		}
@@ -256,29 +263,32 @@ public class SessionsController{
 		}
 	}
 
-	@RequestMapping(value = "/sendNotification", method = {RequestMethod.GET}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/sendNotification", method = {
+			RequestMethod.GET }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String sendNotification(@RequestParam("netID") String netID){
+	public String sendNotification(@RequestParam("netID") String netID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
 		User user = dbmanager.getUser(netID);
 
-		if(user != null){
+		if (user != null) {
 			System.out.println("Device ID : " + user.getDeviceID());
 
 			User user1 = new User();
-			user.setDeviceID("dJQ3iY_rsO8:APA91bEG2bJdFW9vfF0tMkzX-A22LpchEJVaQEIXBQRmLPTSb-R-4PXnFMQw_kEJ89Q2mXZgvgy6JlEzFfJTqXr20MksCo-PmkAOs5pu6HMX9MUPYeZWwtcpBMaYjKnxC42Lnh09-jkJ");
+			user.setDeviceID(
+					"dJQ3iY_rsO8:APA91bEG2bJdFW9vfF0tMkzX-A22LpchEJVaQEIXBQRmLPTSb-R-4PXnFMQw_kEJ89Q2mXZgvgy6JlEzFfJTqXr20MksCo-PmkAOs5pu6HMX9MUPYeZWwtcpBMaYjKnxC42Lnh09-jkJ");
 
 			User user2 = new User();
-			user2.setDeviceID("cYHoRWH5n6k:APA91bH6kmHqoEmY-GAowLYGkwu_eC7RXfgxZwjg0RXR6Z9HZ7ADvLZBpd3R4VSl0BeXABJPUnmSlbsAjGWZ6s_R5c1MJjX8u_930e92ruyRFDC-tRzpjdb0Lf4WnmB0sN61TAZL7iA2");
+			user2.setDeviceID(
+					"cYHoRWH5n6k:APA91bH6kmHqoEmY-GAowLYGkwu_eC7RXfgxZwjg0RXR6Z9HZ7ADvLZBpd3R4VSl0BeXABJPUnmSlbsAjGWZ6s_R5c1MJjX8u_930e92ruyRFDC-tRzpjdb0Lf4WnmB0sN61TAZL7iA2");
 
 			List<User> users = new ArrayList<User>();
 			users.add(user1);
 			users.add(user2);
 
-			notificationService.sendNotification("Demo", "Demo Message", users);
-		}else
+			notificationService.sendNotification("Demo", "Demo Message", null, users);
+		} else
 			System.out.println("No such user " + netID);
 
 		try {

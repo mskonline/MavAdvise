@@ -6,7 +6,6 @@ package org.mavadvise.commons;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import org.mavadvise.R;
 public class DateListPickerHelper extends DialogFragment {
 
     OptionsAdapter optionsAdapter;
-    String advisor;
 
     private JSONArray sessionslist;
     private DateListPickerListener dateListPickerListener;
@@ -31,8 +29,6 @@ public class DateListPickerHelper extends DialogFragment {
 
     public void setSessionDates(JSONArray sessions) {
         this.sessionslist = sessions;
-        //optionsAdapter.notifyDataSetChanged();
-        Log.i("constr", sessionslist.toString());
     }
 
     public interface DateListPickerListener {
@@ -46,14 +42,6 @@ public class DateListPickerHelper extends DialogFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_datelist_picker, container, false);
         getDialog().setTitle("Select Date");
-        Log.i("me3", "Clicked3");
-
-        if (sessionslist != null) {
-            Log.i("no1", "not null 1");
-        } else
-            Log.i("no2", "it is null");
-
-        //setAdvisorlist();
 
         list = (ListView) rootView.findViewById(R.id.datelist);
 
@@ -61,26 +49,17 @@ public class DateListPickerHelper extends DialogFragment {
         list.setAdapter(optionsAdapter);
 
         setUpDateListListener();
-
         return rootView;
-
     }
 
     private void setUpDateListListener() {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 JSONObject obj = null;
                 try {
-
                     obj = sessionslist.getJSONObject(position);
-                    Log.i("pos", Integer.toString(position));
-                    Log.i("Here", obj.getString("date"));
-
-                    // advisor = obj.getString("firstName") + " " + obj.getString("lastName");
                     onDateListPickerFinish(obj);
-
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
                 }
@@ -91,11 +70,9 @@ public class DateListPickerHelper extends DialogFragment {
 
     public void setOnClickListener(DateListPickerListener dateList) {
         this.dateListPickerListener = dateList;
-        Log.i("me4", "Clicked4");
     }
 
     private void onDateListPickerFinish(JSONObject session) {
-        Log.i("me5", "Clicked5");
         dateListPickerListener.onDateListPickerFinish(session);
         getDialog().dismiss();
     }
@@ -107,30 +84,21 @@ public class DateListPickerHelper extends DialogFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View row = convertView;
-            Log.i("me8", "Clicked8");
+
             if (row == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.list_date_select, parent, false);
+                row = inflater.inflate(R.layout.list_date_select_item, parent, false);
             }
 
             TextView adv = (TextView) row.findViewById(R.id.datelistTV);
             TextView datetime = (TextView) row.findViewById(R.id.datetimeTV);
 
-
-            //Log.i("nlst",);
-
             JSONObject obj = null;
-
-            Log.i("me9", "Clicked9");
 
             try {
                 obj = sessionslist.getJSONObject(position);
-                Log.i("lst", obj.toString());
-                Log.i("pos", Integer.toString(position));
-                Log.i("Here", obj.getString("date"));
                 adv.setText(obj.getString("date"));
-                datetime.setText(obj.getString("starttime") + "-" + obj.getString("endtime"));
-                advisor = obj.getString("firstName");
+                datetime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
             }
@@ -141,7 +109,6 @@ public class DateListPickerHelper extends DialogFragment {
         }
 
         public int getCount() {
-            Log.i("posi", "" + sessionslist.length());
             return sessionslist != null ? sessionslist.length() : 0;
         }
 

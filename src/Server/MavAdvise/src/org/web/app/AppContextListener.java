@@ -10,8 +10,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-
-public class AppContextListener implements ServletContextListener  {
+public class AppContextListener implements ServletContextListener {
 
 	final static Logger logger = Logger.getLogger(AppContextListener.class);
 	private long startUpTime = 0;
@@ -28,31 +27,29 @@ public class AppContextListener implements ServletContextListener  {
 		logger.info("MavAdvise Shutdown Initiated...");
 
 		Enumeration<Driver> drivers = DriverManager.getDrivers();
-        while (drivers.hasMoreElements()) {
-            Driver driver = drivers.nextElement();
-            try {
-                DriverManager.deregisterDriver(driver);
-                logger.info("Deregistering driver : " + driver.toString());
-            } catch (SQLException e) {
-            	logger.error("Error in deregistering driver : " + driver.toString() + " " + e.getMessage());
-            }
-        }
+		while (drivers.hasMoreElements()) {
+			Driver driver = drivers.nextElement();
+			try {
+				DriverManager.deregisterDriver(driver);
+				logger.info("Deregistering driver : " + driver.toString());
+			} catch (SQLException e) {
+				logger.error("Error in deregistering driver : " + driver.toString() + " " + e.getMessage());
+			}
+		}
 
-        /*try {
-        	logger.info("Performing MySQL cleanup...");
-            AbandonedConnectionCleanupThread.shutdown();
-        }
-        catch (InterruptedException e) {
-            logger.error("SEVERE problem cleaning up: " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }*/
+		/*
+		 * try { logger.info("Performing MySQL cleanup...");
+		 * AbandonedConnectionCleanupThread.shutdown(); } catch
+		 * (InterruptedException e) { logger.error(
+		 * "SEVERE problem cleaning up: " + e.getMessage());
+		 * e.printStackTrace(); return; }
+		 */
 
-        logger.info("MavAdvise Cleanup completed.");
+		logger.info("MavAdvise Cleanup completed.");
 
-        shutDownTime = System.currentTimeMillis();
-        long upTimeInSecs = (shutDownTime - startUpTime) / 1000;
+		shutDownTime = System.currentTimeMillis();
+		long upTimeInSecs = (shutDownTime - startUpTime) / 1000;
 
-        logger.info("MavAdvise uptime : " + (upTimeInSecs/60) + " mins");
+		logger.info("MavAdvise uptime : " + (upTimeInSecs / 60) + " mins");
 	}
 }

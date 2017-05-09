@@ -1,21 +1,15 @@
 package org.web.controllers;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.web.beans.Response;
-import org.web.beans.SessionInfo;
 import org.web.dao.DBManager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,13 +17,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class AppointmentsController {
-	
+
 	@Autowired
 	private DBManager dbmanager;
 
-	@RequestMapping(value = "/getAppointments", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/getAppointments", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getAppointments(@RequestParam("netID") String netID){
+	public String getAppointments(@RequestParam("netID") String netID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -44,10 +39,11 @@ public class AppointmentsController {
 			return "{}";
 		}
 	}
-	
-	@RequestMapping(value = "/getScheduledApps", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value = "/getScheduledAppointments", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getScheduledApps(@RequestParam("netID") String netID){
+	public String getScheduledApps(@RequestParam("netID") String netID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -62,10 +58,11 @@ public class AppointmentsController {
 			return "{}";
 		}
 	}
-	
-	@RequestMapping(value = "/getAdvisors", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value = "/getAdvisors", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getAdvisors(@RequestParam("branch") String branch){
+	public String getAdvisors(@RequestParam("branch") String branch) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -80,16 +77,16 @@ public class AppointmentsController {
 			return "{}";
 		}
 	}
-	
-	
-	@RequestMapping(value = "/deleteAppointments", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value = "/cancelAppointments", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String deleteAppointments(@RequestParam("netID") String netID,
-			@RequestParam("sessionID") Integer[] appointmentID){
+	public String cancelAppointments(@RequestParam("netID") String netID,
+			@RequestParam("sessionID") Integer[] appointmentID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		List<Object> appointments = dbmanager.deleteAppointments(netID, appointmentID);
+		List<Object> appointments = dbmanager.cancelAppointments(netID, appointmentID);
 		r.setResult(appointments);
 
 		try {
@@ -99,15 +96,12 @@ public class AppointmentsController {
 			return "{}";
 		}
 	}
-	
-	
-	
-	
-	@RequestMapping(value = "/createAppointment", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value = "/createAppointment", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String createAppointment(@RequestParam("sessionID") int sessionID,
-			@RequestParam("netID") String netID,
-	        @RequestParam("date") Date date){
+	public String createAppointment(@RequestParam("sessionID") int sessionID, @RequestParam("netID") String netID,
+			@RequestParam("date") Date date) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -120,11 +114,11 @@ public class AppointmentsController {
 			return "{}";
 		}
 	}
-	
-	
-	@RequestMapping(value = "/getSessionDates", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+
+	@RequestMapping(value = "/getSessionDates", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String getSessionDates(@RequestParam("netID") String netID){
+	public String getSessionDates(@RequestParam("netID") String netID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 

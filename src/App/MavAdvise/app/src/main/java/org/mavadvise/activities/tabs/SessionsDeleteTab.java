@@ -208,6 +208,7 @@ public class SessionsDeleteTab extends Fragment {
                     @Override
                     public void onFinishSuccess(JSONObject obj) {
                         deleteDialog.dismiss();
+
                         try {
                             Toast.makeText(getContext(), "Session(s) deleted",
                                     Toast.LENGTH_LONG).show();
