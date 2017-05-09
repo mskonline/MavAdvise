@@ -84,20 +84,19 @@
         <activity
             android:name=".activities.FPNewPassword"
             android:label="Create New Password" />
-        <activity
-            android:name=".activities.ChangePassword"
             android:label="Change Password" />
-        <activity android:name=".activities.Notification">
+		<activity android:name=".activities.Notification">
             <intent-filter>
                 <action android:name=".MavAdvise.MavAdviseNotification" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
+ 		<activity
             android:name=".activities.ViewAppointment"
             android:label="View Appointment" />
         <activity android:name=".activities.CancelAppointment"
             android:label="Cancel Appointment" />
+		<activity android:name=".activities.AboutUs"
+            android:label="About"></activity>
     </application>
 </manifest>
