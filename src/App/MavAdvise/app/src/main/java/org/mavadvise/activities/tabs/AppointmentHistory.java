@@ -1,30 +1,30 @@
 package org.mavadvise.activities.tabs;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.mavadvise.R;
+import org.mavadvise.adaptors.AppointmentsDataAdaptor;
+import org.mavadvise.app.AppConfig;
+import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.ProgressDialogHelper;
+import org.mavadvise.commons.URLResourceHelper;
+
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 public class AppointmentHistory extends AppCompatActivity {
 
     private JSONArray appointments;
-    private OptionsAdapter optionsAdapter;
+    private AppointmentsDataAdaptor appointmentsDataAdaptor;
 
-    // public AppointmentHistory(JSONArray appointments){
-    //     this.appointments = appointments;
-    // }
+    private AppConfig appConfig;
+    private ProgressDialogHelper mDialog;
 
     public AppointmentHistory() {
     }
@@ -34,73 +34,47 @@ public class AppointmentHistory extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_history);
 
-        Intent intent = getIntent();
-        String jsonArray = intent.getStringExtra("jsonArray");
-
-        try {
-            appointments = new JSONArray(jsonArray);
-            System.out.println(appointments.toString(2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         ListView list = (ListView) findViewById(R.id.historylist);
+        appointmentsDataAdaptor = new AppointmentsDataAdaptor(appointments, this);
+        list.setAdapter(appointmentsDataAdaptor);
 
-        optionsAdapter = new OptionsAdapter();
-        list.setAdapter(optionsAdapter);
+        appConfig = ((MavAdvise) getApplication()).getAppConfig();
+        getAllAppointments();
     }
 
-    public class OptionsAdapter extends BaseAdapter {
+    private void getAllAppointments() {
+        mDialog = ProgressDialogHelper.newInstance();
+        mDialog.setMsg("Loading appointments...");
+        mDialog.show(getSupportFragmentManager(), "Loading");
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            Log.i("H", "Inside View");
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", appConfig.getUser().getNetID())
+                .build();
 
-            if (row == null) {
-                LayoutInflater inflater = getLayoutInflater();
-                row = inflater.inflate(R.layout.list_appointments_item, parent, false);
-            }
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("getAppointments", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                try {
+                                    appointments = obj.getJSONArray("result");
+                                } catch (Exception e) {
+                                    Log.e("JSON Parse", e.getMessage());
+                                }
 
-            TextView aHeader, aDate, aTime, aStat;
+                                appointmentsDataAdaptor.setAppointments(appointments);
+                                appointmentsDataAdaptor.notifyDataSetChanged();
+                                mDialog.dismiss();
+                            }
 
-            aHeader = (TextView) row.findViewById(R.id.appmnt_header);
-            aTime = (TextView) row.findViewById(R.id.appmnt_time);
-            aDate = (TextView) row.findViewById(R.id.appmnt_date);
-            aStat = (TextView) row.findViewById(R.id.appmnt_status);
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                mDialog.dismiss();
+                                Toast.makeText(getApplicationContext(),
+                                        msg, Toast.LENGTH_LONG).show();
+                            }
+                        });
 
-            JSONObject obj = null;
-
-            try {
-                obj = appointments.getJSONObject(position);
-
-                aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
-                Log.i("jso", obj.getString("firstname"));
-                aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
-                aDate.setText(obj.getString("date"));
-                aStat.setText(obj.getString("appStatus"));
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
-            }
-
-            return row;
-        }
-
-        public OptionsAdapter() {
-        }
-
-        public int getCount() {
-            return appointments != null ? appointments.length() : 0;
-        }
-
-        public Object getItem(int arg0) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
+        urlResourceHelper.execute();
     }
 }
-
-

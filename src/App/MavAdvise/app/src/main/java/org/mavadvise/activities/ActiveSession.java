@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mavadvise.R;
-import org.mavadvise.adaptors.SessionAppointmentsAdaptor;
+import org.mavadvise.adaptors.SessionAppointmentsDataAdaptor;
 import org.mavadvise.commons.AlertDialogHelper;
 import org.mavadvise.commons.ProgressDialogHelper;
 import org.mavadvise.commons.URLResourceHelper;
@@ -24,7 +24,7 @@ import okhttp3.RequestBody;
 
 public class ActiveSession extends AppCompatActivity {
 
-    private SessionAppointmentsAdaptor sessionAppointmentsAdaptor;
+    private SessionAppointmentsDataAdaptor sessionAppointmentsDataAdaptor;
     private JSONArray appointments;
 
     private ProgressDialogHelper apptsDialog;
@@ -46,10 +46,10 @@ public class ActiveSession extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_session);
 
-        sessionAppointmentsAdaptor = new SessionAppointmentsAdaptor(this, appointments);
+        sessionAppointmentsDataAdaptor = new SessionAppointmentsDataAdaptor(this, appointments);
 
         listView = (ListView) findViewById(R.id.actSessionApptsLV);
-        listView.setAdapter(sessionAppointmentsAdaptor);
+        listView.setAdapter(sessionAppointmentsDataAdaptor);
 
         final Bundle extras = getIntent().getExtras();
         sessionID = extras.getInt("sessionID");
@@ -109,14 +109,14 @@ public class ActiveSession extends AppCompatActivity {
                                 apptsDialog.dismiss();
                                 try {
                                     appointments = obj.getJSONArray("result");
-                                    sessionAppointmentsAdaptor.setAppointments(appointments);
+                                    sessionAppointmentsDataAdaptor.setAppointments(appointments);
 
                                     totalAppts = appointments.length();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                                sessionAppointmentsAdaptor.notifyDataSetChanged();
+                                sessionAppointmentsDataAdaptor.notifyDataSetChanged();
 
                                 if (!status.equalsIgnoreCase("STARTED")) {
                                     Toast.makeText(getApplicationContext(),

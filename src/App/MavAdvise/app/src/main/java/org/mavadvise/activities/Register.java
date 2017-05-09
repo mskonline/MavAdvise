@@ -157,7 +157,7 @@ public class Register extends AppCompatActivity {
                 .add("password", password)
                 .add("securityQuestionID", "" + securityQuestionID)
                 .add("securityAnswer", securityAnswer)
-                .add("deviceID", appConfig.getFirebaseToken())
+                .add("deviceID", "")
                 .build();
 
         URLResourceHelper urlResourceHelper =

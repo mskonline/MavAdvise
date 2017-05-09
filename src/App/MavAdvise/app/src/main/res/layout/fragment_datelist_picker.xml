@@ -7,10 +7,10 @@
         android:id="@+id/selDateListTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Available Dates"
-        android:padding="5dp"
-        android:gravity="center"
         android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Available Dates"
         android:textColor="#FFF"
         android:textSize="20dp" />
 

@@ -27,5 +27,6 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
     private void saveRegistrationToken(String refreshedToken) {
         appConfig = ((MavAdvise) getApplication()).getAppConfig();
         appConfig.setFirebaseToken(refreshedToken);
+        appConfig.savePreferences(AppConfig.DEVICE_ID, refreshedToken);
     }
 }

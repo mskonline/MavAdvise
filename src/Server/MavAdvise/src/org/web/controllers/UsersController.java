@@ -27,25 +27,26 @@ public class UsersController {
 	@Autowired
 	private DBManager dbmanager;
 
-	@RequestMapping(value = "/login", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/login", method = { RequestMethod.GET,
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String login(HttpServletRequest request,
 			@RequestParam("netID") String netID,
 			@RequestParam("password") String password,
-			@RequestParam("deviceID") String deviceID){
+			@RequestParam("deviceID") String deviceID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
 		User user = dbmanager.getUser(netID);
-		if(user != null){
+		if (user != null) {
 			boolean status;
 			status = user.authenticate(password);
 
-			if(status == true){
+			if (status == true) {
 				HttpSession session = request.getSession();
 				session.setAttribute("hasAccess", "true");
 
-				if(StringUtils.isNotBlank(deviceID)){
+				if (StringUtils.isNotBlank(deviceID)) {
 					logger.debug("New DeviceID : " + deviceID);
 					dbmanager.updateUserDeviceID(user.getNetID(), deviceID);
 				}
@@ -70,15 +71,15 @@ public class UsersController {
 		}
 	}
 
-	@RequestMapping(value = "/register", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/register", method = { RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String register(HttpServletRequest request, @ModelAttribute User user){
+	public String register(HttpServletRequest request, @ModelAttribute User user) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
 		String msg = dbmanager.saveUser(user);
 
-		if(msg == null)
+		if (msg == null)
 			r.setResult("User registered");
 		else
 			r.setMessage(msg);
@@ -91,10 +92,11 @@ public class UsersController {
 		}
 	}
 
-	@RequestMapping(value = "/updateDeviceID", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/updateDeviceID", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String updateDeviceID(@RequestParam("newDeviceID") String newDeviceID,
-			@RequestParam("oldDeviceID") String oldDeviceID){
+								 @RequestParam("oldDeviceID") String oldDeviceID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -108,10 +110,11 @@ public class UsersController {
 		}
 	}
 
-	@RequestMapping(value = "/updatePassword", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/updatePassword", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String updatePassword(@RequestParam("netID") String netId,
-			@RequestParam("password") String password){
+								 @RequestParam("password") String password) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -127,15 +130,16 @@ public class UsersController {
 		}
 	}
 
-	@RequestMapping(value = "/changePassword", method = {RequestMethod.POST}, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/changePassword", method = {
+			RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String changePassword(@RequestParam("netID") String netId,
 			@RequestParam("oldPassword") String oldPwd,
-		@RequestParam("newPassword") String newPwd){
+			@RequestParam("newPassword") String newPwd) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 
-		String msg = dbmanager.changePassword(netId, oldPwd,newPwd);
+		String msg = dbmanager.changePassword(netId, oldPwd, newPwd);
 		r.setResult("Successfull");
 
 		try {
@@ -149,7 +153,7 @@ public class UsersController {
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String logout(HttpSession session, @RequestParam("netID") String netID){
+	public String logout(HttpSession session, @RequestParam("netID") String netID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 		session.removeAttribute("hasAccess");
@@ -166,17 +170,17 @@ public class UsersController {
 		}
 	}
 
-	@RequestMapping(value = "/getUser", method = {RequestMethod.POST} , produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "/getUser", method = { RequestMethod.POST }, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String returnUser(@RequestParam("netID") String netID){
+	public String returnUser(@RequestParam("netID") String netID) {
 		Response r = new Response();
 		ObjectMapper mapper = new ObjectMapper();
 		User user = dbmanager.getUser(netID);
 
-		if(user != null){
+		if (user != null) {
 			user.setDeviceID(null);
 			r.setResult(user);
-		}else{
+		} else {
 			r.setMessage("NetID does not exists");
 		}
 

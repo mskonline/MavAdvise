@@ -4,61 +4,41 @@ package org.mavadvise.activities.tabs;
  * Created by Remesh on 4/12/2017.
  */
 
-        import java.io.IOException;
-        import java.text.ParseException;
-        import java.text.SimpleDateFormat;
-        import java.util.Calendar;
-        import java.util.Date;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.text.format.DateFormat;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
-        import android.os.AsyncTask;
-        import android.os.Bundle;
-        import android.support.v4.app.DialogFragment;
-        import android.support.v4.app.Fragment;
-        import android.support.v4.app.FragmentManager;
-        import android.support.v4.app.ListFragment;
-        import android.text.format.DateFormat;
-        import android.util.Log;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.ArrayAdapter;
-        import android.widget.Button;
-        import android.widget.CheckBox;
-        import android.widget.EditText;
-        import android.widget.ListView;
-        import android.widget.RelativeLayout;
-        import android.widget.TextView;
-        import android.widget.Toast;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.mavadvise.R;
+import org.mavadvise.activities.ManageAppointments;
+import org.mavadvise.app.AppConfig;
+import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.AdvisorPickerHelper;
+import org.mavadvise.commons.DateListPickerHelper;
+import org.mavadvise.commons.ProgressDialogHelper;
+import org.mavadvise.commons.URLResourceHelper;
+import org.mavadvise.data.User;
 
-        import org.json.JSONArray;
-        import org.json.JSONException;
-        import org.json.JSONObject;
-        import org.json.JSONTokener;
-        import org.mavadvise.R;
-        import org.mavadvise.activities.ManageAppointments;
-        import org.mavadvise.app.AppConfig;
-        import org.mavadvise.app.MavAdvise;
-        import org.mavadvise.commons.AdvisorPickerHelper;
-        import org.mavadvise.commons.DateListPickerHelper;
-        import org.mavadvise.commons.DatePickerHelper;
-        import org.mavadvise.commons.ProgressDialogHelper;
-        import org.mavadvise.commons.TimePickerHelper;
-        import org.mavadvise.commons.URLResourceHelper;
-        import org.mavadvise.data.User;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-        import okhttp3.FormBody;
-        import okhttp3.HttpUrl;
-        import okhttp3.OkHttpClient;
-        import okhttp3.Request;
-        import okhttp3.RequestBody;
-        import okhttp3.Response;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 public class AppointmentsAddTab extends Fragment {
 
-    private View thisView;
-
     private AppConfig appConfig;
-    private DialogFragment mDialog;
     private ProgressDialogHelper saveDialog;
     private String netid, sessionid, aDate;
     private Button dateBtn, createBtn;
@@ -66,7 +46,6 @@ public class AppointmentsAddTab extends Fragment {
 
     private JSONArray appointments, advisors, sessions;
     private SimpleDateFormat fromDateFormat, toDateFormat;
-    private RelativeLayout repeatRL;
     private TextView dateTV;
 
     private TextView advTV;
@@ -85,76 +64,66 @@ public class AppointmentsAddTab extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_appointments_add, container, false);
 
+        appConfig = ((MavAdvise) getActivity().getApplication()).getAppConfig();
         initControls(rootView);
 
-        thisView = rootView;
-
-        appConfig = ((MavAdvise) getActivity().getApplication()).getAppConfig();
         return rootView;
     }
 
     private void initControls(View view) {
-        Log.i("AppointmentsAddTab","initControls");
-
         dateTV = (TextView) view.findViewById(R.id.DateTV);
-
         advTV = (TextView) view.findViewById(R.id.AdvTV);
 
         appDate = Calendar.getInstance();
-        dateTV.setText(DateFormat.format("MM/dd/yyyy", appDate.getTimeInMillis()).toString());
+        dateTV.setText(DateFormat.format("EEE, MMM d yyyy", appDate.getTimeInMillis()).toString());
 
         dateBtn = (Button) view.findViewById(R.id.ChangeDateBT);
         advBtn = (Button) view.findViewById(R.id.SelectAdvBT);
         createBtn = (Button) view.findViewById(R.id.createAppBT);
 
-        netid=null;
+        netid = null;
         dateBtn.setEnabled(false);
         dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
         createBtn.setEnabled(false);
         createBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
 
-        //noShowCheck();
-
-        repeatRL = (RelativeLayout) view.findViewById(R.id.appAddRL);
-        setAdvisorlist();
+        getAdvisorList();
 
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 FragmentManager fm = getFragmentManager();
-                DatePickerHelper datePickerHelper = new DatePickerHelper();
 
-                if(netid==null){
+                if (netid == null) {
 
                     dateBtn.setEnabled(false);
                     dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
                 }
 
-                FragmentManager fmDate = getFragmentManager();
                 DateListPickerHelper datePicker = new DateListPickerHelper();
-                if(sessions != null) {
+                if (sessions != null) {
                     datePicker.setSessionDates(sessions);
                 }
 
                 datePicker.setOnClickListener(new DateListPickerHelper.DateListPickerListener() {
                     @Override
-                    public void onDateListPickerFinish(JSONObject sess){
+                    public void onDateListPickerFinish(JSONObject sess) {
                         try {
-                                 aDate = sess.getString("date");
-                                 dateTV.setText(aDate);
-                                 sessionid = sess.getString("session_id");
+                            aDate = sess.getString("date");
+                            dateTV.setText(aDate);
+                            sessionid = sess.getString("session_id");
 
-                            if(sessionid!=null){
+                            if (sessionid != null) {
                                 createBtn.setEnabled(true);
                                 createBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                            }else{
+                            } else {
                                 createBtn.setEnabled(false);
                                 createBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
                             }
 
-                            }catch(JSONException e){
+                        } catch (JSONException e) {
 
-                       }
+                        }
                     }
                 });
 
@@ -163,53 +132,43 @@ public class AppointmentsAddTab extends Fragment {
         });
 
 
-
         advBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Log.i("me", "Clicked");
-
                 FragmentManager fm = getFragmentManager();
+
                 AdvisorPickerHelper advisorPicker = new AdvisorPickerHelper();
-                if(advisors != null) {
-                    Log.i("no", "not null");
+                if (advisors != null) {
                     advisorPicker.setAdvisors(advisors);
                 }
 
-                Log.i("me6", "Clicked6");
                 advisorPicker.show(fm, "AdvisorPick");
 
                 advisorPicker.setOnSelectListener(new AdvisorPickerHelper.AdvisorPickerListener() {
                     @Override
                     public void onAdvisorPickerFinish(JSONObject adv) {
-                        Log.i("me1", "Clicked1");
                         try {
-
                             String name = adv.getString("firstName") + " " + adv.getString("lastName");
                             advTV.setText(name);
-                            netid=adv.getString("netID");
+                            netid = adv.getString("netID");
 
-                            if(netid!=null){
+                            if (netid != null) {
                                 dateBtn.setEnabled(true);
                                 dateBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                            }else{
+                            } else {
                                 dateBtn.setEnabled(false);
                                 dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
                             }
 
-                            setDateList();
-
-
-                        }catch(JSONException e){
+                            getDateList();
+                        } catch (JSONException e) {
 
                         }
                     }
 
 
                 });
-
-
-                          }
+            }
         });
 
         createBtn.setOnClickListener(new View.OnClickListener() {
@@ -218,113 +177,46 @@ public class AppointmentsAddTab extends Fragment {
                 validateAndCreateAppointment();
             }
         });
-
-
     }
 
-//    private void noShowCheck(){
-//
-//      try{
-//          User user = appConfig.getUser();
-//
-//          RequestBody formBody = new FormBody.Builder()
-//                .add("netID",user.getNetID() )
-//                .build();
-//
-//        URLResourceHelper urlResourceHelper =
-//                new URLResourceHelper("checkNoShow", formBody, new URLResourceHelper.onFinishListener() {
-//                    @Override
-//                    public void onFinishSuccess(JSONObject obj) {
-//                        saveDialog.dismiss();
-//                        try {
-//                            //JSONObject res = obj.getJSONObject("result");
-//                            appointments = obj.getJSONArray("result");
-//                            Log.i("app", appointments.toString());
-//
-//                            //JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
-//
-//                            ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
-//                            ((ManageAppointments) getActivity()).showViewTab();
-//
-//                            try {
-//                                Thread.sleep(500);
-//                            } catch (Exception e){
-//                                Log.e("AddAppointments", "Thread exception");
-//                            }
-//
-//                        } catch (Exception e){
-//                            Toast.makeText(getContext(), "Exception on exiting create.",
-//                                    Toast.LENGTH_SHORT).show();
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void onFinishFailed(String msg) {
-//                        saveDialog.dismiss();
-//                        Toast.makeText(getContext(), msg,
-//                                Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-//        urlResourceHelper.execute();
-//
-//    }catch(Exception e)
-//    {
-//    }
-//
-//
-//    }
-
     private void validateAndCreateAppointment() {
-
         saveDialog = ProgressDialogHelper.newInstance();
         saveDialog.show(getFragmentManager(), "Creating");
 
+        fromDateFormat = new SimpleDateFormat("EEE, MMM d yyyy");
+        toDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        User user = appConfig.getUser();
+        String d = null;
+
         try {
-            fromDateFormat = new SimpleDateFormat("EEE, MMM d yyyy");
-            toDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            d = toDateFormat.format(fromDateFormat.parse(aDate));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-            User user = appConfig.getUser();
-
-            String d = toDateFormat.format(fromDateFormat.parse(aDate));
-          //  String compD = toDateFormat.format(fromDateFormat.parse(appointments.getString("date")));
-            RequestBody formBody = new FormBody.Builder()
-                    .add("sessionID", sessionid)
-                    .add("netID",user.getNetID() )
-                    .add("date", d)
-                    .build();
+        RequestBody formBody = new FormBody.Builder()
+                .add("sessionID", sessionid)
+                .add("netID", user.getNetID())
+                .add("date", d)
+                .build();
 
         URLResourceHelper urlResourceHelper =
                 new URLResourceHelper("createAppointment", formBody, new URLResourceHelper.onFinishListener() {
                     @Override
                     public void onFinishSuccess(JSONObject obj) {
                         saveDialog.dismiss();
+
                         try {
-                            //JSONObject res = obj.getJSONObject("result");
                             appointments = obj.getJSONArray("result");
-
-
-                            Log.i("app", appointments.toString());
-
-                            //JSONArray conflictingSessions = res.getJSONArray("conflictingSessions");
 
                             ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
                             ((ManageAppointments) getActivity()).showViewTab();
-
-                            try {
-                                Thread.sleep(500);
-                            } catch (Exception e){
-                                Log.e("AddAppointments", "Thread exception");
-                            }
-
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             Toast.makeText(getContext(), "Exception on exiting create.",
                                     Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
-
                     }
 
                     @Override
@@ -336,161 +228,59 @@ public class AppointmentsAddTab extends Fragment {
                 });
 
         urlResourceHelper.execute();
-
-        }catch(ParseException e)
-        {
-        }
     }
 
+    private void getAdvisorList(){
+        RequestBody formBody = new FormBody.Builder()
+                .add("branch", appConfig.getUser().getDepartment())
+                .build();
 
-    private void setAdvisorlist() {
-        new AppointmentsAddTab.AdvisorsData().execute();
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("getAdvisors", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                try {
+                                    advisors = obj.getJSONArray("result");
+                                } catch (Exception e) {
+                                    Log.e("JSON Parse", e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                Toast.makeText(getContext(),
+                                        msg, Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+        urlResourceHelper.execute();
     }
 
-    private class AdvisorsData extends AsyncTask<String, Void, String> {
+    private void getDateList(){
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", netid)
+                .build();
 
-        @Override
-        protected String doInBackground(String... params) {
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("getSessionDates", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                try {
+                                    sessions = obj.getJSONArray("result");
+                                } catch (Exception e) {
+                                    Log.e("JSON Parse", e.getMessage());
+                                }
+                            }
 
-            try {
-                //Thread.sleep(500);
-            } catch (Exception e) {
-            }
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                Toast.makeText(getContext(),
+                                        msg, Toast.LENGTH_LONG).show();
+                            }
+                        });
 
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("getAdvisors")
-                        .build();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("branch", appConfig.getUser().getDepartment())
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        //.addHeader("Cookie",sessionId)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e) {
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result != null) {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    advisors = obj.getJSONArray("result");
-                    if (advisors != null) {
-                        Log.i("no", "not null");
-                    }
-                    Log.i("In", "In post execute");
-                    Log.i("jso", obj.getString("result"));
-
-                } else {
-                    Toast.makeText(getContext(),
-                            "Error retrieving the sessions.", Toast.LENGTH_LONG).show();
-                }
-            } catch (Exception e) {
-                Log.e("JSON Parse", e.getMessage());
-            }
- //           mDialog.dismiss();
-        }
-    }
-
-
-    private void setDateList() {
-        new AppointmentsAddTab.DateData().execute();
-    }
-
-    private class DateData extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                //Thread.sleep(500);
-            } catch (Exception e) {
-            }
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                Log.i("in","inside setdate");
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("getSessionDates")
-                        .build();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("netID", netid)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        //.addHeader("Cookie",sessionId)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e) {
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result != null) {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    sessions = obj.getJSONArray("result");
-                    if (sessions != null) {
-                        Log.i("no", "not null");
-                    }else{
-                        Log.i("no", "session null");
-                    }
-                    Log.i("In", "In post execute");
-                    Log.i("jso", obj.getString("result"));
-
-                } else {
-                    Toast.makeText(getContext(),
-                            "Error retrieving the dates.", Toast.LENGTH_LONG).show();
-                }
-            } catch (Exception e) {
-                Log.e("JSON Parse", e.getMessage());
-
-            }
-            //           mDialog.dismiss();
-        }
-    }
-
-    public static class ProgressDialogFragment extends DialogFragment {
-
-        public static AppointmentsAddTab.ProgressDialogFragment newInstance() {
-            return new ProgressDialogFragment();
-        }
-
-
+        urlResourceHelper.execute();
     }
 }

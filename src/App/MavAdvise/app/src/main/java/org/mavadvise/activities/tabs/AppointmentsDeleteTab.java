@@ -1,16 +1,13 @@
 package org.mavadvise.activities.tabs;
 
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,40 +16,34 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.mavadvise.R;
 import org.mavadvise.activities.ManageAppointments;
+import org.mavadvise.adaptors.AppointmentsDataAdaptor;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
 import org.mavadvise.commons.AlertDialogHelper;
 import org.mavadvise.commons.ProgressDialogHelper;
+import org.mavadvise.commons.URLResourceHelper;
 import org.mavadvise.data.User;
 
 import java.util.ArrayList;
 
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class AppointmentsDeleteTab extends Fragment {
 
-    private JSONArray appointments, appointments1;
+    private JSONArray appointments;
 
-    private ListView deleteAppointmentsList;
-    private OptionsAdaptor optionsAdapter;
+    private ListView cancelAppointmentsList;
+    private AppointmentsDataAdaptor appointmentsDataAdaptor;
     private ArrayList<Integer> selectedAppointments = new ArrayList<Integer>();
 
     private AppConfig appConfig;
     private AlertDialogHelper alertDialog;
 
-    private TextView deleteButton, cancelButton;
+    private TextView cancelButton;
     private ProgressDialogHelper deleteDialog;
-
-    private int sColor;
-    private JSONObject tempobj;
 
     public AppointmentsDeleteTab() {
     }
@@ -62,44 +53,28 @@ public class AppointmentsDeleteTab extends Fragment {
         return fragment;
     }
 
-//    public void refreshContent(JSONArray appointments){
-//        this.appointments1 = appointments;
-//        //optionsAdapter.notifyDataSetChanged();
-//       // deleteAppointmentsList.requestLayout();
-//    }
+    public void refreshContent(JSONArray appointments) {
+        this.appointments = appointments;
+        appointmentsDataAdaptor.setAppointments(appointments);
+        appointmentsDataAdaptor.notifyDataSetChanged();
+        cancelAppointmentsList.requestLayout();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_appointments_delete, container, false);
 
-        optionsAdapter = new OptionsAdaptor();
-        setDeletelist();
-        Log.i("come", "coming to oncreateview of delete");
-        sColor = ResourcesCompat.getColor(getResources(), R.color.colorAccent, null);
-        deleteAppointmentsList = (ListView) rootView.findViewById(R.id.appsDeletelist);
-        //deleteButton = (Button) rootView.findViewById(R.id.sessionDeleteBT);
+        appointmentsDataAdaptor = new AppointmentsDataAdaptor(appointments, this);
+        cancelAppointmentsList = (ListView) rootView.findViewById(R.id.appsDeletelist);
         cancelButton = (Button) rootView.findViewById(R.id.appCancelBT);
 
+        cancelAppointmentsList.setAdapter(appointmentsDataAdaptor);
 
-        deleteAppointmentsList.setAdapter(optionsAdapter);
-
-        deleteAppointmentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        cancelAppointmentsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final View aView = view;
-
-                Log.i("Del", "Delete1");
-                try {
-                    Log.i("Del", "Delete21");
-                    tempobj = appointments.getJSONObject(position);
-                    Log.i("Del", tempobj.toString());
-                    String status = tempobj.getString("appStatus");
-                    boolean vError = false;
-                    Log.i("Del", "Delete2");
-                } catch (JSONException e) {
-                    Log.i("Del", "Delete3");
-                }
 
                 if (!selectedAppointments.contains(position)) {
                     selectedAppointments.add(position);
@@ -115,21 +90,6 @@ public class AppointmentsDeleteTab extends Fragment {
             }
         });
 
-//        cancelButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                selectedAppointments.clear();
-//               // deleteButton.setText("Delete");
-//                deleteDialog = ProgressDialogHelper.newInstance();
-////                                    deleteDialog.setMsg("Deleting...");
-////                                    deleteDialog.show(getFragmentManager(), "Delete");
-//                                    new DeleteAppointments().execute();
-//
-//                deleteAppointmentsList.clearChoices();
-//                deleteAppointmentsList.requestLayout();
-//            }
-//        });
-
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,10 +101,7 @@ public class AppointmentsDeleteTab extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    deleteDialog = ProgressDialogHelper.newInstance();
-                                    deleteDialog.setMsg("Cancelling...");
-                                    deleteDialog.show(getFragmentManager(), "Delete");
-                                    new DeleteAppointments().execute();
+                                    deleteAppointments();
                                 }
                             },
                             new DialogInterface.OnClickListener() {
@@ -153,263 +110,85 @@ public class AppointmentsDeleteTab extends Fragment {
                                     selectedAppointments.clear();
                                     cancelButton.setText("Cancel");
 
-                                    deleteAppointmentsList.clearChoices();
-                                    deleteAppointmentsList.requestLayout();
+                                    cancelAppointmentsList.clearChoices();
+                                    cancelAppointmentsList.requestLayout();
                                 }
                             });
+
                     alertDialog.show(getFragmentManager(), "Alert");
                 }
             }
         });
 
         appConfig = ((MavAdvise) getActivity().getApplication()).getAppConfig();
+        deleteDialog = ProgressDialogHelper.newInstance();
+        deleteDialog.setMsg("Cancelling...");
+
         return rootView;
     }
 
-    private class DeleteAppointments extends AsyncTask<Void, Void, String> {
+    private void deleteAppointments() {
+        if (!deleteDialog.isAdded())
+            deleteDialog.show(getFragmentManager(), "Delete");
 
-        @Override
-        protected String doInBackground(Void... params) {
+        StringBuilder appIDsBuilder = new StringBuilder();
+        JSONObject obj = null;
 
+        for (int i : selectedAppointments) {
             try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("DeleteAppointments", "Thread exception");
+                obj = appointments.getJSONObject(i);
+                appIDsBuilder.append(obj.getString("session_id") + ",");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            StringBuilder appIDsBuilder = new StringBuilder();
-            JSONObject obj = null;
-            // Integer[] appIdsInt = null;
-
-            for (int i : selectedAppointments) {
-                try {
-                    obj = appointments.getJSONObject(i);
-                    appIDsBuilder.append(obj.getString("session_id") + ",");
-                    //appIdsInt[i] = Integer.parseInt(obj.getString("session_id"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            String appIDs = appIDsBuilder.toString();
-            appIDs = appIDs.replaceAll(",$", "");
-
-            Log.i("AppointmentsDeleteTab", appIDs);
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("deleteAppointments")
-                        .build();
-
-                User user = appConfig.getUser();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("netID", user.getNetID())
-                        .add("sessionID", appIDs)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e) {
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            deleteDialog.dismiss();
+        String appIDs = appIDsBuilder.toString();
+        appIDs = appIDs.replaceAll(",$", "");
 
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                Log.e("AddApps", "Thread exception");
-            }
+        User user = appConfig.getUser();
 
-            if (result != null) {
-                try {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    String resultStr = obj.getString("type");
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", user.getNetID())
+                .add("sessionID", appIDs)
+                .build();
 
-                    if (resultStr.equalsIgnoreCase("success")) {
-                        Toast.makeText(getContext(), "Appointment(s) cancelled",
-                                Toast.LENGTH_LONG).show();
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("cancelAppointments", formBody,
+                        new URLResourceHelper.onFinishListener() {
+                            @Override
+                            public void onFinishSuccess(JSONObject obj) {
+                                try {
+                                    Toast.makeText(getContext(), "Appointment(s) cancelled",
+                                            Toast.LENGTH_LONG).show();
 
-                        appointments = obj.getJSONArray("result");
-                        ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
+                                    appointments = obj.getJSONArray("result");
+                                    ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
 
-                        resetForm();
-                    } else {
-                        String msg = obj.getString("message");
+                                    resetForm();
+                                } catch (Exception e) {
+                                    Log.e("JSON Parse", e.getMessage());
+                                }
 
-                        Toast.makeText(getContext(), msg,
-                                Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e) {
-                    Log.e("AddSessions.onPostExec", e.getMessage());
-                }
-            }
+                                deleteDialog.dismiss();
+                            }
 
-        }
+                            @Override
+                            public void onFinishFailed(String msg) {
+                                deleteDialog.dismiss();
+                                Toast.makeText(getContext(),
+                                        msg, Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+        urlResourceHelper.execute();
     }
 
     private void resetForm() {
         selectedAppointments.clear();
         cancelButton.setText("Cancel");
 
-        deleteAppointmentsList.clearChoices();
-        deleteAppointmentsList.requestLayout();
+        cancelAppointmentsList.clearChoices();
+        cancelAppointmentsList.requestLayout();
     }
-
-    public class OptionsAdaptor extends BaseAdapter {
-
-
-        public int getCount() {
-            return appointments != null ? appointments.length() : 0;
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View row = convertView;
-
-            if (row == null) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.list_appointments_item, parent, false);
-            }
-
-            TextView aHeader, aDate, aTime, aStat;
-
-            aHeader = (TextView) row.findViewById(R.id.appmnt_header);
-            aTime = (TextView) row.findViewById(R.id.appmnt_time);
-            aDate = (TextView) row.findViewById(R.id.appmnt_date);
-            aStat = (TextView) row.findViewById(R.id.appmnt_status);
-
-            JSONObject obj = null;
-
-            try {
-                obj = appointments.getJSONObject(position);
-//                String status = obj.getString("appStatus");
-//                Log.i("stat", status);
-
-                aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
-                Log.i("jso", obj.getString("firstname"));
-                aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
-                aDate.setText(obj.getString("date"));
-                aStat.setText(obj.getString("appStatus"));
-                // }
-//                else{
-//                    //row.setVisibility(View.GONE);
-//                    //row.setEnabled(false);
-//
-
-            } catch (Exception e) {
-                Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
-            }
-
-
-            return row;
-        }
-    }
-
-
-    private void setDeletelist() {
-        new AppointmentsDeleteTab.DeleteData().execute();
-    }
-
-    private class DeleteData extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                //Thread.sleep(500);
-            } catch (Exception e) {
-            }
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-
-                HttpUrl url = new HttpUrl.Builder()
-                        .scheme("http")
-                        .host(appConfig.getHostName())
-                        .port(appConfig.getPort())
-                        .addPathSegment("MavAdvise")
-                        .addPathSegment("getScheduledApps")
-                        .build();
-
-                RequestBody formBody = new FormBody.Builder()
-                        .add("netID", appConfig.getUser().getNetID())
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url(url)
-                        //.addHeader("Cookie",sessionId)
-                        .post(formBody)
-                        .build();
-
-                Response response = client.newCall(request).execute();
-
-                return response.body().string();
-            } catch (Exception e) {
-                Log.e("HTTP Error", e.getMessage());
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                if (result != null) {
-                    JSONObject obj = (JSONObject) new JSONTokener(result).nextValue();
-                    appointments = obj.getJSONArray("result");
-                    if (appointments != null) {
-                        Log.i("no", "not null123");
-                    }
-                    Log.i("In", "In post execute123");
-                    Log.i("jso", obj.getString("result"));
-                    optionsAdapter.notifyDataSetChanged();
-
-                } else {
-                    Toast.makeText(getContext(),
-                            "Error retrieving the sessions.", Toast.LENGTH_LONG).show();
-                }
-            } catch (Exception e) {
-                Log.e("JSON Parse", e.getMessage());
-            }
-            //           mDialog.dismiss();
-        }
-    }
-
-
 }
-
-
-
-
-
-

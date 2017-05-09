@@ -5,29 +5,27 @@
     android:layout_height="match_parent"
     tools:context="org.mavadvise.activities.tabs.AppointmentHistory">
 
+    <TextView
+        android:id="@+id/appointmenthist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="ALL APPOINTMENTS"
+        android:textColor="@color/colorAccent"
+        android:textSize="16dp" />
 
-<TextView
-    android:id="@+id/appointmenthist"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentTop="true"
-    android:layout_marginLeft="3dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
-    android:text="ALL APPOINTMENTS"
-    android:textColor="@color/colorAccent"
-    android:textSize="16dp" />
-
-<ListView
-android:id="@+id/historylist"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_below="@+id/appointmenthist"
-    android:layout_marginTop="10dp"
-android:layout_centerHorizontal="true"
-android:divider="@color/colorAccent"
-android:dividerHeight="2px" />
-
-
-    </RelativeLayout>
+    <ListView
+        android:id="@+id/historylist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appointmenthist"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:divider="@color/colorAccent"
+        android:dividerHeight="2px" />
+</RelativeLayout>

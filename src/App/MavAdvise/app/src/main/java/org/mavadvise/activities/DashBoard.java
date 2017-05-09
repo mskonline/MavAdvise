@@ -77,6 +77,7 @@ public class DashBoard extends AppCompatActivity
                 }
 
                 startActivity(i);
+                //overridePendingTransition(R.anim.enter_from_right, R.anim.exit_from_left);
             }
         });
 
@@ -115,6 +116,7 @@ public class DashBoard extends AppCompatActivity
                 }
 
                 startActivity(i);
+                //overridePendingTransition(R.anim.exit_from_left, R.anim.enter_from_right);
             }
         });
     }

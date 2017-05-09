@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,7 +52,7 @@ public class NotificationService {
 		SERVER_KEY = appConfig.get("firebase.server-key");
 	}
 
-	public void sendNotification(String title, String message, User user){
+	public void sendNotification(String title, String message, String messageEx, User user){
 		if(!isEnabled){
 			logger.debug("Notifications disabled");
 			return;
@@ -63,13 +64,13 @@ public class NotificationService {
 		List<User> users = new ArrayList<User>();
 		users.add(user);
 
-		FireBaseNotifier fireBaseNotifier = new FireBaseNotifier(title, message, users);
+		FireBaseNotifier fireBaseNotifier = new FireBaseNotifier(title, message, messageEx, users);
 
 		Thread t = new Thread(fireBaseNotifier);
 		t.start();
 	}
 
-	public void sendNotification(String title, String message, List<User> users){
+	public void sendNotification(String title, String message, String messageEx, List<User> users){
 		if(!isEnabled){
 			logger.debug("Notifications disabled");
 			return;
@@ -79,20 +80,21 @@ public class NotificationService {
 		if(users == null || users.size() == 0)
 			return;
 
-		FireBaseNotifier fireBaseNotifier = new FireBaseNotifier(title, message, users);
+		FireBaseNotifier fireBaseNotifier = new FireBaseNotifier(title, message, messageEx, users);
 		Thread t = new Thread(fireBaseNotifier);
 
 		t.start();
 	}
 
 	private class FireBaseNotifier implements Runnable{
-		private String title, message;
+		private String title, message, messageExtra;
 		private List<User> users;
 
-		public FireBaseNotifier(String title, String message, List<User> users){
+		public FireBaseNotifier(String title, String message,String messageExtra, List<User> users){
 			this.title = title;
 			this.message = message;
 			this.users = users;
+			this.messageExtra = messageExtra;
 		}
 
 		@Override
@@ -117,10 +119,21 @@ public class NotificationService {
 			jmessage.put("priority", "high");
 			jmessage.put("time_to_live", 900);
 
+			JSONObject data = new JSONObject();
+			data.put("msg", message);
+
+			if(StringUtils.isNotBlank(messageExtra)){
+				data.put("msgEx", messageExtra);
+			} else
+				data.put("msgEx", "");
+
+			jmessage.put("data", data);
+
 			JSONObject notification = new JSONObject();
 			notification.put("title", title);
 			notification.put("body", message);
 			notification.put("sound", "default");
+			notification.put("click_action", ".MavAdvise.MavAdviseNotification");
 
 			jmessage.put("notification", notification);
 

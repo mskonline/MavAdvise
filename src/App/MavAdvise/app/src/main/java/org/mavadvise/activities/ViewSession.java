@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mavadvise.R;
-import org.mavadvise.adaptors.SessionAppointmentsAdaptor;
+import org.mavadvise.adaptors.SessionAppointmentsDataAdaptor;
 import org.mavadvise.commons.ProgressDialogHelper;
 import org.mavadvise.commons.URLResourceHelper;
 
@@ -32,7 +32,7 @@ public class ViewSession extends AppCompatActivity {
     private ProgressDialogHelper apptsDialog;
 
     private JSONArray appointments;
-    private SessionAppointmentsAdaptor appointmentsAdapter;
+    private SessionAppointmentsDataAdaptor appointmentsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class ViewSession extends AppCompatActivity {
         sStatus.setText(status);
 
         ListView apptsView = (ListView) findViewById(R.id.sessionApptsLV);
-        appointmentsAdapter = new SessionAppointmentsAdaptor(this, appointments);
+        appointmentsAdapter = new SessionAppointmentsDataAdaptor(this, appointments);
         apptsView.setAdapter(appointmentsAdapter);
 
         apptsDialog = ProgressDialogHelper.newInstance();
