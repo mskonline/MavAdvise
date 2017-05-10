@@ -113,7 +113,7 @@
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
 			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
                  sessions.status as sesStatus, sessions.location, appointments.net_id,
-                 appointments.slot_number, appointments.status as appStatus,
+                 appointments.slot_number as slot, appointments.status as appStatus,
                  appointments.reason as reason
                  FROM appointments
                  JOIN sessions on appointments.session_id=sessions.session_id
@@ -128,7 +128,7 @@
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
 			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
                  sessions.status as sesStatus, sessions.location, appointments.net_id,
-                 appointments.slot_number, appointments.status as appStatus,
+                 appointments.slot_number as slot, appointments.status as appStatus,
                  appointments.reason as reason
                  FROM appointments
                  JOIN sessions on appointments.session_id=sessions.session_id

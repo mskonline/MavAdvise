@@ -54,4 +54,13 @@
         android:layout_marginRight="10dp"
         android:text="2:00 pm-4:00 pm"
         android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/appmnt_slot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/appmnt_time"
+        android:layout_below="@+id/appmnt_time"
+        android:textSize="14sp"
+        android:text="Slot:  " />
 </RelativeLayout>
