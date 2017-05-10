@@ -6,8 +6,8 @@ import org.json.JSONArray;
 import org.mavadvise.data.User;
 
 public class AppConfig {
-    public static final String hostName = "10.0.2.2";
-    public static final int port = 8080;
+    public static final String hostName = "mavadvise.us-west-2.elasticbeanstalk.com";
+    public static final int port = 80;
 
     private String rememberMeToken;
     private String firebaseToken;
