@@ -8,10 +8,12 @@
 
     <TextView
         android:id="@+id/appmnt_header"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
+        android:lines="1"
+        android:ellipsize="end"
         android:text="Khalili"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -59,8 +61,16 @@
         android:id="@+id/appmnt_slot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Slot:  "
+        android:layout_below="@+id/apptreasonTV"
+        android:layout_alignStart="@+id/apptreasonTV" />
+
+    <TextView
+        android:id="@+id/appmnt_loc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/appmnt_time"
         android:layout_below="@+id/appmnt_time"
-        android:textSize="14sp"
-        android:text="Slot:  " />
+        android:text="Location" />
 </RelativeLayout>
