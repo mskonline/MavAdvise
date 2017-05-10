@@ -84,6 +84,8 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
             String status = obj.getString("appStatus");
             String sStatus = obj.getString("sesStatus");
 
+            aStat.setText(status);
+
             if (status.startsWith("S")){
                 if(sStatus.startsWith("ST"))
                     aStat.setText("SESSION STARTED");
@@ -99,7 +101,7 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
             if (status.startsWith("D") || status.startsWith("O"))
                 aStat.setTextColor(dColor);
 
-            aStat.setText(status);
+
             aReason.setText(obj.getString("reason"));
         } catch (Exception e) {
             Toast.makeText(context, "Error in retrieving the list", Toast.LENGTH_SHORT);

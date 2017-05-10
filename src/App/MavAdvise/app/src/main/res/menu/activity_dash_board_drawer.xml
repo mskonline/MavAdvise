@@ -4,14 +4,17 @@
         <menu>
             <item
                 android:id="@+id/nav_change_password"
+                android:icon="@drawable/change_password"
                 android:title="Change Password" />
 
             <item
                 android:id="@+id/nav_about"
+                android:icon="@drawable/about_mavadvise"
                 android:title="About" />
 
             <item
                 android:id="@+id/nav_logout"
+                android:icon="@drawable/logout"
                 android:title="Logout" />
         </menu>
     </item>

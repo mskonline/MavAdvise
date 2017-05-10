@@ -64,13 +64,14 @@
 
             <Button
                 android:id="@+id/loginBTN"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="25dp"
                 android:background="@color/colorAccent"
                 android:text="Sign In"
-                android:textColor="#FFF" />
+                android:textColor="#FFF"
+                android:textSize="18sp"/>
 
             <Button
                 android:id="@+id/forgotBTN"

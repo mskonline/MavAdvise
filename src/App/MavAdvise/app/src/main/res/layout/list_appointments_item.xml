@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLay"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/list_selector"
     android:orientation="vertical">
 
@@ -63,6 +63,7 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="Slot:  "
+        android:layout_marginBottom="5dp"
         android:layout_below="@+id/apptreasonTV"
         android:layout_alignStart="@+id/apptreasonTV" />
 
