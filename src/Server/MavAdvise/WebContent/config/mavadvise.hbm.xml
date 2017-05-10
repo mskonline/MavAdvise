@@ -112,7 +112,7 @@
                  DATE_FORMAT(sessions.date,'%a, %b %d %Y') as date,
 			     TIME_FORMAT(sessions.starttime,'%h:%i %p') as starttime,
 			     TIME_FORMAT(sessions.endtime,'%h:%i %p') as endtime,
-                 sessions.status as sesStatus, sessions.location, appointments.net_id,
+                 sessions.status as sesStatus, sessions.location as location, appointments.net_id,
                  appointments.slot_number as slot, appointments.status as appStatus,
                  appointments.reason as reason
                  FROM appointments

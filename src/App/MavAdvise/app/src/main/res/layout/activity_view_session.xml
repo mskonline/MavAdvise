@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context="org.mavadvise.activities.ViewSession">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
+
+
     <Button
         android:id="@+id/sessionCancelBT"
         android:layout_width="match_parent"
