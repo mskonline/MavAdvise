@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     tools:context="org.mavadvise.activities.tabs.AppointmentHistory">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
+
+
     <TextView
         android:id="@+id/appointmenthist"
         android:layout_width="match_parent"

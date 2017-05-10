@@ -84,6 +84,8 @@
         <activity
             android:name=".activities.FPNewPassword"
             android:label="Create New Password" />
+        <activity
+            android:name=".activities.ChangePassword"
             android:label="Change Password" />
 		<activity android:name=".activities.Notification">
             <intent-filter>

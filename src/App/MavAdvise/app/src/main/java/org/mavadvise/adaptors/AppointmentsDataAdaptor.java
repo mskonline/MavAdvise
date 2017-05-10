@@ -59,13 +59,14 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
             row = layoutInflater.inflate(R.layout.list_appointments_item, parent, false);
         }
 
-        TextView aHeader, aDate, aTime, aStat, aReason;
+        TextView aHeader, aDate, aTime, aStat, aReason, aSlot;
 
         aHeader = (TextView) row.findViewById(R.id.appmnt_header);
         aTime = (TextView) row.findViewById(R.id.appmnt_time);
         aDate = (TextView) row.findViewById(R.id.appmnt_date);
         aStat = (TextView) row.findViewById(R.id.appmnt_status);
         aReason = (TextView) row.findViewById(R.id.apptreasonTV);
+        aSlot = (TextView) row.findViewById(R.id.appmnt_slot);
 
         JSONObject obj = null;
 
@@ -75,6 +76,7 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
             aHeader.setText(obj.getString("firstname") + " " + obj.getString("lastname"));
             aTime.setText(obj.getString("starttime") + " - " + obj.getString("endtime"));
             aDate.setText(obj.getString("date"));
+            aSlot.setText("Slot : " + obj.getString("slot"));
 
             String status = obj.getString("appStatus");
             String sStatus = obj.getString("sesStatus");

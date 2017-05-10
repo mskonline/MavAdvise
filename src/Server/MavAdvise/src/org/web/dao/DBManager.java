@@ -701,7 +701,7 @@ public class DBManager {
 
 		Criteria criteria = session.createCriteria(org.web.beans.User.class);
 		criteria.addOrder(Order.asc("firstName"));
-		criteria.add(Restrictions.eq("branch", branch));
+		//criteria.add(Restrictions.eq("branch", branch));
 		criteria.add(Restrictions.eq("roleType", "Advisor"));
 
 		allAdvisors = criteria.list();

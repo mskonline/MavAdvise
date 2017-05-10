@@ -5,7 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.mavadvise.activities.AboutUs">
-    
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorAccent" />
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
