@@ -59,7 +59,7 @@ public class SessionAppointmentsDataAdaptor extends BaseAdapter {
                 apptStatus.setTextColor(sColor);
 
             // Cancelled
-            if (status.startsWith("C"))
+            if (status.startsWith("C") || status.startsWith("N"))
                 apptStatus.setTextColor(cColor);
 
             // Done

@@ -99,5 +99,6 @@
         android:text="Cancel Appointment"
         android:layout_marginTop="50dp"
         android:textColor="#FFF"
+        android:visibility="gone"
         android:background="@color/colorAccent"/>
 </LinearLayout>

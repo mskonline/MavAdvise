@@ -16,13 +16,20 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
 import org.mavadvise.app.MavAdvise;
+import org.mavadvise.commons.URLResourceHelper;
 import org.mavadvise.data.User;
 
 import java.util.ArrayList;
+
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 
 public class DashBoard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -195,6 +202,8 @@ public class DashBoard extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
+            doLogout();
+
             Intent intent = new Intent(DashBoard.this, Login.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -204,5 +213,24 @@ public class DashBoard extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void doLogout(){
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", appConfig.getUser().getNetID())
+                .build();
+
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("logout", formBody, new URLResourceHelper.onFinishListener() {
+                    @Override
+                    public void onFinishSuccess(JSONObject obj) {
+                    }
+
+                    @Override
+                    public void onFinishFailed(String msg) {
+                    }
+                });
+
+        urlResourceHelper.execute();
     }
 }

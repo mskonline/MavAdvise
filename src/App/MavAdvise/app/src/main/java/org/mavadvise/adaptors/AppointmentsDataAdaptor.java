@@ -77,12 +77,17 @@ public class AppointmentsDataAdaptor extends BaseAdapter {
             aDate.setText(obj.getString("date"));
 
             String status = obj.getString("appStatus");
+            String sStatus = obj.getString("sesStatus");
 
-            if (status.startsWith("S"))
+            if (status.startsWith("S")){
+                if(sStatus.startsWith("ST"))
+                    aStat.setText("SESSION STARTED");
+
                 aStat.setTextColor(sColor);
-
+            }
+            
             // Cancelled
-            if (status.startsWith("C"))
+            if (status.startsWith("C") || status.startsWith("N"))
                 aStat.setTextColor(cColor);
 
             // Done
