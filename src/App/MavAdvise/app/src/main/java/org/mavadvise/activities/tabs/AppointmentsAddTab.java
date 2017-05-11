@@ -98,9 +98,13 @@ public class AppointmentsAddTab extends Fragment {
                 FragmentManager fm = getFragmentManager();
 
                 if (netid == null) {
-
                     dateBtn.setEnabled(false);
                     dateBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+                }
+
+                if(sessions != null && sessions.length() == 0){
+                    Toast.makeText(getContext(), "No dates available for this advisor", Toast.LENGTH_LONG).show();
+                    return;
                 }
 
                 DateListPickerHelper datePicker = new DateListPickerHelper();
@@ -137,6 +141,13 @@ public class AppointmentsAddTab extends Fragment {
         advBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                aDate = null;
+                dateTV.setText("");
+                sessionid = null;
+
+                createBtn.setEnabled(false);
+                createBtn.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+
                 FragmentManager fm = getFragmentManager();
 
                 AdvisorPickerHelper advisorPicker = new AdvisorPickerHelper();
@@ -230,6 +241,8 @@ public class AppointmentsAddTab extends Fragment {
 
                             ((ManageAppointments) getActivity()).refreshAppointmentsData(appointments);
                             ((ManageAppointments) getActivity()).showViewTab();
+
+                            resetForm();
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Exception on exiting create.",
                                     Toast.LENGTH_SHORT).show();
@@ -300,5 +313,9 @@ public class AppointmentsAddTab extends Fragment {
                         });
 
         urlResourceHelper.execute();
+    }
+
+    private void resetForm(){
+
     }
 }

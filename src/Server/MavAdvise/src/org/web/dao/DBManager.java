@@ -222,7 +222,7 @@ public class DBManager {
 				session.close();
 				msg = "Changed password successfully!!";
 			} else {
-				msg = "Password doesnot match";
+				msg = "Password does not match";
 			}
 
 		} else {

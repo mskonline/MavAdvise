@@ -89,12 +89,14 @@ public class AdvisorPickerHelper extends DialogFragment {
             }
 
             TextView adv = (TextView) row.findViewById(R.id.advisorTV);
+            TextView advBr = (TextView) row.findViewById(R.id.advisorBranchTV);
 
             JSONObject obj = null;
 
             try {
                 obj = advisorslist.getJSONObject(position);
                 adv.setText(obj.getString("firstName") + " " + obj.getString("lastName"));
+                advBr.setText(obj.getString("branch"));
             } catch (Exception e) {
                 Toast.makeText(getContext(), "Error in retrieving the list", Toast.LENGTH_SHORT);
             }

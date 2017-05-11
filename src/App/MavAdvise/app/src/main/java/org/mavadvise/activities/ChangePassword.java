@@ -8,11 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.mavadvise.R;
 import org.mavadvise.app.AppConfig;
@@ -33,6 +35,8 @@ public class ChangePassword extends AppCompatActivity {
             newPassword,
             confirmPassword;
     private DialogFragment saveDialog;
+
+    private String savedOldPassword = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,34 @@ public class ChangePassword extends AppCompatActivity {
                 changePassword();
             }
         });
+
+        getUser();
+    }
+
+    private void getUser(){
+        RequestBody formBody = new FormBody.Builder()
+                .add("netID", appConfig.getUser().getNetID())
+                .build();
+
+        URLResourceHelper urlResourceHelper =
+                new URLResourceHelper("getUser", formBody, new URLResourceHelper.onFinishListener() {
+                    @Override
+                    public void onFinishSuccess(JSONObject obj) {
+                        try {
+                            JSONObject resObj = obj.getJSONObject("result");
+                            savedOldPassword = resObj.getString("password");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onFinishFailed(String msg) {
+                    }
+                });
+
+        urlResourceHelper.execute();
     }
 
     private void changePassword() {
@@ -62,6 +94,16 @@ public class ChangePassword extends AppCompatActivity {
         newPassword = newpwd.getText().toString();
         confirmPassword = confpwd.getText().toString();
         oldPassword = Utils.hashString(oldPassword);
+
+        if(oldPassword.length() == 0 || newPassword.length() == 0 || confirmPassword.length() == 0){
+            Toast.makeText(getApplicationContext(), "All fields are required", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if(!savedOldPassword.equalsIgnoreCase(oldPassword)){
+            Toast.makeText(getApplicationContext(), "Old password does not match", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if (newPassword.equals(confirmPassword)) {
             confirmPassword = Utils.hashString(confirmPassword);
@@ -95,7 +137,7 @@ public class ChangePassword extends AppCompatActivity {
 
             urlResourceHelper.execute();
         } else {
-            Toast.makeText(getApplicationContext(), "Password does not match",
+            Toast.makeText(getApplicationContext(), "New Passwords does not match",
                     Toast.LENGTH_LONG).show();
             return;
         }

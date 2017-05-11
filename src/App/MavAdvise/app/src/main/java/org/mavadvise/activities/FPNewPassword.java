@@ -60,6 +60,11 @@ public class FPNewPassword extends AppCompatActivity {
         newPassword = newPass.getText().toString();
         confirmPassword = confirmPass.getText().toString();
 
+        if(newPassword.length() == 0 || confirmPassword.length() == 0){
+            Toast.makeText(getApplicationContext(), "All fields are required", Toast.LENGTH_LONG);
+            return;
+        }
+
         if (newPassword.equals(confirmPassword)) {
 
             saveDialog = ProgressDialogFragment.newInstance();

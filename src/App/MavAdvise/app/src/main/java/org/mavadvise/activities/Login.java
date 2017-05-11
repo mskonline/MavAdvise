@@ -69,8 +69,6 @@ public class Login extends AppCompatActivity {
     }
 
     private void validateAndLoginUser() {
-        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
         userName = ((EditText) findViewById(R.id.userNameET)).getText().toString().trim();
         password = ((EditText) findViewById(R.id.passET)).getText().toString().trim();
 
@@ -80,6 +78,7 @@ public class Login extends AppCompatActivity {
             return;
         }
 
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         doLogin();
     }
 
