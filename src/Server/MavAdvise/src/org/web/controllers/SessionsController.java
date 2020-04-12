@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.web.beans.Response;
 import org.web.beans.Session;
 import org.web.beans.SessionInfo;
@@ -24,10 +24,13 @@ import org.web.dao.DBManager;
 import org.web.services.NotificationService;
 import org.web.services.SessionsService;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+/**
+ * Controller for handling all the Sessions
+ * 
+ * @author mskonline
+ */
 
-@Controller
+@RestController
 public class SessionsController {
 	@Autowired
 	private DBManager dbmanager;
@@ -40,108 +43,63 @@ public class SessionsController {
 	@Autowired
 	private SessionsService sessionsService;
 
-	@RequestMapping(value = "/addSessions", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/addSessions")
 	@ResponseBody
-	public String createSession(HttpServletRequest request, @ModelAttribute SessionInfo sessionInfo) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+	public Response createSession(HttpServletRequest request, @ModelAttribute SessionInfo sessionInfo) {
+		final Response response = new Response();
 
 		sessionsService.adjustSessionDates(sessionInfo);
-		Map<String, List<Object>> sessions = dbmanager.addSessions(sessionInfo);
+		final Map<String, List<Object>> sessions = dbmanager.addSessions(sessionInfo);
 
-		r.setResult(sessions);
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(sessions);
+		return response;
 	}
 
-	@RequestMapping(value = "/getSessions", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getSessions")
 	@ResponseBody
-	public String getSession(@RequestParam("netID") String netID) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		List<Object> sessions = dbmanager.getAllSessions(netID);
-		r.setResult(sessions);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+	public Response getSession(@RequestParam("netID") String netID) {
+		final Response response = new Response();
+		final List<Object> sessions = dbmanager.getAllSessions(netID);
+		
+		response.setResult(sessions);
+		return response;
 	}
 
-	@RequestMapping(value = "/getScheduledSessions", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getScheduledSessions")
 	@ResponseBody
-	public String getScheduledSessions(@RequestParam("netID") String netID,
-									   @RequestParam("date") String date) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		List<Object> sessions = dbmanager.getScheduledSessionsUpto(netID, date);
-		r.setResult(sessions);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+	public Response getScheduledSessions(@RequestParam("netID") String netID, @RequestParam("date") String date) {
+		final Response response = new Response();
+		final List<Object> sessions = dbmanager.getScheduledSessionsUpto(netID, date);
+		
+		response.setResult(sessions);
+		return response;
 	}
 
-	@RequestMapping(value = "/getSessionAppointments", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getSessionAppointments")
 	@ResponseBody
-	public String getSessionAppointments(@RequestParam("sessionID") Integer sessionID) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
-		r.setResult(allAppointments);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+	public Response getSessionAppointments(@RequestParam("sessionID") Integer sessionID) {
+		final Response response = new Response();
+		final List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
+		
+		response.setResult(allAppointments);
+		return response;
 	}
 
-	@RequestMapping(value = "/deleteSessions", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/deleteSessions")
 	@ResponseBody
-	public String deleteSession(@RequestParam("netID") String netID,
-								@RequestParam("sessionIDs") Integer[] sessionIDs) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		List<Object> sessions = dbmanager.deleteSessions(netID, sessionIDs);
-		r.setResult(sessions);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+	public Response deleteSession(@RequestParam("netID") String netID, @RequestParam("sessionIDs") Integer[] sessionIDs) {
+		final Response response = new Response();
+		final List<Object> sessions = dbmanager.deleteSessions(netID, sessionIDs);
+		
+		response.setResult(sessions);
+		return response;
 	}
 
-	@RequestMapping(value = "/startSession", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/startSession")
 	@ResponseBody
-	public String startSession(@RequestParam("sessionID") Integer sessionID,
-							   @RequestParam("status") String status) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
+	public Response startSession(@RequestParam("sessionID") Integer sessionID, @RequestParam("status") String status) {
+		final Response response = new Response();
+		final List<Object> allAppointments = dbmanager.getSessionAppointments(sessionID);
 
 		if (status.equalsIgnoreCase("SCHEDULED")) {
 			List<User> users = dbmanager.startSession(sessionID);
@@ -166,25 +124,16 @@ public class SessionsController {
 			}
 		}
 
-		r.setResult(allAppointments);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(allAppointments);
+		return response;
 	}
 
-	@RequestMapping(value = "/cancelSession", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping(value = "/cancelSession")
 	@ResponseBody
-	public String cancelSession(@RequestParam("sessionID") Integer sessionID,
-								@RequestParam("cancelReason") String cancelReason) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		List<User> users = dbmanager.cancelSession(sessionID, cancelReason);
+	public Response cancelSession(@RequestParam("sessionID") Integer sessionID,
+			@RequestParam("cancelReason") String cancelReason) {
+		final Response response = new Response();
+		final List<User> users = dbmanager.cancelSession(sessionID, cancelReason);
 
 		// Notify all the appointments
 		Session session = dbmanager.getSession(sessionID);
@@ -197,29 +146,18 @@ public class SessionsController {
 
 		notificationService.sendNotification(TITLE, MESSAGE, cancelReason, users);
 
-		r.setResult("Session Cancelled");
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult("Session Cancelled");
+		return response;
 	}
 
-	@RequestMapping(value = "/advanceSession", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping(value = "/advanceSession")
 	@ResponseBody
-	public String advanceSession(@RequestParam("sessionID") Integer sessionID,
+	public Response advanceSession(@RequestParam("sessionID") Integer sessionID,
 			@RequestParam("nextAppointmentID") Integer nextAppointmentID,
-			@RequestParam("prevAppointmentID") Integer prevAppointmentID,
-			@RequestParam("noShow") String noShow) {
-
+			@RequestParam("prevAppointmentID") Integer prevAppointmentID, @RequestParam("noShow") String noShow) {
 		logger.debug("prevAppointmentID : " + prevAppointmentID + " nextAppointmentID : " + nextAppointmentID);
 
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
+		final Response response = new Response();
 		String msg = "Session: Next appointment notified";
 
 		if (nextAppointmentID != 0) {
@@ -254,30 +192,21 @@ public class SessionsController {
 			msg = dbmanager.markSessionAsDone(sessionID);
 		}
 
-		r.setResult(msg);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(msg);
+		return response;
 	}
 
-	@RequestMapping(value = "/cancelSessionAppointment", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping(value = "/cancelSessionAppointment")
 	@ResponseBody
-	public String cancelSessionAppointment(@RequestParam("netID") String netID,
-			@RequestParam("appointmentID") Integer[] appointmentID,
-			@RequestParam("sessionID") Integer sessionID,
+	public Response cancelSessionAppointment(@RequestParam("netID") String netID,
+			@RequestParam("appointmentID") Integer[] appointmentID, @RequestParam("sessionID") Integer sessionID,
 			@RequestParam("cancelReason") String cancelReason) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+		final Response response = new Response();
+		final List<Object> appointments = dbmanager.cancelAppointments(netID, appointmentID);
+		
+		response.setResult(appointments);
 
-		List<Object> appointments = dbmanager.cancelAppointments(netID, appointmentID);
-		r.setResult(appointments);
-
-		if(StringUtils.isNotBlank(cancelReason)){
+		if (StringUtils.isNotBlank(cancelReason)) {
 			final String TITLE = "MavAdvise";
 			final String MESSAGE = "Your appointment was Cancelled";
 
@@ -288,22 +217,14 @@ public class SessionsController {
 			notificationService.sendNotification(TITLE, MESSAGE, messageBody, u);
 		}
 
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		return response;
 	}
 
-	@RequestMapping(value = "/sendNotification", method = {
-			RequestMethod.GET }, produces = "application/json; charset=utf-8")
+	@GetMapping("/sendNotification")
 	@ResponseBody
-	public String sendNotification(@RequestParam("netID") String netID) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		User user = dbmanager.getUser(netID);
+	public Response sendNotification(@RequestParam("netID") String netID) {
+		final Response response = new Response();
+		final User user = dbmanager.getUser(netID);
 
 		if (user != null) {
 			System.out.println("Device ID : " + user.getDeviceID());
@@ -324,11 +245,6 @@ public class SessionsController {
 		} else
 			System.out.println("No such user " + netID);
 
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		return response;
 	}
 }

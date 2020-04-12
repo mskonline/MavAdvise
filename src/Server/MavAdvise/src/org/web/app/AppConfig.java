@@ -5,6 +5,12 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class helps in reading the configurations of the application
+ * 
+ * @author mskonline
+ */
+
 @Component
 public class AppConfig {
 
@@ -20,9 +26,16 @@ public class AppConfig {
 		}
 	}
 
+	/**
+	 * Get the value for a key
+	 * 
+	 * @param key The key
+	 * @return The value of the key
+	 */
 	public String get(String key) {
-		if (config == null)
+		if (config == null) {
 			return null;
+		}
 
 		return config.getString(key);
 	}

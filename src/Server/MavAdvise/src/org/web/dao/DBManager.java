@@ -25,6 +25,12 @@ import org.web.beans.Appointment;
 import org.web.beans.Response;
 import org.web.beans.User;
 
+/**
+ * Class to handle all the Database operations
+ * 
+ * @author gurleenkaur793, remeshsv, mskonline
+ */
+
 @Component
 public class DBManager {
 	final static Logger logger = Logger.getLogger(DBManager.class);
@@ -618,7 +624,6 @@ public class DBManager {
 						return null;
 					}
 
-
 					Transaction txn = hSession.beginTransaction();
 
 					int counter = sess3.getSlotCounter() + 1;
@@ -701,7 +706,7 @@ public class DBManager {
 
 		Criteria criteria = session.createCriteria(org.web.beans.User.class);
 		criteria.addOrder(Order.asc("firstName"));
-		//criteria.add(Restrictions.eq("branch", branch));
+		// criteria.add(Restrictions.eq("branch", branch));
 		criteria.add(Restrictions.eq("roleType", "Advisor"));
 
 		allAdvisors = criteria.list();

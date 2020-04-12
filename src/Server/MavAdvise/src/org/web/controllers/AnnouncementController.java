@@ -5,86 +5,66 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.web.beans.Announcement;
 import org.web.beans.Response;
 import org.web.dao.DBManager;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+/**
+ * Controller for handling all the Announcements
+ * 
+ * @author gurleenkaur793
+ */
 
-@Controller
+@RestController
 public class AnnouncementController {
 
 	@Autowired
 	private DBManager dbmanager;
 
-	@RequestMapping(value = "/getAllAnnouncements", method = { RequestMethod.GET,
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getAllAnnouncements")
 	@ResponseBody
-	public String getAllAppointments(@RequestParam("startDate") String startDate,
+	public Response getAllAppointments(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate, @RequestParam("branch") String branch,
 			@RequestParam(value = "netId", required = false) String netId) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-		List<Object> announcements = dbmanager.getAllAnnouncements(startDate, endDate, branch, netId);
+		final Response response = new Response();
+		final List<Object> announcements = dbmanager.getAllAnnouncements(startDate, endDate, branch, netId);
 
-		r.setResult(announcements);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(announcements);
+		return response;
 	}
 
-	@RequestMapping(value = "/createAnnouncement", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/createAnnouncement")
 	@ResponseBody
-	public String register(HttpServletRequest request, @ModelAttribute Announcement announ) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+	public Response register(HttpServletRequest request, @ModelAttribute Announcement announcement) {
+		final Response response = new Response();
+		final String msg = dbmanager.saveAnnouncement(announcement);
 
-		String msg = dbmanager.saveAnnouncement(announ);
-
-		if (msg == null)
-			r.setResult("Announcement Posted");
-		else
-			r.setMessage(msg);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
+		if (msg == null) {
+			response.setResult("Announcement Posted");
+		} else {
+			response.setMessage(msg);
 		}
+
+		return response;
 	}
 
-	@RequestMapping(value = "/deleteAnnouncement", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/deleteAnnouncement")
 	@ResponseBody
-	public String deleteAnnouncement(@RequestParam("announcementID") int a_id) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+	public Response deleteAnnouncement(@RequestParam("announcementID") int announcementId) {
+		final Response response = new Response();
+		final String msg = dbmanager.deleteAnnouncement(announcementId);
 
-		String msg = dbmanager.deleteAnnouncement(a_id);
-
-		if (msg == null)
-			r.setResult("Announcement Deleted");
-		else
-			r.setMessage(msg);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
+		if (msg == null) {
+			response.setResult("Announcement Deleted");
+		} else {
+			response.setMessage(msg);
 		}
+
+		return response;
 	}
 }
