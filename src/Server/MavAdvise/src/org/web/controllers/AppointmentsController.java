@@ -4,135 +4,81 @@ import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.web.beans.Response;
 import org.web.dao.DBManager;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+/**
+ * Controller for handling all the Appointments
+ * 
+ * @author remeshsv
+ */
 
-@Controller
+@RestController
 public class AppointmentsController {
 
 	@Autowired
 	private DBManager dbmanager;
 
-	@RequestMapping(value = "/getAppointments", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getAppointments")
 	@ResponseBody
-	public String getAppointments(@RequestParam("netID") String netID) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+	public Response getAppointments(@RequestParam("netID") String netID) {
+		final Response response = new Response();
+		final List<Object> appointments = dbmanager.getAppointments(netID);
 
-		List<Object> appointments = dbmanager.getAppointments(netID);
-
-		r.setResult(appointments);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(appointments);
+		return response;
 	}
 
-	@RequestMapping(value = "/getScheduledAppointments", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getScheduledAppointments")
 	@ResponseBody
-	public String getScheduledApps(@RequestParam("netID") String netID) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+	public Response getScheduledApps(@RequestParam("netID") String netID) {
+		final Response response = new Response();
+		final List<Object> appointments = dbmanager.getScheduledApps(netID);
 
-		List<Object> appointments = dbmanager.getScheduledApps(netID);
-
-		r.setResult(appointments);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(appointments);
+		return response;
 	}
 
-	@RequestMapping(value = "/getAdvisors", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getAdvisors")
 	@ResponseBody
-	public String getAdvisors(@RequestParam("branch") String branch) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+	public Response getAdvisors(@RequestParam("branch") String branch) {
+		final Response response = new Response();
+		final List<org.web.beans.User> advisors = dbmanager.getAdvisors(branch);
 
-		List<org.web.beans.User> advisors = dbmanager.getAdvisors(branch);
-
-		r.setResult(advisors);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(advisors);
+		return response;
 	}
 
-	@RequestMapping(value = "/cancelAppointments", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/cancelAppointments")
 	@ResponseBody
-	public String cancelAppointments(@RequestParam("netID") String netID,
+	public Response cancelAppointments(@RequestParam("netID") String netID,
 			@RequestParam("sessionID") Integer[] appointmentID) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+		final Response response = new Response();
+		final List<Object> appointments = dbmanager.cancelAppointments(netID, appointmentID);
 
-		List<Object> appointments = dbmanager.cancelAppointments(netID, appointmentID);
-		r.setResult(appointments);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(appointments);
+		return response;
 	}
 
-	@RequestMapping(value = "/createAppointment", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/createAppointment")
 	@ResponseBody
-	public String createAppointment(@RequestParam("sessionID") int sessionID, @RequestParam("netID") String netID,
-			@RequestParam("date") Date date,
-			@RequestParam("appointmentReason") String appointmentReason) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
-
-		r = dbmanager.createAppointment(sessionID, netID, date, appointmentReason);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+	public Response createAppointment(@RequestParam("sessionID") int sessionID, @RequestParam("netID") String netID,
+			@RequestParam("date") Date date, @RequestParam("appointmentReason") String appointmentReason) {
+		final Response response = dbmanager.createAppointment(sessionID, netID, date, appointmentReason);
+		return response;
 	}
 
-	@RequestMapping(value = "/getSessionDates", method = {
-			RequestMethod.POST }, produces = "application/json; charset=utf-8")
+	@PostMapping("/getSessionDates")
 	@ResponseBody
-	public String getSessionDates(@RequestParam("netID") String netID) {
-		Response r = new Response();
-		ObjectMapper mapper = new ObjectMapper();
+	public Response getSessionDates(@RequestParam("netID") String netID) {
+		final Response response = new Response();
+		final List<Object> sessions = dbmanager.getSessionDates(netID);
 
-		List<Object> sessions = dbmanager.getSessionDates(netID);
-
-		r.setResult(sessions);
-
-		try {
-			return mapper.writeValueAsString(r);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "{}";
-		}
+		response.setResult(sessions);
+		return response;
 	}
-
 }

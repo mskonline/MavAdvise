@@ -7,12 +7,22 @@ import org.springframework.stereotype.Service;
 import org.web.beans.Session;
 import org.web.beans.SessionInfo;
 
+/**
+ * Service class for handling all the operations on advisor sessions
+ * 
+ * @author mskonline
+ */
 @Service
 public class SessionsService {
-
-	public void adjustSessionDates(SessionInfo sessionInfo){
-		if(sessionInfo.getStartDate().equals(sessionInfo.getEndDate()))
+	/**
+	 * Adjust the session dates
+	 * 
+	 * @param sessionInfo The session info object
+	 */
+	public void adjustSessionDates(final SessionInfo sessionInfo){
+		if(sessionInfo.getStartDate().equals(sessionInfo.getEndDate())) {
 			return;
+		}
 
 		/**
 		 *   M T W T F S S
@@ -26,8 +36,9 @@ public class SessionsService {
 		 * M T W T F S S
 		 * 0 0 0 0 0 0 0
 		 */
-		for(int i = 0; i < sessionInfo.getFrequency().length(); ++i)
+		for (int i = 0; i < sessionInfo.getFrequency().length(); ++i) {
 			dayOfWeek[i + 1] = Character.getNumericValue(sessionInfo.getFrequency().charAt(i));
+		}
 
 		DateTime start = DateTime.parse(sessionInfo.getStartDate().toString());
 		DateTime end = DateTime.parse(sessionInfo.getEndDate().toString());
@@ -62,7 +73,13 @@ public class SessionsService {
 		sessionInfo.setEndDate(d);
 	}
 
-	public String getStartSessionMessage(Session session){
+	/**
+	 * Construct a session start message
+	 * 
+	 * @param session The session object
+	 * @return The message
+	 */
+	public String getStartSessionMessage(final Session session){
 		StringBuilder message = new StringBuilder();
 
 		message.append("Advising session on ");
@@ -83,7 +100,14 @@ public class SessionsService {
 		return message.toString();
 	}
 
-	public String getCancelAppointmentMessage(Session session, String cancelReason){
+	/**
+	 * Construct a appointment cancellation message 
+	 * 
+	 * @param session The session object
+	 * @param cancelReason The cancellation reason
+	 * @return The message
+	 */
+	public String getCancelAppointmentMessage(final Session session, final String cancelReason){
 		StringBuilder message = new StringBuilder();
 
 		message.append("Your Advising session on ");

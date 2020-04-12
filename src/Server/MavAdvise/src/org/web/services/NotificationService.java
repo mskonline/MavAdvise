@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web.app.AppConfig;
 import org.web.beans.User;
-import org.web.dao.DBManager;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -20,9 +19,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Service class for sending notifications to mobile devices using Google's FireBase
+ * 
+ * @author mskonline
+ */
+
 @Service
 public class NotificationService {
-
 	private static OkHttpClient httpClient;
 	private final String FIREBASE_ENDPOINT;
 	private final String SERVER_KEY;
@@ -33,10 +37,10 @@ public class NotificationService {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 	@Autowired
-	public NotificationService(AppConfig appConfig){
-		String flag = appConfig.get("notifications.enabled");
+	public NotificationService(AppConfig appConfig) {
+		final String flag = appConfig.get("notifications.enabled");
 
-		if(flag.equalsIgnoreCase("false")){
+		if (flag.equalsIgnoreCase("false")) {
 			isEnabled = false;
 
 			FIREBASE_ENDPOINT = null;
@@ -44,7 +48,7 @@ public class NotificationService {
 			return;
 		}
 
-		if(httpClient == null){
+		if (httpClient == null) {
 			httpClient = new OkHttpClient.Builder().build();
 		}
 
@@ -52,13 +56,21 @@ public class NotificationService {
 		SERVER_KEY = appConfig.get("firebase.server-key");
 	}
 
-	public void sendNotification(String title, String message, String messageEx, User user){
-		if(!isEnabled){
+	/**
+	 * Sends notification to the user
+	 * 
+	 * @param title The title of the message
+	 * @param message The message
+	 * @param messageEx The additional message data
+	 * @param user The intended user
+	 */
+	public void sendNotification(final String title, final String message, final String messageEx, final User user) {
+		if (!isEnabled) {
 			logger.debug("Notifications disabled");
 			return;
 		}
 
-		if(user == null)
+		if (user == null)
 			return;
 
 		List<User> users = new ArrayList<User>();
@@ -66,31 +78,39 @@ public class NotificationService {
 
 		FireBaseNotifier fireBaseNotifier = new FireBaseNotifier(title, message, messageEx, users);
 
-		Thread t = new Thread(fireBaseNotifier);
-		t.start();
+		final Thread thread = new Thread(fireBaseNotifier);
+		thread.start();
 	}
 
-	public void sendNotification(String title, String message, String messageEx, List<User> users){
-		if(!isEnabled){
+	/**
+	 * Sends notification to a list of users
+	 * 
+	 * @param title The title of the message
+	 * @param message The message
+	 * @param messageEx The additional message data
+	 * @param users List of all users
+	 */
+	public void sendNotification(final String title, final String message, final String messageEx,
+			final List<User> users) {
+		if (!isEnabled) {
 			logger.debug("Notifications disabled");
 			return;
 		}
 
-
-		if(users == null || users.size() == 0)
+		if (users == null || users.size() == 0)
 			return;
 
 		FireBaseNotifier fireBaseNotifier = new FireBaseNotifier(title, message, messageEx, users);
-		Thread t = new Thread(fireBaseNotifier);
+		final Thread thread = new Thread(fireBaseNotifier);
 
-		t.start();
+		thread.start();
 	}
 
-	private class FireBaseNotifier implements Runnable{
+	private class FireBaseNotifier implements Runnable {
 		private String title, message, messageExtra;
 		private List<User> users;
 
-		public FireBaseNotifier(String title, String message,String messageExtra, List<User> users){
+		public FireBaseNotifier(String title, String message, String messageExtra, List<User> users) {
 			this.title = title;
 			this.message = message;
 			this.users = users;
@@ -99,12 +119,13 @@ public class NotificationService {
 
 		@Override
 		public void run() {
-			if(users == null || users.size() == 0)
+			if (users == null || users.size() == 0) {
 				return;
+			}
 
-			JSONObject jmessage = new JSONObject();
+			final JSONObject jmessage = new JSONObject();
 
-			if(users.size() == 1){
+			if (users.size() == 1) {
 				jmessage.put("to", users.get(0).getDeviceID());
 			} else {
 				JSONArray array = new JSONArray();
@@ -122,14 +143,15 @@ public class NotificationService {
 			JSONObject data = new JSONObject();
 			data.put("msg", message);
 
-			if(StringUtils.isNotBlank(messageExtra)){
+			if (StringUtils.isNotBlank(messageExtra)) {
 				data.put("msgEx", messageExtra);
-			} else
+			} else {
 				data.put("msgEx", "");
+			}
 
 			jmessage.put("data", data);
 
-			JSONObject notification = new JSONObject();
+			final JSONObject notification = new JSONObject();
 			notification.put("title", title);
 			notification.put("body", message);
 			notification.put("sound", "default");
@@ -141,38 +163,37 @@ public class NotificationService {
 
 			logger.debug("Firebase Request : " + jmessage.toString());
 
-			Request request = new Request.Builder()
-	                .url(FIREBASE_ENDPOINT)
-	                .post(body)
-	                .addHeader("Content-type", "application/json")
-	                .addHeader("Authorization", SERVER_KEY)
-	                .build();
+			final Request request = new Request.Builder().url(FIREBASE_ENDPOINT).post(body)
+					.addHeader("Content-type", "application/json").addHeader("Authorization", SERVER_KEY).build();
 
 			Response response = null;
 			String responseMsg = null;
 
-	        try {
-	            response = httpClient.newCall(request).execute();
-	            responseMsg = response.body().string();
+			try {
+				response = httpClient.newCall(request).execute();
+				responseMsg = response.body().string();
 
-	            logger.debug("Firebase Response : " + responseMsg);
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+				logger.debug("Firebase Response : " + responseMsg);
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public void test() {
-		User user = new User();
-		user.setDeviceID("dJQ3iY_rsO8:APA91bEG2bJdFW9vfF0tMkzX-A22LpchEJVaQEIXBQRmLPTSb-R-4PXnFMQw_kEJ89Q2mXZgvgy6JlEzFfJTqXr20MksCo-PmkAOs5pu6HMX9MUPYeZWwtcpBMaYjKnxC42Lnh09-jkJ");
+		final User user = new User();
+		user.setDeviceID(
+				"dJQ3iY_rsO8:APA91bEG2bJdFW9vfF0tMkzX-A22LpchEJVaQEIXBQRmLPTSb-R-4PXnFMQw_kEJ89Q2mXZgvgy6JlEzFfJTqXr20MksCo-PmkAOs5pu6HMX9MUPYeZWwtcpBMaYjKnxC42Lnh09-jkJ");
 
-		User user2 = new User();
-		user2.setDeviceID("cYHoRWH5n6k:APA91bH6kmHqoEmY-GAowLYGkwu_eC7RXfgxZwjg0RXR6Z9HZ7ADvLZBpd3R4VSl0BeXABJPUnmSlbsAjGWZ6s_R5c1MJjX8u_930e92ruyRFDC-tRzpjdb0Lf4WnmB0sN61TAZL7iA2");
+		final User user2 = new User();
+		user2.setDeviceID(
+				"cYHoRWH5n6k:APA91bH6kmHqoEmY-GAowLYGkwu_eC7RXfgxZwjg0RXR6Z9HZ7ADvLZBpd3R4VSl0BeXABJPUnmSlbsAjGWZ6s_R5c1MJjX8u_930e92ruyRFDC-tRzpjdb0Lf4WnmB0sN61TAZL7iA2");
 
-		List<User> users = new ArrayList<User>();
+		final List<User> users = new ArrayList<User>();
 		users.add(user);
 		users.add(user2);
 
-		//new NotificationService().sendNotification("Server Notification 3", "Hello World", users);
+		// new NotificationService().sendNotification("Server Notification 3", "Hello
+		// World", users);
 	}
 }
