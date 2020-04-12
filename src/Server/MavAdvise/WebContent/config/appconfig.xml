@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appconfig>
+	<env>DEV</env>
 	<notifications>
 		<enabled>true</enabled>
 	</notifications>
@@ -7,5 +8,13 @@
 		<end-point>https://fcm.googleapis.com/fcm/send</end-point>
 		<server-key>key=AAAAtnaLFvw:APA91bGPPVJoknYNvob5Cd2TGoKrFeS66Q8B6Gviq1QDY89k9dZVsqjhi-9HvaSYTy8AtW8LCpFWVEwQnilv2Y8hMu1LjtzRULbqVgEKfdrCefrIH9-cWSmfz3GhHWnVXk3nqKcrjp1w</server-key>
 	</firebase>
+	<security>
+		<encryption>
+			<scheme></scheme>
+			<keys>
+				<data-encryption-key></data-encryption-key>
+			</keys>
+		</encryption>
+	</security>
 </appconfig>
 
