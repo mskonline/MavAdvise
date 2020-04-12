@@ -3,6 +3,12 @@ package org.web.beans;
 import java.sql.Date;
 import java.sql.Time;
 
+/**
+ * Bean representing the Sessions table 
+ * 
+ * @author mskonline
+ */
+
 public class Session {
 	private int sessionID;
 	private String netID;

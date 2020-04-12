@@ -1,5 +1,11 @@
 package org.web.beans;
 
+/**
+ * Bean for all the API responses
+ * 
+ * @author mskonline
+ */
+
 public class Response {
 	public String type;
 	public String message;

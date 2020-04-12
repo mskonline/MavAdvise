@@ -3,6 +3,12 @@ package org.web.beans;
 import java.sql.Date;
 import java.sql.Time;
 
+/**
+ * Bean for collecting form data of sessions
+ * 
+ * @author mskonline
+ */
+
 public class SessionInfo {
 	private String netID;
 	private Date startDate;

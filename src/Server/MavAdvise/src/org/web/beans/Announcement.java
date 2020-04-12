@@ -2,6 +2,12 @@ package org.web.beans;
 
 import java.sql.Date;
 
+/**
+ * Bean representing the Announcements table 
+ * 
+ * @author gurleenkaur793
+ */
+
 public class Announcement {
 	private String netID;
 	private Date date;

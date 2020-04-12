@@ -2,6 +2,12 @@ package org.web.beans;
 
 import java.sql.Date;
 
+/**
+ * Bean representing the Appointments table 
+ * 
+ * @author remeshsv
+ */
+
 public class Appointment {
 	private int appointmentID;
 	private String netID;

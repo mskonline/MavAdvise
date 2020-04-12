@@ -1,5 +1,11 @@
 package org.web.beans;
 
+/**
+ * Bean representing the Users table 
+ * 
+ * @author mskonline
+ */
+
 public class User {
 	private String firstName;
 	private String lastName;
